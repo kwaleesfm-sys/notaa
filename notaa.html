@@ -3,166 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NootaChat Ultimate | محمد</title>
+    <title>NootaChat Ultimate | نسخة محمد</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0b141a; --panel: #111b21; --primary: #8A2BE2; --secondary: #202c33;
-            --text: #e9edef; --dim: #8696a0; --danger: #ff4757; --ghost: #00f2ff;
+            --bg: #090e11; --panel: #111b21; --primary: #8A2BE2; --secondary: #202c33;
+            --text: #e9edef; --dim: #8696a0; --danger: #ff4757; --ghost: #00f2ff; --bomb: #ff9f43;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
-        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-touch-callout: none; outline: none; }
+        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         .hidden { display: none !important; }
 
-        /* الشاشة الرئيسية */
+        /* منع سحب الصور للحماية */
+        img { pointer-events: none; }
+        .allow-click { pointer-events: auto; cursor: pointer; }
+
+        /* الشاشات والقوائم */
         .main-content { flex: 1; overflow-y: auto; padding-bottom: 90px; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--panel); display: flex; height: 75px; border-top: 1px solid #222d34; z-index: 100; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: var(--dim); cursor: pointer; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--panel); display: flex; height: 70px; border-top: 1px solid #222d34; z-index: 100; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: var(--dim); }
         .nav-item.active { color: var(--primary); font-weight: bold; }
 
-        /* النوتس (للأصدقاء فقط) */
-        .notes-bar { display: flex; gap: 15px; padding: 20px; overflow-x: auto; background: var(--bg); border-bottom: 1px solid #1c262d; }
-        .note-wrap { min-width: 75px; text-align: center; position: relative; }
-        .note-img-circle { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--primary); padding: 3px; background: var(--secondary); }
-        .note-img-circle img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; pointer-events: none; }
-        .note-pop { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); background: white; color: black; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; white-space: nowrap; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-main:active { transform: scale(0.98); }
+        .input-style { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #2f3e46; background: var(--secondary); color: white; text-align: center; font-size: 15px; }
+
+        /* النوتس */
+        .notes-bar { display: flex; gap: 15px; padding: 20px; overflow-x: auto; background: var(--bg); }
+        .note-wrap { text-align: center; position: relative; min-width: 70px; }
+        .note-circle { width: 65px; height: 65px; border-radius: 50%; border: 2.5px solid var(--primary); padding: 2px; }
+        .note-circle img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .note-pop { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: white; color: black; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10; }
 
         /* المحادثة */
-        #chat-window { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 300; display: flex; flex-direction: column; }
-        .chat-header { padding: 12px 18px; background: var(--panel); display: flex; align-items: center; justify-content: space-between; }
-        .msg-area { flex: 1; padding: 15px; overflow-y: auto; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; background-color: #0b141a; display: flex; flex-direction: column; }
+        #chat-window { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 200; display: flex; flex-direction: column; }
+        .chat-header { padding: 12px 15px; background: var(--panel); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1c262d; }
+        .msg-area { flex: 1; padding: 15px; overflow-y: auto; background-color: #0b141a; display: flex; flex-direction: column; }
         
-        .msg { max-width: 75%; padding: 10px 14px; margin: 4px 0; border-radius: 16px; position: relative; font-size: 15px; transition: 0.2s; }
-        .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
-        .received { align-self: flex-start; background: var(--secondary); color: white; border-bottom-left-radius: 2px; }
-        .reply-box-in-msg { background: rgba(0,0,0,0.2); padding: 5px 8px; border-left: 3px solid white; border-radius: 5px; margin-bottom: 5px; font-size: 12px; opacity: 0.8; }
-        .react-badge { position: absolute; bottom: -10px; right: 10px; background: var(--secondary); border-radius: 10px; padding: 2px 5px; font-size: 12px; border: 1px solid #333; }
+        .msg { max-width: 80%; padding: 10px 14px; margin: 6px 0; border-radius: 16px; position: relative; font-size: 15px; display: inline-block; word-wrap: break-word; }
+        .sent { align-self: flex-end; background: var(--primary); border-bottom-right-radius: 4px; }
+        .received { align-self: flex-start; background: var(--secondary); border-bottom-left-radius: 4px; }
         
-        /* أدوات الإدخال */
-        .input-bar { background: var(--panel); padding: 12px; display: flex; align-items: flex-end; gap: 8px; }
-        .reply-preview { background: var(--secondary); padding: 8px 15px; border-left: 4px solid var(--primary); display: flex; justify-content: space-between; }
-        .ghost-toggle { width: 40px; height: 22px; background: #333; border-radius: 20px; position: relative; transition: 0.3s; }
-        .ghost-toggle.active { background: var(--ghost); }
-        .ghost-circle { width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
-        .ghost-toggle.active .ghost-circle { left: 20px; }
+        .sys-msg { align-self: center; background: rgba(255,255,255,0.1); color: var(--dim); font-size: 11px; padding: 4px 12px; border-radius: 20px; margin: 8px; }
+        .ghost-msg { background: rgba(0, 242, 255, 0.1) !important; color: var(--ghost) !important; border: 1px dashed var(--ghost); }
+        .reply-box { background: rgba(0,0,0,0.25); padding: 6px; border-left: 3px solid white; border-radius: 6px; font-size: 12px; margin-bottom: 6px; color: #ddd; }
+        .react-badge { position: absolute; bottom: -10px; right: 10px; background: var(--panel); border: 1px solid #333; border-radius: 10px; padding: 2px 5px; font-size: 12px; }
+        .chat-image { max-width: 200px; border-radius: 10px; margin-top: 5px; display: block; }
+        
+        .bomb-btn { background: var(--bomb); color: black; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 12px; }
 
-        /* مودال الخيارات */
-        .modal { position: fixed; top: 0; left:0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .menu-card { width: 100%; max-width: 300px; background: var(--panel); border-radius: 20px; overflow: hidden; }
-        .menu-item { padding: 16px; border-bottom: 1px solid #222d34; text-align: center; font-weight: bold; cursor: pointer; }
+        /* أدوات الإدخال */
+        .input-bar { background: var(--panel); padding: 10px; display: flex; align-items: flex-end; gap: 8px; }
+        .action-icon { font-size: 24px; color: var(--dim); cursor: pointer; padding: 5px; }
+        .action-icon.active { color: var(--bomb); text-shadow: 0 0 10px var(--bomb); }
         
-        .btn-main { background: var(--primary); border: none; padding: 16px; border-radius: 15px; color: white; font-weight: bold; width: 100%; cursor: pointer; }
+        /* المودال */
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index: 500; display:flex; align-items:center; justify-content:center; padding: 20px; }
+        .menu-card { background: var(--panel); width: 100%; max-width: 320px; border-radius: 20px; padding: 20px; }
+        .menu-item { padding: 15px; border-bottom: 1px solid #222d34; text-align: center; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div id="auth-screen" class="modal">
-        <div class="menu-card" style="padding:25px; max-width:350px;">
-            <h1 style="text-align:center; color:var(--primary); margin:0 0 20px;">NootaChat</h1>
-            <input type="email" id="email" placeholder="البريد الإلكتروني" style="width:100%; padding:14px; margin-bottom:12px; border-radius:12px; border:none; background:var(--secondary); color:white; text-align:center;">
-            <input type="password" id="pass" placeholder="كلمة المرور" style="width:100%; padding:14px; margin-bottom:20px; border-radius:12px; border:none; background:var(--secondary); color:white; text-align:center;">
-            <button class="btn-main" onclick="authAction('login')">تسجيل الدخول</button>
-            <p onclick="document.getElementById('signup-modal').classList.remove('hidden')" style="text-align:center; margin-top:15px; color:var(--dim); font-size:14px;">ليس لديك حساب؟ <span style="color:var(--primary)">سجل مجاناً</span></p>
+    <div id="auth-modal" class="modal">
+        <div class="menu-card" style="text-align:center;">
+            <h1 style="color:var(--primary); margin-bottom:20px;">NootaChat Ultra</h1>
+            <input type="email" id="auth-email" class="input-style allow-click" placeholder="البريد الإلكتروني">
+            <input type="password" id="auth-pass" class="input-style allow-click" placeholder="كلمة المرور">
+            <button class="btn-main" onclick="handleAuth('login')">تسجيل الدخول</button>
+            <p onclick="handleAuth('signup')" class="allow-click" style="color:var(--dim); margin-top:20px; font-size:14px;">مستخدم جديد؟ <span style="color:var(--primary)">إنشاء حساب فوراً</span></p>
         </div>
     </div>
 
-    <div id="signup-modal" class="modal hidden">
-        <div class="menu-card" style="padding:25px;">
-            <h3>إنشاء حساب جديد</h3>
-            <input type="email" id="s-email" placeholder="بريد جديد" style="width:100%; padding:14px; margin-bottom:10px; border-radius:12px; border:none; background:var(--secondary); color:white; text-align:center;">
-            <input type="password" id="s-pass" placeholder="كلمة مرور" style="width:100%; padding:14px; margin-bottom:20px; border-radius:12px; border:none; background:var(--secondary); color:white; text-align:center;">
-            <button class="btn-main" onclick="authAction('signup')">إنشاء الحساب</button>
-            <button onclick="document.getElementById('signup-modal').classList.add('hidden')" style="width:100%; background:none; border:none; color:var(--dim); margin-top:10px;">رجوع</button>
-        </div>
-    </div>
-
-    <div id="setup-screen" class="modal hidden">
-        <div class="menu-card" style="padding:25px; text-align:center;">
-            <h2 id="setup-title">إعداد ملفك</h2>
-            <div style="position:relative; margin:20px auto; width:100px;">
-                <img id="prev-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--primary); object-fit:cover;">
-                <input type="file" id="img-input" accept="image/*" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0;">
+    <div id="setup-modal" class="modal hidden">
+        <div class="menu-card" style="text-align:center;">
+            <h2 id="setup-title">إعداد البروفايل</h2>
+            <div style="position:relative; width:110px; height:110px; margin:15px auto;">
+                <img id="setup-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:100%; height:100%; border-radius:50%; object-fit:cover; border:3px solid var(--primary);">
+                <input type="file" id="img-upload" class="allow-click" accept="image/*" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0;">
             </div>
-            <input type="text" id="set-user" placeholder="اسم المستخدم (English)" style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:none; background:var(--secondary); color:white; text-align:center;">
-            <input type="text" id="set-nick" placeholder="اللقب" style="width:100%; padding:12px; margin-bottom:20px; border-radius:10px; border:none; background:var(--secondary); color:white; text-align:center;">
-            <button class="btn-main" onclick="saveUser()">حفظ البيانات</button>
+            <input type="text" id="setup-u" class="input-style allow-click" placeholder="Username (مهم للبحث)">
+            <input type="text" id="setup-n" class="input-style allow-click" placeholder="اللقب الظاهر">
+            <button class="btn-main allow-click" onclick="saveProfile()">حفظ البيانات</button>
+            <button id="cancel-edit-btn" class="hidden allow-click" style="width:100%; background:none; border:none; color:var(--dim); margin-top:10px; padding:10px;" onclick="document.getElementById('setup-modal').classList.add('hidden')">إلغاء</button>
         </div>
     </div>
 
-    <div id="app-screen" class="hidden" style="height:100%;">
-        <div id="page-chats" class="main-content">
-            <div style="padding:25px 20px 10px; font-size:26px; font-weight:bold;">المحادثات</div>
-            <div class="notes-bar" id="notes-list">
-                <div class="note-wrap" onclick="addNote()">
-                    <div class="note-img-circle" style="border-style:dashed; color:#555; display:flex; align-items:center; justify-content:center; font-size:30px;">+</div>
-                    <span style="font-size:11px;">نوتة</span>
+    <div id="main-app" class="hidden" style="height:100%;">
+        <div id="tab-chats" class="main-content">
+            <div style="padding:20px; font-size:24px; font-weight:bold;">المحادثات</div>
+            <div class="notes-bar" id="notes-container">
+                <div class="note-wrap allow-click" onclick="createNote()">
+                    <div class="note-circle" style="border-style:dashed; color:#555; display:flex; align-items:center; justify-content:center; font-size:30px;">+</div>
+                    <span style="font-size:11px; color:var(--dim);">حالة</span>
                 </div>
             </div>
-            <div id="chat-items-list"></div>
-            <button class="btn-main" style="width:90%; margin:20px 5%;" onclick="findFriend()">+ ابحث عن صديق باليوزر</button>
+            <div id="chats-list"></div>
+            <button class="btn-main allow-click" style="width:90%; margin:20px 5%;" onclick="searchUser()">+ محادثة جديدة</button>
         </div>
 
-        <div id="page-profile" class="main-content hidden" style="padding:50px 20px; text-align:center;">
-            <img id="my-avatar" src="" style="width:130px; height:130px; border-radius:50%; border:4px solid var(--primary); object-fit:cover;">
-            <h2 id="my-name-display" style="margin:10px 0 5px;">...</h2>
-            <p id="my-user-display" style="color:var(--dim); margin:0;">@...</p>
-            <button class="btn-main" style="background:var(--secondary); margin-top:30px;" onclick="editProfile()">تعديل البروفايل</button>
-            <button class="btn-main" style="background:var(--danger); margin-top:15px;" onclick="location.reload()">تسجيل الخروج</button>
+        <div id="tab-profile" class="main-content hidden" style="padding:40px; text-align:center;">
+            <img id="my-pic" src="" style="width:140px; height:140px; border-radius:50%; border:4px solid var(--primary); object-fit:cover;">
+            <h2 id="my-name" style="margin:15px 0 5px;">...</h2>
+            <p id="my-username" style="color:var(--dim); margin:0;">@...</p>
+            <button class="btn-main allow-click" style="background:var(--secondary); margin-top:40px;" onclick="openEditProfile()">✏️ تعديل البروفايل</button>
+            <button class="btn-main allow-click" style="background:var(--danger); margin-top:15px;" onclick="location.reload()">تسجيل الخروج</button>
         </div>
 
         <nav class="bottom-nav">
-            <div class="nav-item active" onclick="tab('chats', this)">💬<span>دردشة</span></div>
-            <div class="nav-item" onclick="tab('profile', this)">👤<span>حسابي</span></div>
+            <div class="nav-item active allow-click" onclick="switchTab('chats', this)">💬<span>دردشة</span></div>
+            <div class="nav-item allow-click" onclick="switchTab('profile', this)">👤<span>حسابي</span></div>
         </nav>
     </div>
 
     <div id="chat-window" class="hidden">
         <div class="chat-header">
             <div style="display:flex; align-items:center;">
-                <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:24px; margin-left:12px;">→</button>
-                <img id="h-img" src="" style="width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:12px;">
-                <div onclick="openOptions()">
-                    <b id="h-name">...</b><br>
-                    <small id="ghost-status" style="color:var(--dim); font-size:10px;">عادي</small>
+                <span class="allow-click" onclick="closeChat()" style="font-size:22px; margin-left:12px; color:white;">→</span>
+                <img id="chat-h-img" src="" style="width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px;">
+                <div class="allow-click" onclick="document.getElementById('opt-modal').classList.remove('hidden')">
+                    <b id="chat-h-name">...</b><br>
+                    <small id="chat-h-status" style="color:var(--dim); font-size:11px;">عادي</small>
                 </div>
             </div>
-            <div style="display:flex; align-items:center; gap:12px;">
-                <div class="ghost-toggle" id="g-toggle" onclick="toggleGhost()"><div class="ghost-circle"></div></div>
-                <span onclick="openOptions()" style="font-size:22px; cursor:pointer;">⋮</span>
+            <div style="display:flex; gap:15px; align-items:center;">
+                <span id="ghost-btn" class="action-icon allow-click" onclick="toggleGhost()">👻</span>
+                <span class="allow-click" onclick="document.getElementById('opt-modal').classList.remove('hidden')" style="font-size:22px;">⋮</span>
             </div>
         </div>
         
         <div class="msg-area" id="msg-area"></div>
 
-        <div id="reply-preview" class="reply-preview hidden">
-            <div id="reply-text" style="font-size:12px; color:var(--dim);"></div>
-            <span onclick="cancelReply()" style="color:var(--danger); cursor:pointer;">✕</span>
+        <div id="preview-bar" class="hidden" style="background:var(--secondary); padding:10px 15px; border-left:3px solid var(--primary); display:flex; justify-content:space-between; align-items:center;">
+            <div id="preview-content" style="font-size:12px; color:var(--dim); max-height:40px; overflow:hidden;"></div>
+            <span class="allow-click" onclick="cancelAction()" style="color:var(--danger); font-size:18px;">✕</span>
         </div>
 
         <div class="input-bar" id="input-bar">
-            <input type="text" id="msg-input" placeholder="اكتب رسالة..." style="flex:1; background:var(--secondary); border-radius:25px; padding:12px 18px; color:white; border:none;">
-            <button onclick="sendMsg()" style="background:var(--primary); border:none; width:48px; height:48px; border-radius:50%; color:white; font-size:18px;">➤</button>
+            <label for="chat-img-input" class="action-icon allow-click">📎</label>
+            <input type="file" id="chat-img-input" accept="image/*" class="hidden">
+            
+            <span id="bomb-btn" class="action-icon allow-click" onclick="toggleBomb()" title="صورة تحذف بمجرد رؤيتها">👁️</span>
+
+            <input type="text" id="msg-input" class="allow-click" placeholder="اكتب رسالة..." style="flex:1; background:var(--secondary); border-radius:20px; padding:12px; border:none; color:white;">
+            <button class="allow-click" onclick="sendMessage()" style="background:var(--primary); border:none; width:45px; height:45px; border-radius:50%; color:white; font-size:18px;">➤</button>
         </div>
-        <div id="blocked-bar" class="hidden" style="padding:20px; text-align:center; background:var(--danger); font-weight:bold;">لا يمكنك المراسلة (أنت محظور)</div>
+        <div id="blocked-bar" class="hidden" style="padding:15px; text-align:center; background:var(--danger); font-weight:bold;">لا يمكنك المراسلة، أنت محظور</div>
     </div>
 
-    <div id="opt-modal" class="modal hidden" onclick="this.classList.add('hidden')">
+    <div id="opt-modal" class="modal hidden allow-click" onclick="this.classList.add('hidden')">
         <div class="menu-card" onclick="event.stopPropagation()">
-            <div class="menu-item" onclick="clearChat()">🗑️ مسح المحادثة للطرفين</div>
-            <div class="menu-item" id="block-btn-txt" onclick="blockUser()">🚫 حظر المستخدم</div>
-            <div class="menu-item" onclick="reportUser()" style="color:orange;">⚠️ إبلاغ (حظر تلقائي عند 10)</div>
-            <div class="menu-item" onclick="document.getElementById('opt-modal').classList.add('hidden')">إلغاء</div>
+            <div class="menu-item allow-click" onclick="clearHistory()">🗑️ مسح المحادثة بالكامل</div>
+            <div class="menu-item allow-click" id="block-txt" onclick="toggleBlock()">🚫 حظر</div>
+            <div class="menu-item allow-click" onclick="reportAction()" style="color:orange; border:none;">⚠️ إبلاغ (حظر نهائي عند 10)</div>
         </div>
     </div>
 
-    <div id="react-modal" class="modal hidden" onclick="this.classList.add('hidden')">
-        <div class="menu-card" style="display:flex; justify-content:space-around; padding:15px;" onclick="event.stopPropagation()">
-            <span style="font-size:25px; cursor:pointer;" onclick="setReact('❤️')">❤️</span>
-            <span style="font-size:25px; cursor:pointer;" onclick="setReact('😂')">😂</span>
-            <span style="font-size:25px; cursor:pointer;" onclick="setReact('😮')">😮</span>
-            <span style="font-size:25px; cursor:pointer;" onclick="setReact('😢')">😢</span>
-            <span style="font-size:25px; cursor:pointer;" onclick="setReact('👍')">👍</span>
-            <span style="font-size:25px; cursor:pointer;" onclick="makeReply()">💬 رد</span>
+    <div id="react-modal" class="modal hidden allow-click" onclick="this.classList.add('hidden')">
+        <div class="menu-card" style="display:flex; justify-content:space-around; padding:15px; border-radius:30px;" onclick="event.stopPropagation()">
+            <span class="allow-click" style="font-size:25px;" onclick="addReact('❤️')">❤️</span>
+            <span class="allow-click" style="font-size:25px;" onclick="addReact('😂')">😂</span>
+            <span class="allow-click" style="font-size:25px;" onclick="addReact('👍')">👍</span>
+            <span class="allow-click" style="font-size:25px;" onclick="prepReply()">💬 رد</span>
         </div>
     </div>
 
@@ -171,158 +173,203 @@
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, get, child, update, remove, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M",
-            authDomain: "fir-c3e88.firebaseapp.com",
-            databaseURL: "https://fir-c3e88-default-rtdb.firebaseio.com",
-            projectId: "fir-c3e88",
-            storageBucket: "fir-c3e88.firebasestorage.app",
-            messagingSenderId: "202130175288",
-            appId: "1:202130175288:web:0d7ad99c3c828501b4fdcd"
+        const app = initializeApp({
+            apiKey: "AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M", authDomain: "fir-c3e88.firebaseapp.com",
+            databaseURL: "https://fir-c3e88-default-rtdb.firebaseio.com", projectId: "fir-c3e88",
+            storageBucket: "fir-c3e88.firebasestorage.app", messagingSenderId: "202130175288", appId: "1:202130175288:web:0d7ad99c3c828501b4fdcd"
+        });
+        const auth = getAuth(app); const db = getDatabase(app);
+
+        let me = null, activeF = null, activeC = null;
+        let isGhost = false, isBomb = false, replyText = null, selectedMsg = null, pendingImg = null;
+
+        // دالة لضغط الصور (مهمة جداً لـ Firebase)
+        const compressImg = (file, cb) => {
+            const r = new FileReader(); r.readAsDataURL(file);
+            r.onload = e => {
+                const img = new Image(); img.src = e.target.result;
+                img.onload = () => {
+                    const cvs = document.createElement('canvas'); const ctx = cvs.getContext('2d');
+                    const MAX = 400; const scale = MAX / img.width; // تصغير الصورة
+                    cvs.width = MAX; cvs.height = img.height * scale;
+                    ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+                    cb(cvs.toDataURL('image/jpeg', 0.6)); // ضغط الجودة لـ 60%
+                }
+            }
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-
-        let me = null, activeF = null, activeC = null, isG = false, replyTo = null, selectedMsgId = null;
-
-        window.authAction = async (t) => {
-            const e = document.getElementById(t==='login'?'email':'s-email').value;
-            const p = document.getElementById(t==='login'?'pass':'s-pass').value;
-            try { t==='login' ? await signInWithEmailAndPassword(auth, e, p) : await createUserWithEmailAndPassword(auth, e, p); }
-            catch(err) { alert("فشلت العملية، تأكد من البيانات"); }
+        window.handleAuth = async (t) => {
+            const e = document.getElementById('auth-email').value, p = document.getElementById('auth-pass').value;
+            try { t === 'login' ? await signInWithEmailAndPassword(auth, e, p) : await createUserWithEmailAndPassword(auth, e, p); }
+            catch(err) { alert("تأكد من البيانات أو البريد"); }
         };
 
-        const toB64 = f => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(f); rd.onload = () => r(rd.result); });
-        document.getElementById('img-input').onchange = async e => { if(e.target.files[0]) document.getElementById('prev-img').src = await toB64(e.target.files[0]); };
+        document.getElementById('img-upload').onchange = e => { if(e.target.files[0]) compressImg(e.target.files[0], b64 => document.getElementById('setup-img').src = b64); };
 
-        window.saveUser = async () => {
-            const u = document.getElementById('set-user').value.trim().toLowerCase(), n = document.getElementById('set-nick').value.trim(), img = document.getElementById('prev-img').src;
+        window.saveProfile = async () => {
+            const u = document.getElementById('setup-u').value.trim().toLowerCase(), n = document.getElementById('setup-n').value.trim(), img = document.getElementById('setup-img').src;
             if(!n) return alert("اللقب مطلوب");
-            if(!me) {
-                const s = await get(child(ref(db), 'usernames/'+u));
-                if(s.exists()) return alert("اليوزر مأخوذ");
+            if(me) { // تعديل
+                await update(ref(db, 'users/'+auth.currentUser.uid), { n, img });
+            } else { // حساب جديد
+                const s = await get(child(ref(db), 'usernames/'+u)); if(s.exists()) return alert("اليوزر نيم مأخوذ");
                 await set(ref(db, 'usernames/'+u), auth.currentUser.uid);
                 await set(ref(db, 'users/'+auth.currentUser.uid), { u, n, img, reports: 0 });
-            } else {
-                await update(ref(db, 'users/'+auth.currentUser.uid), { n, img });
             }
             location.reload();
         };
 
-        window.tab = (t, el) => {
-            document.querySelectorAll('.main-content').forEach(x => x.classList.add('hidden'));
-            document.getElementById('page-'+t).classList.remove('hidden');
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            el.classList.add('active');
+        window.openEditProfile = () => {
+            document.getElementById('setup-modal').classList.remove('hidden');
+            document.getElementById('setup-title').innerText = "تعديل البيانات";
+            document.getElementById('setup-u').classList.add('hidden'); // لا يغير اليوزر
+            document.getElementById('setup-n').value = me.n;
+            document.getElementById('setup-img').src = me.img;
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
         };
 
-        window.findFriend = async () => {
-            const u = prompt("أدخل اسم المستخدم (Username):"); if(!u) return;
+        window.switchTab = (t, el) => {
+            document.querySelectorAll('.main-content').forEach(x => x.classList.add('hidden'));
+            document.getElementById('tab-'+t).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); el.classList.add('active');
+        };
+
+        window.searchUser = async () => {
+            const u = prompt("أدخل يوزر الصديق:"); if(!u) return;
             const s = await get(child(ref(db), 'usernames/'+u.toLowerCase()));
             if(s.exists() && s.val() !== auth.currentUser.uid) {
-                const fData = (await get(child(ref(db), 'users/'+s.val()))).val();
-                openChat(s.val(), fData.n, fData.img);
+                const f = (await get(child(ref(db), 'users/'+s.val()))).val(); openChat(s.val(), f.n, f.img);
             } else alert("غير موجود!");
         };
 
         window.openChat = async (id, name, img) => {
             activeF = id; activeC = [auth.currentUser.uid, id].sort().join("_");
             document.getElementById('chat-window').classList.remove('hidden');
-            document.getElementById('h-name').innerText = name;
-            document.getElementById('h-img').src = img;
+            document.getElementById('chat-h-name').innerText = name; document.getElementById('chat-h-img').src = img;
             await update(ref(db, `friends/${auth.currentUser.uid}/${id}`), { n: name, img: img });
             await update(ref(db, `friends/${id}/${auth.currentUser.uid}`), { n: me.n, img: me.img });
-            checkBlock(); loadMsgs();
+            checkBlock(); loadChat();
         };
 
-        window.closeChat = () => { document.getElementById('chat-window').classList.add('hidden'); isG = false; };
-        window.toggleGhost = () => { isG = !isG; document.getElementById('g-toggle').classList.toggle('active', isG); document.getElementById('ghost-status').innerText = isG ? "وضع الشبح 👻" : "عادي"; };
+        window.closeChat = () => { document.getElementById('chat-window').classList.add('hidden'); isGhost = false; isBomb = false; cancelAction(); };
+        window.toggleGhost = () => { isGhost = !isGhost; document.getElementById('ghost-btn').classList.toggle('active', isGhost); updateStatus(); };
+        window.toggleBomb = () => { isBomb = !isBomb; document.getElementById('bomb-btn').classList.toggle('active', isBomb); updateStatus(); };
+        
+        function updateStatus() {
+            const s = document.getElementById('chat-h-status');
+            if(isGhost && isBomb) s.innerText = "شبح + قنبلة صور 👻💣";
+            else if(isGhost) s.innerText = "وضع الشبح 👻";
+            else if(isBomb) s.innerText = "وضع الصور الموقوتة 💣";
+            else s.innerText = "عادي";
+        }
 
-        window.sendMsg = () => {
-            const t = document.getElementById('msg-input').value; if(!t) return;
+        // إعداد الصورة للإرسال
+        document.getElementById('chat-img-input').onchange = e => {
+            if(e.target.files[0]) compressImg(e.target.files[0], b64 => {
+                pendingImg = b64;
+                document.getElementById('preview-bar').classList.remove('hidden');
+                document.getElementById('preview-content').innerHTML = `🖼️ تم إرفاق صورة ${isBomb ? '(قنبلة)' : ''}`;
+            });
+        };
+
+        window.sendMessage = () => {
+            const txt = document.getElementById('msg-input').value.trim();
+            if(!txt && !pendingImg) return;
             const mRef = push(ref(db, 'messages/'+activeC));
-            const data = { s: auth.currentUser.uid, t, time: Date.now(), g: isG };
-            if(replyTo) data.reply = replyTo;
+            let type = 'text'; if(pendingImg) type = isBomb ? 'bomb' : 'img';
+            
+            const data = { s: auth.currentUser.uid, t: txt, type: type, time: Date.now(), g: isGhost };
+            if(pendingImg) data.img = pendingImg;
+            if(replyText) data.reply = replyText;
+
             set(mRef, data);
-            if(isG) setTimeout(() => remove(mRef), 10000);
-            document.getElementById('msg-input').value = ""; cancelReply();
+            if(isGhost) setTimeout(() => remove(mRef), 10000); // الشبح يمسحها بعد 10 ثواني
+            
+            document.getElementById('msg-input').value = ""; pendingImg = null; cancelAction();
         };
 
-        function loadMsgs() {
+        function loadChat() {
             onValue(ref(db, 'messages/'+activeC), snap => {
                 const box = document.getElementById('msg-area'); box.innerHTML = "";
                 snap.forEach(c => {
                     const m = c.val(), d = document.createElement('div');
-                    d.className = `msg ${m.s === auth.currentUser.uid ? 'sent' : 'received'} ${m.g ? 'ghost-msg' : ''}`;
-                    if(m.reply) d.innerHTML += `<div class="reply-box-in-msg">${m.reply}</div>`;
-                    d.innerHTML += m.t;
-                    if(m.react) d.innerHTML += `<div class="react-badge">${m.react}</div>`;
-                    d.onclick = () => { selectedMsgId = c.key; replyTo = m.t; document.getElementById('react-modal').classList.remove('hidden'); };
+                    if(m.sys) { d.className="sys-msg"; d.innerText=m.sys; box.appendChild(d); return; }
+                    
+                    d.className = `msg allow-click ${m.s === auth.currentUser.uid ? 'sent' : 'received'} ${m.g ? 'ghost-msg' : ''}`;
+                    let html = '';
+                    if(m.reply) html += `<div class="reply-box">${m.reply}</div>`;
+                    
+                    // معالجة نوع الرسالة
+                    if(m.type === 'img') {
+                        html += `<img src="${m.img}" class="chat-image"><br>${m.t}`;
+                    } else if(m.type === 'bomb') {
+                        if(m.s === auth.currentUser.uid) { html += `💣 قنبلة صورة مرسلة<br>${m.t}`; } // المرسل يرى نص فقط
+                        else {
+                            html += `<button class="bomb-btn allow-click" id="btn-${c.key}" onclick="triggerBomb('${c.key}', '${m.img}')">👁️ اضغط لرؤية الصورة (5 ثوان)</button><br>${m.t}`;
+                        }
+                    } else { html += m.t; }
+
+                    if(m.react) html += `<div class="react-badge">${m.react}</div>`;
+                    d.innerHTML = html;
+                    
+                    // فتح خيارات الرسالة (إلا لو كانت قنبلة للمستلم)
+                    if(!(m.type === 'bomb' && m.s !== auth.currentUser.uid)) {
+                        d.onclick = (e) => { if(e.target.tagName !== 'BUTTON') { selectedMsg = c.key; replyText = m.type==='text'?m.t:'صورة'; document.getElementById('react-modal').classList.remove('hidden'); } };
+                    }
                     box.appendChild(d);
                 });
                 box.scrollTop = box.scrollHeight;
             });
         }
 
-        window.setReact = (r) => { update(ref(db, `messages/${activeC}/${selectedMsgId}`), { react: r }); document.getElementById('react-modal').classList.add('hidden'); };
-        window.makeReply = () => { document.getElementById('reply-preview').classList.remove('hidden'); document.getElementById('reply-text').innerText = replyTo; document.getElementById('react-modal').classList.add('hidden'); };
-        window.cancelReply = () => { replyTo = null; document.getElementById('reply-preview').classList.add('hidden'); };
-
-        window.openOptions = () => {
-            get(child(ref(db), `blocks/${auth.currentUser.uid}/${activeF}`)).then(s => {
-                document.getElementById('block-btn-txt').innerText = s.exists() ? "فك الحظر" : "حظر المستخدم";
-                document.getElementById('opt-modal').classList.remove('hidden');
-            });
+        // تفجير قنبلة الصورة
+        window.triggerBomb = (key, imgSrc) => {
+            const btn = document.getElementById('btn-'+key);
+            btn.outerHTML = `<img src="${imgSrc}" class="chat-image"><br><small style="color:var(--danger)">تتدمر بعد 5 ثواني...</small>`;
+            setTimeout(() => remove(child(ref(db, 'messages/'+activeC), key)), 5000); // حذف من الداتا بيز
         };
 
-        window.blockUser = async () => {
+        window.addReact = r => { update(ref(db, `messages/${activeC}/${selectedMsg}`), { react: r }); document.getElementById('react-modal').classList.add('hidden'); };
+        window.prepReply = () => { document.getElementById('preview-bar').classList.remove('hidden'); document.getElementById('preview-content').innerText = "رد على: " + replyText; document.getElementById('react-modal').classList.add('hidden'); };
+        window.cancelAction = () => { replyText = null; pendingImg = null; document.getElementById('preview-bar').classList.add('hidden'); document.getElementById('chat-img-input').value = ""; };
+
+        window.toggleBlock = async () => {
             const s = await get(child(ref(db), `blocks/${auth.currentUser.uid}/${activeF}`));
-            if(s.exists()) {
-                await remove(ref(db, `blocks/${auth.currentUser.uid}/${activeF}`));
-                push(ref(db, 'messages/'+activeC), { t: "🔓 تم فك الحظر", s: "sys" });
-            } else {
-                await set(ref(db, `blocks/${auth.currentUser.uid}/${activeF}`), true);
-                push(ref(db, 'messages/'+activeC), { t: "🚫 لقد قمت بحظر هذا المستخدم", s: "sys" });
-            }
+            if(s.exists()) { await remove(ref(db, `blocks/${auth.currentUser.uid}/${activeF}`)); push(ref(db, 'messages/'+activeC), { sys: "تم فك الحظر 🔓" }); }
+            else { await set(ref(db, `blocks/${auth.currentUser.uid}/${activeF}`), true); push(ref(db, 'messages/'+activeC), { sys: "تم حظر المستخدم 🚫" }); }
             document.getElementById('opt-modal').classList.add('hidden');
         };
-
-        window.reportUser = async () => { if(confirm("إبلاغ عن المستخدم؟")) { await update(ref(db, `users/${activeF}`), { reports: increment(1) }); alert("تم الإبلاغ"); } };
-        window.clearChat = async () => { if(confirm("مسح المحادثة للطرفين؟")) { await remove(ref(db, 'messages/'+activeC)); closeChat(); } };
+        window.clearHistory = async () => { if(confirm("مسح؟")) { await remove(ref(db, 'messages/'+activeC)); closeChat(); } };
+        window.reportAction = async () => { if(confirm("إبلاغ؟")) { await update(ref(db, 'users/'+activeF), { reports: increment(1) }); alert("تم"); } document.getElementById('opt-modal').classList.add('hidden'); };
 
         function checkBlock() {
-            onValue(ref(db, `blocks/${activeF}/${auth.currentUser.uid}`), s => {
-                document.getElementById('input-bar').classList.toggle('hidden', s.exists());
-                document.getElementById('blocked-bar').classList.toggle('hidden', !s.exists());
-            });
+            onValue(ref(db, `blocks/${activeF}/${auth.currentUser.uid}`), s => { document.getElementById('input-bar').classList.toggle('hidden', s.exists()); document.getElementById('blocked-bar').classList.toggle('hidden', !s.exists()); });
+            onValue(ref(db, `blocks/${auth.currentUser.uid}/${activeF}`), s => document.getElementById('block-txt').innerText = s.exists() ? "فك الحظر" : "حظر المستخدم");
         }
 
-        window.addNote = async () => { const t = prompt("ماذا يدور في ذهنك؟"); if(t) await set(ref(db, 'notes/'+auth.currentUser.uid), { t, n: me.n, img: me.img, time: Date.now() }); };
-        window.editProfile = () => { document.getElementById('setup-screen').classList.remove('hidden'); document.getElementById('set-user').parentElement.classList.add('hidden'); document.getElementById('set-nick').value = me.n; document.getElementById('prev-img').src = me.img; };
+        window.createNote = async () => { const t = prompt("حالتك اليوم؟"); if(t) set(ref(db, 'notes/'+auth.currentUser.uid), { t, n: me.n, img: me.img, time: Date.now() }); };
 
         onAuthStateChanged(auth, async u => {
             if(u) {
                 const s = await get(child(ref(db), 'users/'+u.uid));
                 if(s.exists()) {
-                    me = s.val(); if(me.reports >= 10) { document.body.innerHTML = "<h1 style='text-align:center; margin-top:100px;'>حسابك محظور نهائياً</h1>"; return; }
-                    document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('app-screen').classList.remove('hidden');
-                    document.getElementById('my-avatar').src = me.img; document.getElementById('my-name-display').innerText = me.n; document.getElementById('my-user-display').innerText = "@" + me.u;
-                    initApp();
-                } else { document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('setup-screen').classList.remove('hidden'); }
+                    me = s.val(); if(me.reports >= 10) { document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:50px;'>حسابك موقوف بسبب الإبلاغات</h1>"; return; }
+                    document.getElementById('auth-modal').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden');
+                    document.getElementById('my-pic').src = me.img; document.getElementById('my-name').innerText = me.n; document.getElementById('my-username').innerText = "@" + me.u;
+                    startApp();
+                } else { document.getElementById('auth-modal').classList.add('hidden'); document.getElementById('setup-modal').classList.remove('hidden'); }
             }
         });
 
-        function initApp() {
+        function startApp() {
             onValue(ref(db, 'notes'), snap => {
-                const box = document.getElementById('notes-list'); box.innerHTML = box.firstElementChild.outerHTML;
+                const box = document.getElementById('notes-container'); box.innerHTML = box.firstElementChild.outerHTML;
                 snap.forEach(c => {
                     get(child(ref(db), `friends/${auth.currentUser.uid}/${c.key}`)).then(isF => {
                         if(isF.exists() || c.key === auth.currentUser.uid) {
                             const n = c.val(); if(Date.now() - n.time < 86400000) {
-                                const d = document.createElement('div'); d.className = 'note-wrap';
-                                d.innerHTML = `<div class="note-pop">${n.t}</div><div class="note-img-circle"><img src="${n.img}"></div><span style="font-size:10px">${n.n}</span>`;
+                                const d = document.createElement('div'); d.className = 'note-wrap allow-click';
+                                d.innerHTML = `<div class="note-pop">${n.t}</div><div class="note-circle"><img src="${n.img}"></div><span style="font-size:10px;color:var(--dim)">${n.n}</span>`;
                                 box.appendChild(d);
                             }
                         }
@@ -330,11 +377,11 @@
                 });
             });
             onValue(ref(db, `friends/${auth.currentUser.uid}`), snap => {
-                const box = document.getElementById('chat-items-list'); box.innerHTML = "";
+                const box = document.getElementById('chats-list'); box.innerHTML = "";
                 snap.forEach(c => {
                     const f = c.val(); const d = document.createElement('div');
                     d.style = "display:flex; align-items:center; padding:15px; border-bottom:1px solid #1c262d; cursor:pointer;";
-                    d.onclick = () => openChat(c.key, f.n, f.img);
+                    d.className = "allow-click"; d.onclick = () => openChat(c.key, f.n, f.img);
                     d.innerHTML = `<img src="${f.img}" style="width:55px; height:55px; border-radius:50%; margin-left:15px; object-fit:cover;"><b>${f.n}</b>`;
                     box.appendChild(d);
                 });
