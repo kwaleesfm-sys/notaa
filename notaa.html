@@ -68,7 +68,7 @@
     <div id="auth-screen" class="modal">
         <div class="glass-panel" style="padding: 30px; width: 100%; max-width: 380px; text-align: center;">
             <h1 style="color:var(--primary); font-size: 35px; margin-bottom: 5px;">NootaChat</h1>
-            <p style="color: rgba(255,255,255,0.6); margin-bottom: 30px; font-size: 14px;">الإصدار الألترا</p>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 30px; font-size: 14px;">الإصدار الألترا (سريع جداً)</p>
             <input type="email" id="email" class="input-glass" placeholder="البريد الإلكتروني">
             <input type="password" id="pass" class="input-glass" placeholder="كلمة المرور">
             <button class="btn-glass" onclick="authAction('login')">دخول</button>
@@ -120,7 +120,7 @@
                 <h2 id="my-name-display" style="margin-bottom: 5px;">...</h2>
                 <p id="my-user-display" style="color:rgba(255,255,255,0.5); margin-bottom: 30px;">@...</p>
                 <button class="btn-glass" style="background: rgba(255,255,255,0.1); margin-bottom: 15px;" onclick="editProfile()">تعديل البروفايل</button>
-                <button class="btn-glass" style="background: var(--danger);" onclick="location.reload()">تسجيل خروج</button>
+                <button class="btn-glass" style="background: var(--danger);" onclick="logout()">تسجيل خروج</button>
             </div>
         </div>
 
@@ -186,10 +186,10 @@
     </div>
 
     <script type="module">
-        // التوصيلة بقاعدة البيانات (Firebase)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, get, child, update, remove, increment, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        // إضافة query و limitToLast لضمان السرعة
+        import { getDatabase, ref, set, push, onValue, get, child, update, remove, increment, onDisconnect, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M",
@@ -208,10 +208,9 @@
         let me = null, activeF = null, activeC = null;
         let isGhost = false, isWhisper = false, replyTo = null, selectedMsgId = null;
         let mediaRecorder, audioChunks = [];
-        let isRecording = false; // حل مشكلة ضغطات الموبايل
-        let chatListener = null; // حل مشكلة تسريب وتكرار الرسائل
+        let isRecording = false; 
+        let chatListener = null; 
 
-        // الزر الديناميكي للإدخال
         const msgInput = document.getElementById('msg-input');
         const sendBtn = document.getElementById('send-btn');
         const recordBtn = document.getElementById('record-btn');
@@ -225,6 +224,12 @@
             const p = document.getElementById(t==='login'?'pass':'s-pass').value;
             try { t==='login' ? await signInWithEmailAndPassword(auth, e, p) : await createUserWithEmailAndPassword(auth, e, p); }
             catch(err) { alert("بيانات غير صحيحة."); }
+        };
+
+        window.logout = async () => {
+            await signOut(auth);
+            localStorage.clear(); // مسح الذاكرة المحلية عند الخروج
+            location.reload();
         };
 
         const toB64 = f => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(f); rd.onload = () => r(rd.result); });
@@ -243,6 +248,10 @@
                 await set(ref(db, 'usernames/'+u), auth.currentUser.uid);
                 await set(ref(db, 'users/'+auth.currentUser.uid), { u, n, img });
             } else { await update(ref(db, 'users/'+auth.currentUser.uid), { n, img }); }
+            
+            // تحديث اللوكل ستورج للبروفايل
+            me = { u, n, img };
+            localStorage.setItem('my_profile', JSON.stringify(me));
             location.reload();
         };
 
@@ -262,7 +271,6 @@
         };
 
         window.openChat = async (id, name, img) => {
-            // إيقاف أي مستمع رسائل قديم لمنع تكرار الرسائل في الواجهة
             if(chatListener) { chatListener(); chatListener = null; }
 
             activeF = id; activeC = [auth.currentUser.uid, id].sort().join("_");
@@ -270,13 +278,10 @@
             document.getElementById('h-name').innerHTML = `${name} <span id="h-online" class="offline-dot"></span>`;
             document.getElementById('h-img').src = img;
             
-            // تصفير عداد الرسائل غير المقروءة عند فتح الشات
             set(ref(db, `unread/${auth.currentUser.uid}/${id}`), 0);
-            
             await update(ref(db, `friends/${auth.currentUser.uid}/${id}`), { n: name, img: img });
             await update(ref(db, `friends/${id}/${auth.currentUser.uid}`), { n: me.n, img: me.img });
             
-            // متابعة حالة اتصال الصديق
             onValue(ref(db, `presence/${id}`), s => {
                 const dot = document.getElementById('h-online');
                 if(dot) { dot.className = s.val() === true ? 'online-dot' : 'offline-dot'; }
@@ -288,7 +293,7 @@
         window.closeChat = () => { 
             document.getElementById('chat-window').classList.add('hidden'); 
             activeF = null; activeC = null; isGhost = false; isWhisper = false; 
-            if(chatListener) { chatListener(); chatListener = null; } // إيقاف المستمع
+            if(chatListener) { chatListener(); chatListener = null; }
         };
 
         window.toggleMode = (m) => {
@@ -299,7 +304,7 @@
             document.getElementById('chat-status').innerText = s;
         };
 
-        // الريكورد المعدل المتوافق مع الايفون ومنع التكرار
+        // الريكورد مع حماية اللمس المزدوج
         window.startRecord = async (e) => {
             if(e && e.type === "touchstart") e.preventDefault();
             if(isRecording) return;
@@ -340,44 +345,69 @@
             
             const mRef = push(ref(db, 'messages/'+activeC)); set(mRef, data);
             
-            // زيادة عداد غير المقروء للطرف الآخر
             const unreadRef = ref(db, `unread/${activeF}/${auth.currentUser.uid}`);
             get(unreadRef).then(s => set(unreadRef, (s.val() || 0) + 1));
 
             if(isGhost) setTimeout(() => remove(mRef), 10000);
         }
 
+        // دالة عرض الرسائل الموحدة (مستقلة عن قواعد البيانات)
+        function renderMessagesArray(msgsArray) {
+            const box = document.getElementById('msg-area');
+            box.innerHTML = "";
+            msgsArray.forEach(item => {
+                const m = item.data;
+                const d = document.createElement('div');
+                let classes = `glass-panel msg ${m.s === auth.currentUser.uid ? 'sent' : 'received'} `;
+                if(m.g) classes += 'ghost-msg '; if(m.w) classes += 'whisper-msg ';
+                d.className = classes;
+                
+                let html = "";
+                if(m.reply) html += `<div style="background:rgba(0,0,0,0.3); padding:8px; border-right:3px solid var(--primary); border-radius:8px; margin-bottom:8px; font-size:12px;">${m.reply}</div>`;
+                if(m.t) html += m.t;
+                if(m.imgMsg) html += `<img src="${m.imgMsg}" style="width:100%; border-radius:10px; margin-top:5px;">`;
+                if(m.a) html += `<audio src="${m.a}" controls playsinline></audio>`;
+                if(m.react) html += `<div style="position:absolute; bottom:-8px; right:10px; background:#222; border-radius:12px; padding:2px 6px; font-size:13px;">${m.react}</div>`;
+                
+                if(m.s === auth.currentUser.uid) {
+                    html += `<span class="msg-status-icon ${m.read ? 'status-seen' : ''}">${m.read ? '👁️ شوهدت' : '☁️ أُرسلت'}</span>`;
+                }
+
+                d.innerHTML = html;
+                d.onclick = () => { selectedMsgId = item.key; replyTo = m.t ? m.t : (m.imgMsg ? "صورة" : "مقطع صوتي"); document.getElementById('react-modal').classList.remove('hidden'); };
+                box.appendChild(d);
+            });
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // تحميل الرسائل بسرعة فائقة (استخدام LocalStorage + Firebase limitToLast)
         function loadMsgs() {
-            chatListener = onValue(ref(db, 'messages/'+activeC), snap => {
-                if(!activeC) return;
-                const box = document.getElementById('msg-area'); box.innerHTML = "";
+            if(!activeC) return;
+            
+            // 1. عرض الرسائل من الذاكرة المحلية فوراً (إذا وجدت)
+            const chatKey = 'chat_cache_' + activeC;
+            const cachedMsgs = localStorage.getItem(chatKey);
+            if(cachedMsgs) {
+                try { renderMessagesArray(JSON.parse(cachedMsgs)); } catch(e){}
+            }
+
+            // 2. الاستماع لقاعدة البيانات بحد أقصى 40 رسالة
+            const msgQuery = query(ref(db, 'messages/' + activeC), limitToLast(40));
+            chatListener = onValue(msgQuery, snap => {
+                const msgsList = [];
                 snap.forEach(c => {
-                    const m = c.val(), d = document.createElement('div');
-                    
-                    // إذا كانت الرسالة مرسلة من الصديق، قم بتعليمها كمقروءة فوراً
-                    if(m.s === activeF && m.read === false) { update(ref(db, `messages/${activeC}/${c.key}`), { read: true }); }
-
-                    let classes = `glass-panel msg ${m.s === auth.currentUser.uid ? 'sent' : 'received'} `;
-                    if(m.g) classes += 'ghost-msg '; if(m.w) classes += 'whisper-msg ';
-                    d.className = classes;
-                    
-                    let html = "";
-                    if(m.reply) html += `<div style="background:rgba(0,0,0,0.3); padding:8px; border-right:3px solid var(--primary); border-radius:8px; margin-bottom:8px; font-size:12px;">${m.reply}</div>`;
-                    if(m.t) html += m.t;
-                    if(m.imgMsg) html += `<img src="${m.imgMsg}" style="width:100%; border-radius:10px; margin-top:5px;">`;
-                    if(m.a) html += `<audio src="${m.a}" controls playsinline></audio>`;
-                    if(m.react) html += `<div style="position:absolute; bottom:-8px; right:10px; background:#222; border-radius:12px; padding:2px 6px; font-size:13px;">${m.react}</div>`;
-                    
-                    // نظام القراءة الجديد (سحابة للإرسال / عين متوهجة للرؤية)
-                    if(m.s === auth.currentUser.uid) {
-                        html += `<span class="msg-status-icon ${m.read ? 'status-seen' : ''}">${m.read ? '👁️ شوهدت' : '☁️ أُرسلت'}</span>`;
+                    const m = c.val();
+                    msgsList.push({ key: c.key, data: m });
+                    // تحديث القراءة مباشرة
+                    if(m.s === activeF && m.read === false) { 
+                        update(ref(db, `messages/${activeC}/${c.key}`), { read: true }); 
                     }
-
-                    d.innerHTML = html;
-                    d.onclick = () => { selectedMsgId = c.key; replyTo = m.t ? m.t : (m.imgMsg ? "صورة" : "مقطع صوتي"); document.getElementById('react-modal').classList.remove('hidden'); };
-                    box.appendChild(d);
                 });
-                box.scrollTop = box.scrollHeight;
+                
+                // حفظ أحدث الرسائل في الذاكرة المحلية لفتحها بسرعة المرة القادمة
+                try { localStorage.setItem(chatKey, JSON.stringify(msgsList)); } catch(e){}
+                
+                renderMessagesArray(msgsList);
             });
         }
 
@@ -397,7 +427,6 @@
         window.clearChat = async () => { if(confirm("مسح السجل للطرفين؟")) { await remove(ref(db, 'messages/'+activeC)); closeChat(); document.getElementById('opt-modal').classList.add('hidden'); } };
 
         function checkBlock() { 
-            // تأكيد ظهور شريط الإدخال عند فتح دردشة جديدة نظيفة
             document.getElementById('blocked-bar').classList.add('hidden');
             document.getElementById('input-bar').classList.remove('hidden');
         }
@@ -405,9 +434,43 @@
         window.addNote = async () => { const t = prompt("حالة جديدة (تختفي بعد 24 ساعة):"); if(t) await set(ref(db, 'notes/'+auth.currentUser.uid), { t, n: me.n, img: me.img, time: Date.now() }); };
         window.editProfile = () => { document.getElementById('setup-screen').classList.remove('hidden'); document.getElementById('set-user').classList.add('hidden'); document.getElementById('close-setup-btn').classList.remove('hidden'); };
 
+        // إعداد الواجهة بمعلومات المستخدم
+        function setupMyProfile(userData) {
+            document.getElementById('auth-screen').classList.add('hidden'); 
+            document.getElementById('app-screen').classList.remove('hidden');
+            document.getElementById('my-avatar').src = userData.img; 
+            document.getElementById('my-name-display').innerText = userData.n; 
+            document.getElementById('my-user-display').innerText = "@" + userData.u;
+        }
+
+        // دالة موحدة لعرض الأصدقاء
+        function renderFriendsList(friendsObj) {
+            const box = document.getElementById('chat-items-list'); box.innerHTML = "";
+            for (const [fId, f] of Object.entries(friendsObj)) {
+                const d = document.createElement('div');
+                d.className = 'glass-panel'; d.style = "display:flex; align-items:center; padding:15px; margin-bottom:10px; cursor:pointer;";
+                d.onclick = () => openChat(fId, f.n, f.img);
+                
+                let inner = `<img src="${f.img}" style="width:55px; height:55px; border-radius:50%; margin-left:15px; object-fit:cover; border:2px solid var(--primary);"><div><b style="font-size:16px;">${f.n}</b><br><small id="status-${fId}" style="color:#aaa;">جاري التحقق...</small></div>`;
+                inner += `<div id="unread-${fId}" class="unread-badge hidden">0</div>`;
+                d.innerHTML = inner; box.appendChild(d);
+
+                onValue(ref(db, `presence/${fId}`), pSnap => {
+                    const statusTxt = document.getElementById(`status-${fId}`);
+                    if(statusTxt) { statusTxt.innerHTML = pSnap.val() === true ? `<span class="online-dot"></span> متصل الآن` : `<span class="offline-dot"></span> غير متصل`; }
+                });
+
+                onValue(ref(db, `unread/${auth.currentUser.uid}/${fId}`), uSnap => {
+                    const count = uSnap.val() || 0;
+                    const badge = document.getElementById(`unread-${fId}`);
+                    if(badge) { badge.innerText = count; badge.classList.toggle('hidden', count === 0); }
+                });
+            }
+        }
+
         onAuthStateChanged(auth, async u => {
             if(u) {
-                // نظام الأونلاين والأوفلاين التلقائي
+                // الاتصال المباشر
                 const connectedRef = ref(db, '.info/connected');
                 onValue(connectedRef, snap => {
                     if (snap.val() === true) {
@@ -416,18 +479,26 @@
                     }
                 });
 
+                // التحقق من البروفايل في اللوكل ستورج أولاً للسرعة
+                const cachedMe = localStorage.getItem('my_profile');
+                if(cachedMe) {
+                    me = JSON.parse(cachedMe);
+                    setupMyProfile(me);
+                    initApp();
+                }
+
+                // التحقق من قاعدة البيانات في كل الأحوال للتحديث
                 const s = await get(child(ref(db), 'users/'+u.uid));
                 if(s.exists()) {
                     me = s.val();
-                    document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('app-screen').classList.remove('hidden');
-                    document.getElementById('my-avatar').src = me.img; document.getElementById('my-name-display').innerText = me.n; document.getElementById('my-user-display').innerText = "@" + me.u;
-                    initApp();
+                    localStorage.setItem('my_profile', JSON.stringify(me));
+                    if(!cachedMe) { setupMyProfile(me); initApp(); }
                 } else { document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('setup-screen').classList.remove('hidden'); }
             }
         });
 
         function initApp() {
-            // تحميل حالات الأصدقاء
+            // تحميل حالات الأصدقاء (Notes)
             onValue(ref(db, 'notes'), snap => {
                 const box = document.getElementById('notes-list'); box.innerHTML = `<div class="note-wrap" onclick="addNote()"><div class="note-img" style="border: 2px dashed rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; font-size:25px;">+</div><span style="font-size:11px; margin-top:5px; display:block;">حالة جديدة</span></div>`;
                 snap.forEach(c => {
@@ -442,32 +513,14 @@
                 });
             });
 
-            // تحميل قائمة الأصدقاء مع نظام الرسائل غير المقروءة والاتصال
+            // قائمة الأصدقاء (تحميل من الذاكرة ثم من النت)
+            const cachedFriends = localStorage.getItem('friends_list_' + auth.currentUser.uid);
+            if(cachedFriends) { renderFriendsList(JSON.parse(cachedFriends)); }
+
             onValue(ref(db, `friends/${auth.currentUser.uid}`), snap => {
-                const box = document.getElementById('chat-items-list'); box.innerHTML = "";
-                snap.forEach(c => {
-                    const f = c.val(), fId = c.key;
-                    const d = document.createElement('div');
-                    d.className = 'glass-panel'; d.style = "display:flex; align-items:center; padding:15px; margin-bottom:10px; cursor:pointer;";
-                    d.onclick = () => openChat(fId, f.n, f.img);
-                    
-                    let inner = `<img src="${f.img}" style="width:55px; height:55px; border-radius:50%; margin-left:15px; object-fit:cover; border:2px solid var(--primary);"><div><b style="font-size:16px;">${f.n}</b><br><small id="status-${fId}" style="color:#aaa;">جاري التحقق...</small></div>`;
-                    inner += `<div id="unread-${fId}" class="unread-badge hidden">0</div>`;
-                    d.innerHTML = inner; box.appendChild(d);
-
-                    // تحديث الأونلاين في القائمة
-                    onValue(ref(db, `presence/${fId}`), pSnap => {
-                        const statusTxt = document.getElementById(`status-${fId}`);
-                        if(statusTxt) { statusTxt.innerHTML = pSnap.val() === true ? `<span class="online-dot"></span> متصل الآن` : `<span class="offline-dot"></span> غير متصل`; }
-                    });
-
-                    // تحديث العداد
-                    onValue(ref(db, `unread/${auth.currentUser.uid}/${fId}`), uSnap => {
-                        const count = uSnap.val() || 0;
-                        const badge = document.getElementById(`unread-${fId}`);
-                        if(badge) { badge.innerText = count; badge.classList.toggle('hidden', count === 0); }
-                    });
-                });
+                const friendsObj = snap.val() || {};
+                localStorage.setItem('friends_list_' + auth.currentUser.uid, JSON.stringify(friendsObj));
+                renderFriendsList(friendsObj);
             });
         }
     </script>
