@@ -73,6 +73,7 @@
         .reply-box { background: rgba(0,0,0,0.3); padding: 8px; border-right: 3px solid var(--primary); border-radius: 8px; margin-bottom: 8px; font-size: 12px; opacity: 0.9; }
         .react-badge { position: absolute; bottom: -8px; right: 10px; background: #222; border-radius: 12px; padding: 2px 6px; font-size: 13px; border: 1px solid #444; }
         audio { height: 40px; max-width: 200px; outline: none; border-radius: 20px; }
+        .msg-img { max-width: 100%; border-radius: 10px; margin-top: 5px; } /* تنسيق للصور المرسلة */
 
         /* منطقة الإدخال */
         .input-area { padding: 15px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--glass-border); display: flex; align-items: center; gap: 10px; }
@@ -181,6 +182,10 @@
         </div>
 
         <div class="input-area" id="input-bar">
+            <label class="action-btn" style="cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                📷
+                <input type="file" id="chat-img-input" accept="image/*" style="display: none;" onchange="sendImageMsg(event)">
+            </label>
             <button id="record-btn" class="action-btn" onmousedown="startRecord()" onmouseup="stopRecord()" ontouchstart="startRecord()" ontouchend="stopRecord()">🎤</button>
             
             <input type="text" id="msg-input" placeholder="اكتب رسالة..." style="flex:1; background:rgba(255,255,255,0.1); border:none; border-radius:20px; padding:14px; color:white; font-size: 15px;">
@@ -211,7 +216,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, get, child, update, remove, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        // إضافة off لإلغاء الاشتراك من المستمعين
+        import { getDatabase, ref, set, push, onValue, get, child, update, remove, increment, off } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M",
@@ -272,16 +278,32 @@
         };
 
         window.openChat = async (id, name, img) => {
+            // إلغاء الاستماع للرسائل القديمة إذا كانت هناك محادثة مفتوحة مسبقاً
+            if (activeC) {
+                off(ref(db, 'messages/' + activeC));
+            }
+            
             activeF = id; activeC = [auth.currentUser.uid, id].sort().join("_");
             document.getElementById('chat-window').classList.remove('hidden');
             document.getElementById('h-name').innerText = name;
             document.getElementById('h-img').src = img;
+            
+            // تفريغ الرسائل القديمة فوراً لتجنب ظهورها للحظات قبل تحميل الجديدة
+            document.getElementById('msg-area').innerHTML = "";
+
             await update(ref(db, `friends/${auth.currentUser.uid}/${id}`), { n: name, img: img });
             await update(ref(db, `friends/${id}/${auth.currentUser.uid}`), { n: me.n, img: me.img });
             checkBlock(); loadMsgs();
         };
 
-        window.closeChat = () => { document.getElementById('chat-window').classList.add('hidden'); isGhost = false; isWhisper = false; updateStatus(); };
+        window.closeChat = () => { 
+            // إلغاء الاستماع عند إغلاق المحادثة أيضاً كإجراء احترازي
+            if (activeC) {
+                off(ref(db, 'messages/' + activeC));
+            }
+            document.getElementById('chat-window').classList.add('hidden'); 
+            isGhost = false; isWhisper = false; updateStatus(); 
+        };
 
         window.toggleMode = (m) => {
             if(m==='ghost') { isGhost = !isGhost; document.getElementById('ghost-btn').classList.toggle('active', isGhost); }
@@ -329,10 +351,24 @@
 
         function sendAudioMsg(audioB64) { pushData({ audio: audioB64 }); cancelReply(); }
 
+        // دالة جديدة لإرسال الصور
+        window.sendImageMsg = async (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                // يمكنك إضافة تحقق من حجم الصورة هنا إذا أردت
+                const imageB64 = await toB64(file);
+                pushData({ image: imageB64 });
+                cancelReply();
+            }
+            // إعادة تعيين الإدخال لضمان القدرة على إرسال نفس الصورة مرة أخرى إذا لزم الأمر
+            event.target.value = '';
+        };
+
         function pushData(content) {
             const data = { s: auth.currentUser.uid, time: Date.now(), g: isGhost, w: isWhisper };
             if(content.text) data.t = content.text;
             if(content.audio) data.a = content.audio;
+            if(content.image) data.img = content.image; // إضافة حقل الصورة
             if(replyTo) data.reply = replyTo;
             
             const mRef = push(ref(db, 'messages/'+activeC));
@@ -360,13 +396,22 @@
                     if(m.reply) innerHTML += `<div class="reply-box">${m.reply}</div>`;
                     if(m.t) innerHTML += m.t;
                     if(m.a) innerHTML += `<audio src="${m.a}" controls></audio>`;
+                    if(m.img) innerHTML += `<img src="${m.img}" class="msg-img" onclick="window.open('${m.img}', '_blank')">`; // عرض الصورة المرفقة
                     if(m.react) innerHTML += `<div class="react-badge">${m.react}</div>`;
                     
                     d.innerHTML = innerHTML;
-                    d.onclick = () => { 
-                        selectedMsgId = c.key; 
-                        replyTo = m.t ? (m.t.length>20?m.t.substring(0,20)+"...":m.t) : "رسالة صوتية"; 
-                        document.getElementById('react-modal').classList.remove('hidden'); 
+                    d.onclick = (e) => { 
+                        // منع تفعيل الرد إذا تم النقر على الصورة لتكبيرها
+                        if (e.target.tagName !== 'IMG') {
+                            selectedMsgId = c.key; 
+                            
+                            // تحديد نص الرد بناءً على نوع الرسالة
+                            if(m.t) replyTo = m.t.length>20?m.t.substring(0,20)+"...":m.t;
+                            else if(m.img) replyTo = "صورة 🖼️";
+                            else replyTo = "رسالة صوتية 🎵";
+                            
+                            document.getElementById('react-modal').classList.remove('hidden'); 
+                        }
                     };
                     box.appendChild(d);
                 });
