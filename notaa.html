@@ -9,11 +9,12 @@
         :root {
             --primary: #a29bfe; --primary-dark: #6c5ce7;
             --danger: #ff7675; --ghost: #00cec9; --whisper: #fdcb6e;
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         
+        /* الخلفية الديناميكية */
         body { 
             background: linear-gradient(135deg, #090a0f, #1b1625, #0f172a); 
             background-size: 400% 400%; animation: gradientBG 15s ease infinite; 
@@ -21,13 +22,15 @@
         }
         @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
         
+        /* تأثير الزجاج */
         .glass-panel { 
-            background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
+            background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
             border: 1px solid var(--glass-border); border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); 
         }
 
         .hidden { display: none !important; }
         
+        /* الأزرار والمدخلات */
         .btn-glass { 
             background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
             border: none; padding: 16px; border-radius: 16px; color: white; font-weight: bold; width: 100%; cursor: pointer; transition: 0.3s; 
@@ -40,21 +43,12 @@
         }
         .input-glass:focus { border-color: var(--primary); background: rgba(0, 0, 0, 0.4); }
 
-        /* شريط التنقل */
+        /* شريط التنقل الزجاجي */
         .bottom-nav { 
             position: fixed; bottom: 15px; left: 15px; right: 15px; height: 70px; display: flex; z-index: 100; padding: 10px;
         }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 13px; color: rgba(255,255,255,0.5); cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--primary); font-weight: bold; text-shadow: 0 0 10px rgba(162, 155, 254, 0.5); transform: translateY(-3px); }
-
-        /* زر إضافة صديق الدائري (FAB) */
-        .fab-btn {
-            position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px;
-            border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white; font-size: 28px; border: none; box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5);
-            display: flex; justify-content: center; align-items: center; z-index: 90; cursor: pointer; transition: 0.3s;
-        }
-        .fab-btn:active { transform: scale(0.9); }
+        .nav-item.active { color: var(--primary); font-weight: bold; text-shadow: 0 0 10px var(--primary); transform: translateY(-3px); }
 
         /* النوتس (الحالات) */
         .notes-bar { display: flex; gap: 15px; padding: 20px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--glass-border); }
@@ -62,8 +56,8 @@
         .note-img { width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--primary); padding: 2px; object-fit: cover; }
         .note-pop { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: white; color: black; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10; }
 
-        /* المحادثة */
-        #chat-window { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(25px); z-index: 300; display: flex; flex-direction: column; }
+        /* المحادثة (Chat) */
+        #chat-window { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 300; display: flex; flex-direction: column; }
         .chat-header { padding: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--glass-border); }
         .msg-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         
@@ -71,28 +65,25 @@
         .sent { align-self: flex-end; background: var(--primary-dark); border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2); }
         .received { align-self: flex-start; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-bottom-left-radius: 4px; }
         
-        .msg img { max-width: 100%; border-radius: 12px; margin-top: 5px; }
-        .view-once-btn { background: var(--danger); color: white; padding: 8px 15px; border-radius: 10px; font-size: 12px; cursor: pointer; display: inline-block; margin-top: 5px; text-align: center; }
-
-        /* تصميم مشغل الصوت (Apple Style) */
-        audio { height: 35px; width: 220px; border-radius: 20px; filter: sepia(20%) saturate(70%) grayscale(100%) contrast(99%) invert(80%); }
-
-        /* منطقة الإدخال المحدثة */
-        .input-area { padding: 15px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--glass-border); display: flex; align-items: center; gap: 8px; }
-        .action-btn { width: 42px; height: 42px; border-radius: 50%; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 18px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .action-btn.active { background: var(--danger); animation: pulse 1s infinite; }
-        .toggle-btn.active { background: var(--ghost); color: black; box-shadow: 0 0 10px var(--ghost); }
+        /* الرسائل الخاصة */
+        .ghost-msg { border: 1px dashed var(--ghost); background: rgba(0, 206, 201, 0.1) !important; color: var(--ghost); }
+        .whisper-msg { filter: blur(5px); opacity: 0.7; transition: 0.3s; border: 1px dashed var(--whisper); }
+        .whisper-msg:hover, .whisper-msg:active { filter: blur(0); opacity: 1; }
         
+        .reply-box { background: rgba(0,0,0,0.3); padding: 8px; border-right: 3px solid var(--primary); border-radius: 8px; margin-bottom: 8px; font-size: 12px; opacity: 0.9; }
+        .react-badge { position: absolute; bottom: -8px; right: 10px; background: #222; border-radius: 12px; padding: 2px 6px; font-size: 13px; border: 1px solid #444; }
+        audio { height: 40px; max-width: 200px; outline: none; border-radius: 20px; }
+
+        /* منطقة الإدخال */
+        .input-area { padding: 15px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--glass-border); display: flex; align-items: center; gap: 10px; }
+        .action-btn { width: 45px; height: 45px; border-radius: 50%; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 20px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+        .action-btn.active { background: var(--danger); animation: pulse 1s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); box-shadow: 0 0 10px var(--danger); } 100% { transform: scale(1); } }
 
-        /* المنشورات */
-        .post-card { padding: 20px; margin: 15px; border-radius: 20px; }
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .post-img { width: 100%; border-radius: 15px; margin-top: 10px; }
-
-        /* اللودينج */
-        .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--primary); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* أدوات الشات (شبح + همس) */
+        .tools-bar { display: flex; gap: 15px; }
+        .toggle-icon { font-size: 22px; opacity: 0.4; transition: 0.3s; }
+        .toggle-icon.active { opacity: 1; filter: drop-shadow(0 0 8px currentColor); }
 
         /* المودال */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
@@ -103,7 +94,7 @@
     <div id="auth-screen" class="modal">
         <div class="glass-panel" style="padding: 30px; width: 100%; max-width: 380px; text-align: center;">
             <h1 style="color:var(--primary); font-size: 35px; margin-bottom: 5px;">NootaChat</h1>
-            <p style="color: rgba(255,255,255,0.6); margin-bottom: 30px; font-size: 14px;">الإصدار الزجاجي</p>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 30px; font-size: 14px;">الإصدار الزجاجي الفاخر</p>
             <input type="email" id="email" class="input-glass" placeholder="البريد الإلكتروني">
             <input type="password" id="pass" class="input-glass" placeholder="كلمة المرور">
             <button class="btn-glass" onclick="authAction('login')">دخول</button>
@@ -113,7 +104,7 @@
 
     <div id="signup-modal" class="modal hidden">
         <div class="glass-panel" style="padding: 30px; width: 100%; max-width: 380px; text-align: center;">
-            <h2>تسجيل جديد</h2><br>
+            <h2 style="margin-bottom: 20px;">تسجيل جديد</h2>
             <input type="email" id="s-email" class="input-glass" placeholder="بريد إلكتروني صالح">
             <input type="password" id="s-pass" class="input-glass" placeholder="كلمة مرور قوية">
             <button class="btn-glass" onclick="authAction('signup')">إنشاء الحساب</button>
@@ -132,95 +123,95 @@
             <input type="text" id="set-user" class="input-glass" placeholder="Username (للبحث عنك)">
             <input type="text" id="set-nick" class="input-glass" placeholder="اللقب الظاهر للأصدقاء">
             <button class="btn-glass" onclick="saveUser()">حفظ</button>
+            <p id="close-setup-btn" onclick="document.getElementById('setup-screen').classList.add('hidden')" class="hidden" style="margin-top:15px; color:#ccc;">إغلاق</p>
         </div>
     </div>
 
     <div id="app-screen" class="hidden" style="height:100%; display:flex; flex-direction:column;">
-        
         <div id="page-chats" style="flex:1; overflow-y:auto; padding-bottom:100px;">
             <div style="padding: 25px 20px 10px; font-size: 28px; font-weight: 800;">الدردشات</div>
             <div class="notes-bar" id="notes-list">
                 <div class="note-wrap" onclick="addNote()">
-                    <div class="note-img" style="border: 2px dashed rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; font-size:25px;">+</div>
+                    <div class="note-img" style="border: 2px dashed rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; font-size:25px; color:rgba(255,255,255,0.6);">+</div>
                     <span style="font-size:11px; margin-top:5px; display:block;">حالة جديدة</span>
                 </div>
             </div>
             <div id="chat-items-list" style="padding: 10px;"></div>
-            
-            <button class="fab-btn" onclick="findFriend()">+</button>
-        </div>
-
-        <div id="page-posts" class="hidden" style="flex:1; overflow-y:auto; padding-bottom:100px;">
-            <div style="padding: 25px 20px 10px; font-size: 28px; font-weight: 800;">المنشورات</div>
-            <div class="glass-panel" style="margin: 15px; padding: 15px;">
-                <textarea id="post-text" class="input-glass" placeholder="بم تفكر؟" style="resize:none; height:60px;"></textarea>
-                <div style="display:flex; gap:10px;">
-                    <input type="file" id="post-img-input" accept="image/*" style="display:none;">
-                    <button class="action-btn" onclick="document.getElementById('post-img-input').click()">📷</button>
-                    <button class="btn-glass" style="flex:1; padding:10px;" onclick="createPost()">نشر</button>
-                </div>
-            </div>
-            <div id="posts-feed"></div>
+            <button class="btn-glass" style="width: calc(100% - 40px); margin: 20px; box-shadow: none;" onclick="findFriend()">+ محادثة جديدة</button>
         </div>
 
         <div id="page-profile" class="hidden" style="flex:1; padding:50px 20px; text-align:center;">
             <div class="glass-panel" style="padding: 40px 20px;">
                 <img id="my-avatar" src="" style="width:140px; height:140px; border-radius:50%; border:4px solid var(--primary); object-fit:cover; margin-bottom: 15px;">
-                <h2 id="my-name-display">...</h2>
+                <h2 id="my-name-display" style="margin-bottom: 5px;">...</h2>
                 <p id="my-user-display" style="color:rgba(255,255,255,0.5); margin-bottom: 30px;">@...</p>
+                <button class="btn-glass" style="background: rgba(255,255,255,0.1); margin-bottom: 15px;" onclick="editProfile()">تعديل البروفايل</button>
                 <button class="btn-glass" style="background: var(--danger);" onclick="location.reload()">تسجيل خروج</button>
             </div>
         </div>
 
         <div class="glass-panel bottom-nav">
-            <div class="nav-item active" onclick="tab('chats', this)"><span style="font-size:22px;">💬</span>دردشة</div>
-            <div class="nav-item" onclick="tab('posts', this)"><span style="font-size:22px;">🌍</span>المنشورات</div>
-            <div class="nav-item" onclick="tab('profile', this)"><span style="font-size:22px;">👤</span>حسابي</div>
+            <div class="nav-item active" onclick="tab('chats', this)"><span style="font-size:22px; margin-bottom:4px;">💬</span>دردشة</div>
+            <div class="nav-item" onclick="tab('profile', this)"><span style="font-size:22px; margin-bottom:4px;">👤</span>حسابي</div>
         </div>
     </div>
 
     <div id="chat-window" class="hidden">
         <div class="chat-header">
             <div style="display:flex; align-items:center; gap:12px;">
-                <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">➔</button>
+                <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:22px;">➔</button>
                 <img id="h-img" src="" style="width:45px; height:45px; border-radius:50%; object-fit:cover;">
-                <div>
-                    <b id="h-name" style="font-size: 16px;">...</b>
+                <div onclick="openOptions()">
+                    <b id="h-name" style="font-size: 16px;">...</b><br>
+                    <small id="chat-status" style="color:var(--primary); font-size: 11px;">محادثة آمنة</small>
                 </div>
             </div>
-            <span onclick="document.getElementById('opt-modal').classList.remove('hidden')" style="font-size:22px; cursor:pointer;">⋮</span>
+            <div class="tools-bar">
+                <span id="whisper-btn" class="toggle-icon" style="color:var(--whisper);" onclick="toggleMode('whisper')">🤫</span>
+                <span id="ghost-btn" class="toggle-icon" style="color:var(--ghost);" onclick="toggleMode('ghost')">👻</span>
+                <span onclick="openOptions()" class="toggle-icon active">⋮</span>
+            </div>
         </div>
         
         <div class="msg-area" id="msg-area"></div>
 
+        <div id="reply-preview" class="hidden" style="background: rgba(0,0,0,0.6); padding: 10px 15px; display:flex; justify-content:space-between; align-items:center; border-left: 3px solid var(--primary);">
+            <div id="reply-text" style="font-size:12px; color:#ccc; max-width:85%; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;"></div>
+            <span onclick="cancelReply()" style="color:var(--danger); cursor:pointer; font-weight:bold;">✕</span>
+        </div>
+
         <div class="input-area" id="input-bar">
-            <input type="file" id="chat-img-input" accept="image/*" style="display:none;" onchange="sendChatImage(this)">
-            <button class="action-btn" onclick="document.getElementById('chat-img-input').click()">📎</button>
-            
-            <button id="view-once-toggle" class="action-btn toggle-btn" onclick="this.classList.toggle('active')" title="صورة لمرة واحدة">1️⃣</button>
-            
             <button id="record-btn" class="action-btn" onmousedown="startRecord()" onmouseup="stopRecord()" ontouchstart="startRecord()" ontouchend="stopRecord()">🎤</button>
             
-            <input type="text" id="msg-input" placeholder="رسالة..." style="flex:1; background:rgba(255,255,255,0.1); border:none; border-radius:20px; padding:12px 15px; color:white;">
+            <input type="text" id="msg-input" placeholder="اكتب رسالة..." style="flex:1; background:rgba(255,255,255,0.1); border:none; border-radius:20px; padding:14px; color:white; font-size: 15px;">
             <button onclick="sendMsg()" class="action-btn" style="background: var(--primary);">➤</button>
         </div>
+        <div id="blocked-bar" class="hidden" style="padding:20px; text-align:center; background:rgba(255, 71, 87, 0.2); color: var(--danger); font-weight:bold; backdrop-filter: blur(10px);">لا يمكنك المراسلة، تم الحظر.</div>
     </div>
 
     <div id="opt-modal" class="modal hidden" onclick="this.classList.add('hidden')">
         <div class="glass-panel" style="width: 100%; max-width: 300px; padding: 10px 0;" onclick="event.stopPropagation()">
             <div style="padding:15px; text-align:center; border-bottom:1px solid var(--glass-border); cursor:pointer;" onclick="clearChat()">مسح المحادثة 🗑️</div>
-            <div style="padding:15px; text-align:center; cursor:pointer; color:var(--danger);" onclick="document.getElementById('opt-modal').classList.add('hidden')">إغلاق</div>
+            <div id="block-btn-txt" style="padding:15px; text-align:center; border-bottom:1px solid var(--glass-border); cursor:pointer; color:var(--danger);" onclick="blockUser()">حظر المستخدم 🚫</div>
+            <div style="padding:15px; text-align:center; cursor:pointer; color:orange;" onclick="reportUser()">إبلاغ (Report) ⚠️</div>
+        </div>
+    </div>
+
+    <div id="react-modal" class="modal hidden" onclick="this.classList.add('hidden')">
+        <div class="glass-panel" style="display:flex; justify-content:space-around; padding:15px; width: 90%; max-width: 320px;" onclick="event.stopPropagation()">
+            <span style="font-size:28px; cursor:pointer;" onclick="setReact('❤️')">❤️</span>
+            <span style="font-size:28px; cursor:pointer;" onclick="setReact('😂')">😂</span>
+            <span style="font-size:28px; cursor:pointer;" onclick="setReact('😮')">😮</span>
+            <span style="font-size:28px; cursor:pointer;" onclick="setReact('🔥')">🔥</span>
+            <div style="width: 1px; background: var(--glass-border); margin: 0 10px;"></div>
+            <span style="font-size:22px; cursor:pointer; display:flex; align-items:center; color:var(--primary);" onclick="makeReply()">↩️ رد</span>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, get, child, update, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-        
-        // إضافات جديدة للستوريدج والفايرستور
-        import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getDatabase, ref, set, push, onValue, get, child, update, remove, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M",
@@ -235,17 +226,16 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        const storage = getStorage(app);
-        const firestore = getFirestore(app);
 
         let me = null, activeF = null, activeC = null;
+        let isGhost = false, isWhisper = false, replyTo = null, selectedMsgId = null;
         let mediaRecorder, audioChunks = [];
 
         window.authAction = async (t) => {
             const e = document.getElementById(t==='login'?'email':'s-email').value;
             const p = document.getElementById(t==='login'?'pass':'s-pass').value;
             try { t==='login' ? await signInWithEmailAndPassword(auth, e, p) : await createUserWithEmailAndPassword(auth, e, p); }
-            catch(err) { alert("بيانات غير صحيحة."); }
+            catch(err) { alert("بيانات غير صحيحة أو البريد مستخدم."); }
         };
 
         const toB64 = f => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(f); rd.onload = () => r(rd.result); });
@@ -253,29 +243,32 @@
 
         window.saveUser = async () => {
             const u = document.getElementById('set-user').value.trim().toLowerCase(), n = document.getElementById('set-nick').value.trim(), img = document.getElementById('prev-img').src;
-            if(!n || !u) return alert("البيانات مطلوبة");
-            await set(ref(db, 'usernames/'+u), auth.currentUser.uid);
-            await set(ref(db, 'users/'+auth.currentUser.uid), { u, n, img });
+            if(!n) return alert("اللقب مطلوب");
+            if(!me) {
+                const s = await get(child(ref(db), 'usernames/'+u));
+                if(s.exists()) return alert("اسم المستخدم مأخوذ مسبقاً");
+                await set(ref(db, 'usernames/'+u), auth.currentUser.uid);
+                await set(ref(db, 'users/'+auth.currentUser.uid), { u, n, img, reports: 0 });
+            } else {
+                await update(ref(db, 'users/'+auth.currentUser.uid), { n, img });
+            }
             location.reload();
         };
 
         window.tab = (t, el) => {
-            document.getElementById('page-chats').classList.add('hidden');
-            document.getElementById('page-posts').classList.add('hidden');
-            document.getElementById('page-profile').classList.add('hidden');
-            document.getElementById('page-'+t).classList.remove('hidden');
+            document.getElementById('page-chats').classList.toggle('hidden', t!=='chats');
+            document.getElementById('page-profile').classList.toggle('hidden', t!=='profile');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
-            if(t === 'posts') loadPosts();
         };
 
         window.findFriend = async () => {
-            const u = prompt("أدخل يوزر صديقك:"); if(!u) return;
+            const u = prompt("أدخل Username صديقك:"); if(!u) return;
             const s = await get(child(ref(db), 'usernames/'+u.toLowerCase()));
             if(s.exists() && s.val() !== auth.currentUser.uid) {
                 const fData = (await get(child(ref(db), 'users/'+s.val()))).val();
                 openChat(s.val(), fData.n, fData.img);
-            } else alert("حساب غير موجود.");
+            } else alert("حساب غير موجود أو أنه حسابك!");
         };
 
         window.openChat = async (id, name, img) => {
@@ -285,12 +278,26 @@
             document.getElementById('h-img').src = img;
             await update(ref(db, `friends/${auth.currentUser.uid}/${id}`), { n: name, img: img });
             await update(ref(db, `friends/${id}/${auth.currentUser.uid}`), { n: me.n, img: me.img });
-            loadMsgs();
+            checkBlock(); loadMsgs();
         };
 
-        window.closeChat = () => { document.getElementById('chat-window').classList.add('hidden'); };
+        window.closeChat = () => { document.getElementById('chat-window').classList.add('hidden'); isGhost = false; isWhisper = false; updateStatus(); };
 
-        /* تسجيل الصوت */
+        window.toggleMode = (m) => {
+            if(m==='ghost') { isGhost = !isGhost; document.getElementById('ghost-btn').classList.toggle('active', isGhost); }
+            if(m==='whisper') { isWhisper = !isWhisper; document.getElementById('whisper-btn').classList.toggle('active', isWhisper); }
+            updateStatus();
+        };
+
+        function updateStatus() {
+            let s = "آمنة";
+            if(isGhost && isWhisper) s = "👻 شبح + 🤫 همس";
+            else if(isGhost) s = "👻 وضع الشبح (اختفاء)";
+            else if(isWhisper) s = "🤫 رسائل مهموسة (مخفية)";
+            document.getElementById('chat-status').innerText = s;
+        }
+
+        /* نظام التسجيل الصوتي */
         window.startRecord = async () => {
             document.getElementById('record-btn').classList.add('active');
             try {
@@ -299,146 +306,126 @@
                 mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
                 mediaRecorder.onstop = async () => {
                     const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    // رفع الفويس للستوريدج لتجنب اللاج
-                    uploadFileToStorage(audioBlob, 'audio', url => pushData({ audio: url }));
+                    const base64Audio = await toB64(audioBlob);
+                    sendAudioMsg(base64Audio);
                     audioChunks = [];
                 };
                 mediaRecorder.start();
             } catch(e) { alert("يرجى السماح باستخدام الميكروفون"); document.getElementById('record-btn').classList.remove('active'); }
         };
-        window.stopRecord = () => { if(mediaRecorder && mediaRecorder.state === "recording") { mediaRecorder.stop(); document.getElementById('record-btn').classList.remove('active'); } };
+
+        window.stopRecord = () => {
+            if(mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+                document.getElementById('record-btn').classList.remove('active');
+            }
+        };
 
         window.sendMsg = () => {
             const t = document.getElementById('msg-input').value; if(!t) return;
-            pushData({ text: t }); document.getElementById('msg-input').value = "";
+            pushData({ text: t });
+            document.getElementById('msg-input').value = ""; cancelReply();
         };
 
-        /* إرسال صورة في الشات مع خيار وان سي وبدون لاج */
-        window.sendChatImage = (input) => {
-            const file = input.files[0]; if(!file) return;
-            const isViewOnce = document.getElementById('view-once-toggle').classList.contains('active');
-            
-            // إنشاء رسالة وهمية مؤقتة (لإظهار اللودينج للمستخدم)
-            const tempId = Date.now().toString();
-            const box = document.getElementById('msg-area');
-            box.innerHTML += `<div id="temp-${tempId}" class="glass-panel msg sent"><div class="loader"></div> جاري إرسال الصورة...</div>`;
-            box.scrollTop = box.scrollHeight;
-
-            uploadFileToStorage(file, 'chat_images', url => {
-                document.getElementById(`temp-${tempId}`)?.remove();
-                pushData({ img: url, viewOnce: isViewOnce });
-                document.getElementById('view-once-toggle').classList.remove('active'); // إعادة الضبط
-            });
-            input.value = "";
-        };
-
-        // دالة الرفع إلى Storage
-        function uploadFileToStorage(file, folder, callback) {
-            const fileRef = sRef(storage, `${folder}/${Date.now()}_${auth.currentUser.uid}`);
-            const uploadTask = uploadBytesResumable(fileRef, file);
-            uploadTask.on('state_changed', null, error => alert("فشل الرفع"), () => {
-                getDownloadURL(uploadTask.snapshot.ref).then(callback);
-            });
-        }
+        function sendAudioMsg(audioB64) { pushData({ audio: audioB64 }); cancelReply(); }
 
         function pushData(content) {
-            const data = { s: auth.currentUser.uid, time: Date.now() };
+            const data = { s: auth.currentUser.uid, time: Date.now(), g: isGhost, w: isWhisper };
             if(content.text) data.t = content.text;
             if(content.audio) data.a = content.audio;
-            if(content.img) { data.i = content.img; data.vo = content.viewOnce; }
-            push(ref(db, 'messages/'+activeC), data);
+            if(replyTo) data.reply = replyTo;
+            
+            const mRef = push(ref(db, 'messages/'+activeC));
+            set(mRef, data);
+            if(isGhost) setTimeout(() => remove(mRef), 10000);
         }
 
         function loadMsgs() {
             onValue(ref(db, 'messages/'+activeC), snap => {
                 const box = document.getElementById('msg-area'); box.innerHTML = "";
                 snap.forEach(c => {
-                    const m = c.val(), msgKey = c.key;
-                    const d = document.createElement('div');
-                    d.className = `glass-panel msg ${m.s === auth.currentUser.uid ? 'sent' : 'received'}`;
+                    const m = c.val(), d = document.createElement('div');
                     
-                    if(m.t) d.innerText = m.t;
-                    if(m.a) d.innerHTML = `<audio src="${m.a}" controls></audio>`;
-                    if(m.i) {
-                        if(m.vo) {
-                            if(m.s === auth.currentUser.uid) {
-                                d.innerHTML = `📷 صورة (View Once) - تم الإرسال`;
-                            } else {
-                                d.innerHTML = `<div class="view-once-btn" onclick="openViewOnce('${m.i}', '${msgKey}')">اضغط لرؤية الصورة 🔓</div>`;
-                            }
-                        } else {
-                            d.innerHTML = `<img src="${m.i}" onclick="window.open('${m.i}')">`;
-                        }
+                    if(m.sys) {
+                        d.style = "align-self:center; background:rgba(255,255,255,0.1); padding:5px 15px; border-radius:20px; font-size:11px; color:var(--danger);";
+                        d.innerText = m.sys; box.appendChild(d); return;
                     }
+
+                    let classes = `glass-panel msg ${m.s === auth.currentUser.uid ? 'sent' : 'received'} `;
+                    if(m.g) classes += 'ghost-msg ';
+                    if(m.w) classes += 'whisper-msg ';
+                    d.className = classes;
+                    
+                    let innerHTML = "";
+                    if(m.reply) innerHTML += `<div class="reply-box">${m.reply}</div>`;
+                    if(m.t) innerHTML += m.t;
+                    if(m.a) innerHTML += `<audio src="${m.a}" controls></audio>`;
+                    if(m.react) innerHTML += `<div class="react-badge">${m.react}</div>`;
+                    
+                    d.innerHTML = innerHTML;
+                    d.onclick = () => { 
+                        selectedMsgId = c.key; 
+                        replyTo = m.t ? (m.t.length>20?m.t.substring(0,20)+"...":m.t) : "رسالة صوتية"; 
+                        document.getElementById('react-modal').classList.remove('hidden'); 
+                    };
                     box.appendChild(d);
                 });
                 box.scrollTop = box.scrollHeight;
             });
         }
 
-        /* منطق الـ View Once */
-        window.openViewOnce = (imgUrl, msgKey) => {
-            // فتح الصورة في نافذة منبثقة بسيطة
-            const modal = document.createElement('div');
-            modal.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:black; z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column;";
-            modal.innerHTML = `<img src="${imgUrl}" style="max-width:90%; max-height:80%; border-radius:15px;"><br><button class="btn-glass" style="width:200px; background:var(--danger);" onclick="this.parentElement.remove()">إغلاق وحذف 💥</button>`;
-            document.body.appendChild(modal);
-            
-            // حذف الرسالة فوراً من قاعدة البيانات حتى لا تظهر مجدداً
-            remove(ref(db, `messages/${activeC}/${msgKey}`));
+        window.setReact = (r) => { update(ref(db, `messages/${activeC}/${selectedMsgId}`), { react: r }); document.getElementById('react-modal').classList.add('hidden'); };
+        window.makeReply = () => { document.getElementById('reply-preview').classList.remove('hidden'); document.getElementById('reply-text').innerText = replyTo; document.getElementById('react-modal').classList.add('hidden'); };
+        window.cancelReply = () => { replyTo = null; document.getElementById('reply-preview').classList.add('hidden'); };
+
+        window.openOptions = () => {
+            get(child(ref(db), `blocks/${auth.currentUser.uid}/${activeF}`)).then(s => {
+                document.getElementById('block-btn-txt').innerText = s.exists() ? "فك الحظر 🔓" : "حظر المستخدم 🚫";
+                document.getElementById('opt-modal').classList.remove('hidden');
+            });
         };
 
-        window.clearChat = async () => { if(confirm("مسح السجل؟")) { await remove(ref(db, 'messages/'+activeC)); closeChat(); document.getElementById('opt-modal').classList.add('hidden'); } };
-
-        /* --- نظام المنشورات (Firestore) --- */
-        window.createPost = async () => {
-            const text = document.getElementById('post-text').value;
-            const file = document.getElementById('post-img-input').files[0];
-            if(!text && !file) return;
-
-            document.getElementById('post-text').value = "جاري النشر...";
-
-            const saveToFirestore = async (imgUrl = null) => {
-                await addDoc(collection(firestore, "posts"), {
-                    uid: auth.currentUser.uid,
-                    name: me.n,
-                    avatar: me.img,
-                    text: text,
-                    image: imgUrl,
-                    createdAt: serverTimestamp()
-                });
-                document.getElementById('post-text').value = "";
-                document.getElementById('post-img-input').value = "";
-            };
-
-            if(file) uploadFileToStorage(file, 'posts', saveToFirestore);
-            else saveToFirestore();
+        window.blockUser = async () => {
+            const s = await get(child(ref(db), `blocks/${auth.currentUser.uid}/${activeF}`));
+            if(s.exists()) {
+                await remove(ref(db, `blocks/${auth.currentUser.uid}/${activeF}`));
+                push(ref(db, 'messages/'+activeC), { sys: "تم فك الحظر، يمكنكم المراسلة الآن." });
+            } else {
+                await set(ref(db, `blocks/${auth.currentUser.uid}/${activeF}`), true);
+                push(ref(db, 'messages/'+activeC), { sys: "تم حظر هذا المستخدم." });
+            }
+            document.getElementById('opt-modal').classList.add('hidden');
         };
 
-        function loadPosts() {
-            const q = query(collection(firestore, "posts"), orderBy("createdAt", "desc"));
-            onSnapshot(q, (snapshot) => {
-                const feed = document.getElementById('posts-feed'); feed.innerHTML = "";
-                snapshot.forEach((doc) => {
-                    const p = doc.data();
-                    feed.innerHTML += `
-                        <div class="glass-panel post-card">
-                            <div class="post-header">
-                                <img src="${p.avatar}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
-                                <b>${p.name}</b>
-                            </div>
-                            <p style="font-size:14px; line-height:1.5;">${p.text}</p>
-                            ${p.image ? `<img src="${p.image}" class="post-img">` : ''}
-                        </div>`;
-                });
+        window.reportUser = async () => { if(confirm("تأكيد الإبلاغ؟")) { await update(ref(db, `users/${activeF}`), { reports: increment(1) }); alert("تم تسجيل البلاغ."); document.getElementById('opt-modal').classList.add('hidden'); } };
+        window.clearChat = async () => { if(confirm("مسح السجل للطرفين؟")) { await remove(ref(db, 'messages/'+activeC)); closeChat(); document.getElementById('opt-modal').classList.add('hidden'); } };
+
+        function checkBlock() {
+            onValue(ref(db, `blocks/${activeF}/${auth.currentUser.uid}`), s => {
+                document.getElementById('input-bar').classList.toggle('hidden', s.exists());
+                document.getElementById('blocked-bar').classList.toggle('hidden', !s.exists());
             });
         }
+
+        window.addNote = async () => { 
+            const t = prompt("حالة جديدة (تختفي بعد 24 ساعة):"); 
+            if(t) await set(ref(db, 'notes/'+auth.currentUser.uid), { t, n: me.n, img: me.img, time: Date.now() }); 
+        };
+        
+        window.editProfile = () => { 
+            document.getElementById('setup-screen').classList.remove('hidden'); 
+            document.getElementById('setup-title').innerText = "تعديل الملف";
+            document.getElementById('set-user').classList.add('hidden'); 
+            document.getElementById('close-setup-btn').classList.remove('hidden');
+            document.getElementById('set-nick').value = me.n; 
+            document.getElementById('prev-img').src = me.img; 
+        };
 
         onAuthStateChanged(auth, async u => {
             if(u) {
                 const s = await get(child(ref(db), 'users/'+u.uid));
                 if(s.exists()) {
-                    me = s.val();
+                    me = s.val(); if(me.reports >= 10) { document.body.innerHTML = "<div style='display:flex; height:100vh; align-items:center; justify-content:center; flex-direction:column;'><h1 style='color:#ff4757'>حساب موقوف</h1><p>تم تجاوز حد البلاغات</p></div>"; return; }
                     document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('app-screen').classList.remove('hidden');
                     document.getElementById('my-avatar').src = me.img; document.getElementById('my-name-display').innerText = me.n; document.getElementById('my-user-display').innerText = "@" + me.u;
                     initApp();
@@ -447,6 +434,20 @@
         });
 
         function initApp() {
+            onValue(ref(db, 'notes'), snap => {
+                const box = document.getElementById('notes-list'); box.innerHTML = box.firstElementChild.outerHTML;
+                snap.forEach(c => {
+                    get(child(ref(db), `friends/${auth.currentUser.uid}/${c.key}`)).then(isF => {
+                        if(isF.exists() || c.key === auth.currentUser.uid) {
+                            const n = c.val(); if(Date.now() - n.time < 86400000) {
+                                const d = document.createElement('div'); d.className = 'note-wrap';
+                                d.innerHTML = `<div class="note-pop">${n.t}</div><img class="note-img" src="${n.img}"><span style="font-size:10px; display:block; margin-top:5px; color:rgba(255,255,255,0.7);">${n.n}</span>`;
+                                box.appendChild(d);
+                            }
+                        }
+                    });
+                });
+            });
             onValue(ref(db, `friends/${auth.currentUser.uid}`), snap => {
                 const box = document.getElementById('chat-items-list'); box.innerHTML = "";
                 snap.forEach(c => {
