@@ -2,107 +2,263 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NootaChat | نوتة تشات</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NootaChat Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #111B21;
-            --panel-color: #202C33;
-            --primary-color: #8A2BE2; /* اللون البنفسجي الخاص بك */
-            --text-main: #FFFFFF;
-            --text-muted: #8696A0;
-            --msg-sent: #8A2BE2;
-            --msg-rec: #2A3942;
+            --bg-dark: #090e11;
+            --panel-dark: #111b21;
+            --primary: #8A2BE2;
+            --secondary: #202c33;
+            --accent: #00a884;
+            --text-main: #e9edef;
+            --text-dim: #8696a0;
         }
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
-        .hidden { display: none !important; }
-        
-        /* واجهات الدخول */
-        .screen { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; }
-        input { padding: 12px; margin: 10px 0; width: 300px; border-radius: 8px; border: 1px solid #2f3e46; background: #2A3942; color: white; outline: none; }
-        button { padding: 12px 25px; border-radius: 8px; border: none; background: var(--primary-color); color: white; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        button:hover { opacity: 0.8; }
 
-        /* التطبيق الرئيسي */
-        #main-app-screen { display: flex; width: 100%; height: 100%; }
-        .sidebar { width: 350px; background: var(--panel-color); border-left: 1px solid #2f3e46; display: flex; flex-direction: column; }
-        .chat-area { flex: 1; display: flex; flex-direction: column; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; background-color: #0b141a; }
-        
-        /* شريط النوتس */
-        .notes-bar { display: flex; gap: 15px; padding: 15px; overflow-x: auto; border-bottom: 1px solid #2f3e46; background: #111B21; min-height: 100px; }
-        .note-item { min-width: 75px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-        .note-circle { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--primary-color); background: #202C33; display: flex; align-items: center; justify-content: center; font-size: 11px; padding: 5px; text-align: center; overflow: hidden; word-break: break-all; margin-bottom: 5px; }
-        
-        /* المحادثة */
-        #messages-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
-        .msg { max-width: 75%; padding: 10px 15px; margin: 5px; border-radius: 12px; position: relative; font-size: 15px; }
-        .sent { align-self: flex-end; background: var(--msg-sent); color: white; border-bottom-right-radius: 2px; }
-        .received { align-self: flex-start; background: var(--msg-rec); color: white; border-bottom-left-radius: 2px; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .hidden { display: none !important; }
+
+        /* شاشات الدخول */
+        .auth-container {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .input-group {
+            background: var(--secondary);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 320px;
+            border: 1px solid #2f3e46;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 345px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+        }
+
+        /* القائمة السفلية (Modern Bottom Nav) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 65px;
+            background: var(--panel-dark);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #222d34;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-dim);
+            cursor: pointer;
+        }
+
+        .nav-item.active { color: var(--primary); }
+
+        /* الشاشات الرئيسية */
+        .main-screen {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 80px; /* لترك مساحة للـ nav */
+        }
+
+        /* قائمة الشاتات */
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #222d34;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--secondary);
+            margin-left: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* النوتس (انستجرام ستايل) */
+        .notes-scroll {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .note-card {
+            min-width: 75px;
+            text-align: center;
+        }
+
+        .note-bubble {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            padding: 3px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .note-text {
+            position: absolute;
+            top: -10px;
+            background: white;
+            color: black;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            white-space: nowrap;
+            max-width: 60px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* نافذة الدردشة الكاملة */
+        #full-chat-window {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--bg-dark);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body>
 
-    <div id="auth-screen" class="screen">
-        <h1 style="font-size: 40px; color: var(--primary-color);">NootaChat</h1>
-        <div id="login-form">
-            <input type="email" id="login-email" placeholder="البريد الإلكتروني">
-            <input type="password" id="login-password" placeholder="كلمة المرور">
-            <button id="btn-login">دخول</button>
-            <p onclick="toggleAuth()" style="cursor:pointer; color: var(--text-muted); margin-top:15px;">جديد هنا؟ أنشئ حسابك</p>
+    <div id="auth-screen" class="auth-container">
+        <h1 style="color: var(--primary);">NootaChat</h1>
+        <div id="login-form" style="width: 100%; text-align: center;">
+            <div class="input-group"><input type="email" id="login-email" placeholder="البريد الإلكتروني"></div>
+            <div class="input-group"><input type="password" id="login-password" placeholder="كلمة المرور"></div>
+            <button class="btn-primary" id="btn-login">تسجيل الدخول</button>
+            <p onclick="toggleAuth()" style="color: var(--text-dim); margin-top: 20px;">إنشاء حساب جديد</p>
         </div>
-        <div id="signup-form" class="hidden">
-            <input type="email" id="signup-email" placeholder="بريد إلكتروني جديد">
-            <input type="password" id="signup-password" placeholder="اختر كلمة مرور">
-            <button id="btn-signup">إنشاء الحساب</button>
-            <p onclick="toggleAuth()" style="cursor:pointer; color: var(--text-muted); margin-top:15px;">لديك حساب؟ سجل دخولك</p>
+        
+        <div id="signup-form" class="hidden" style="width: 100%; text-align: center;">
+            <div class="input-group"><input type="email" id="signup-email" placeholder="بريد جديد"></div>
+            <div class="input-group"><input type="password" id="signup-password" placeholder="كلمة مرور قوية"></div>
+            <button class="btn-primary" id="btn-signup">ابدأ الآن مجاناً</button>
+            <p onclick="toggleAuth()" style="color: var(--text-dim); margin-top: 20px;">لديك حساب؟ سجل دخولك</p>
         </div>
     </div>
 
-    <div id="profile-setup-screen" class="screen hidden">
-        <h2>أهلاً بك! اختر اسم مستخدم فريد</h2>
-        <input type="text" id="username-input" placeholder="اسم المستخدم (بدون مسافات)">
-        <button id="btn-save-profile">حفظ والبدء</button>
+    <div id="profile-setup" class="auth-container hidden">
+        <h2>أكمل بروفايلك</h2>
+        <div class="input-group"><input type="text" id="username-input" placeholder="اسم المستخدم (بالإنجليزي)"></div>
+        <button class="btn-primary" id="btn-save-profile">حفظ والدخول</button>
     </div>
 
-    <div id="main-app-screen" class="hidden">
-        <div class="sidebar">
-            <div style="padding:15px; background:#202C33; display:flex; justify-content:space-between; align-items:center;">
-                <b id="user-display-name">...</b>
-                <button onclick="location.reload()" style="padding:5px 10px; font-size:12px; background:#f44336;">خروج</button>
-            </div>
+    <div id="main-app" class="hidden" style="height: 100%;">
+        
+        <div id="page-chats" class="main-screen">
+            <div style="padding: 20px; font-size: 24px; font-weight: bold;">المحادثات</div>
             
-            <div class="notes-bar" id="notes-display">
-                <div class="note-item" onclick="addNewNote()">
-                    <div class="note-circle" style="border: 2px dashed #8696A0; color:#8696A0;">+</div>
+            <div class="notes-scroll" id="notes-list">
+                <div class="note-card" onclick="addMyNote()">
+                    <div class="note-bubble" style="border-style: dashed; border-color: var(--text-dim);">
+                        <div style="margin-top: 15px; font-size: 25px;">+</div>
+                    </div>
                     <span style="font-size: 11px;">نوتة</span>
                 </div>
             </div>
 
-            <div style="padding:15px;">
-                <button id="btn-new-chat" style="width:100%;">+ ابدأ محادثة بالاسم</button>
+            <div id="friends-list">
+                </div>
+            
+            <button class="btn-primary" style="margin: 20px; width: calc(100% - 40px);" onclick="startNewChat()">+ مراسلة شخص جديد</button>
+        </div>
+
+        <div id="page-profile" class="main-screen hidden">
+            <div style="padding: 20px; text-align: center;">
+                <div class="avatar" style="width: 100px; height: 100px; font-size: 40px; margin: 0 auto 20px;" id="profile-big-avatar">M</div>
+                <h2 id="display-my-name">Username</h2>
+                <p id="display-my-email" style="color: var(--text-dim);">email@example.com</p>
+                <hr style="border: 0.5px solid #222d34; margin: 30px 0;">
+                <button class="btn-primary" style="background: #ff4757;" onclick="logout()">تسجيل الخروج</button>
             </div>
         </div>
 
-        <div class="chat-area">
-            <div id="chat-header" style="padding:15px; background:#202C33; border-right:1px solid #111B21;">
-                محادثة مع: <b id="active-friend-name">اختر صديقاً</b>
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="showPage('chats')">
+                <span>💬</span><span>دردشة</span>
             </div>
-            
-            <div id="messages-container"></div>
-            
-            <div style="padding:15px; display:flex; gap:10px; background:#202C33;">
-                <input type="text" id="message-input" placeholder="اكتب رسالة..." style="flex:1; margin:0;">
-                <button id="btn-send-msg">إرسال</button>
+            <div class="nav-item" onclick="showPage('profile')">
+                <span>👤</span><span>حسابي</span>
             </div>
+        </nav>
+    </div>
+
+    <div id="full-chat-window" class="hidden">
+        <div style="padding: 15px; background: var(--panel-dark); display: flex; align-items: center;">
+            <button onclick="closeChat()" style="background: none; border: none; color: white; font-size: 20px; margin-left: 15px;">→</button>
+            <div class="avatar" id="chat-header-avatar" style="width: 35px; height: 35px; margin-left: 10px;">?</div>
+            <b id="chat-header-name">اسم الصديق</b>
+        </div>
+        <div id="msg-container" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column;"></div>
+        <div style="padding: 15px; background: var(--panel-dark); display: flex; gap: 10px;">
+            <input type="text" id="msg-input" placeholder="اكتب رسالة..." style="flex: 1; background: var(--secondary); padding: 10px; border-radius: 20px; margin: 0;">
+            <button id="btn-send" style="background: var(--primary); border-radius: 50%; width: 45px; height: 45px; border: none; color: white;">➤</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // إعدادات Firebase الخاصة بك
         const firebaseConfig = {
             apiKey: "AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M",
             authDomain: "fir-c3e88.firebaseapp.com",
@@ -117,118 +273,155 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let currentUser = null;
+        let myData = null;
         let activeChatId = null;
 
-        // تبديل الشاشات
+        // دالة التبديل بين الشاشات
+        window.showPage = (page) => {
+            document.querySelectorAll('.main-screen').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('page-' + page).classList.remove('hidden');
+            event.currentTarget.classList.add('active');
+        };
+
         window.toggleAuth = () => {
             document.getElementById('login-form').classList.toggle('hidden');
             document.getElementById('signup-form').classList.toggle('hidden');
         };
 
-        // إنشاء نوتة جديدة
-        window.addNewNote = async () => {
-            const text = prompt("ماذا يدور في ذهنك؟");
-            if(!text) return;
-            await set(ref(db, 'notes/' + currentUser.uid), {
-                username: document.getElementById('user-display-name').innerText,
-                text: text,
-                createdAt: Date.now()
-            });
-        };
-
-        // تسجيل الدخول وإنشاء الحساب
+        // --- Auth Logic ---
         document.getElementById('btn-signup').onclick = async () => {
             const email = document.getElementById('signup-email').value;
             const pass = document.getElementById('signup-password').value;
-            try { await createUserWithEmailAndPassword(auth, email, pass); } catch (e) { alert(e.message); }
+            try { await createUserWithEmailAndPassword(auth, email, pass); } catch (e) { alert("خطأ: " + e.message); }
         };
 
         document.getElementById('btn-login').onclick = async () => {
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-password').value;
-            try { await signInWithEmailAndPassword(auth, email, pass); } catch (e) { alert(e.message); }
+            try { await signInWithEmailAndPassword(auth, email, pass); } catch (e) { alert("تأكد من البيانات"); }
         };
 
         document.getElementById('btn-save-profile').onclick = async () => {
-            const name = document.getElementById('username-input').value.trim().toLowerCase();
-            if(!name) return;
-            await set(ref(db, 'users/' + currentUser.uid), { username: name });
-            await set(ref(db, 'usernames/' + name), currentUser.uid);
+            const user = document.getElementById('username-input').value.trim().toLowerCase();
+            if(!user) return;
+            await set(ref(db, 'users/' + auth.currentUser.uid), { username: user, email: auth.currentUser.email });
+            await set(ref(db, 'usernames/' + user), auth.currentUser.uid);
             location.reload();
         };
 
-        // بدء محادثة
-        document.getElementById('btn-new-chat').onclick = async () => {
-            const name = prompt("اسم المستخدم للصديق:");
+        window.logout = () => signOut(auth).then(() => location.reload());
+
+        // --- Chat Logic ---
+        window.startNewChat = async () => {
+            const name = prompt("ادخل اسم المستخدم للصديق:");
             if(!name) return;
             const snap = await get(child(ref(db), `usernames/${name}`));
-            if(snap.exists()){
-                const friendId = snap.val();
-                activeChatId = [currentUser.uid, friendId].sort().join("_");
-                document.getElementById('active-friend-name').innerText = name;
-                loadMessages(activeChatId);
-            } else { alert("لم نجد هذا الاسم!"); }
+            if(snap.exists()) {
+                openChatWindow(snap.val(), name);
+                // حفظ الصديق في قائمة المحادثات
+                await set(ref(db, `user_chats/${auth.currentUser.uid}/${snap.val()}`), name);
+                await set(ref(db, `user_chats/${snap.val()}/${auth.currentUser.uid}`), myData.username);
+            } else { alert("غير موجود!"); }
         };
 
-        document.getElementById('btn-send-msg').onclick = () => {
-            const text = document.getElementById('message-input').value;
-            if(!text || !activeChatId) return;
+        function openChatWindow(fId, fName) {
+            activeChatId = [auth.currentUser.uid, fId].sort().join("_");
+            document.getElementById('full-chat-window').classList.remove('hidden');
+            document.getElementById('chat-header-name').innerText = fName;
+            document.getElementById('chat-header-avatar').innerText = fName[0].toUpperCase();
+            loadMessages(activeChatId);
+        }
+
+        window.closeChat = () => {
+            document.getElementById('full-chat-window').classList.add('hidden');
+            activeChatId = null;
+        };
+
+        document.getElementById('btn-send').onclick = () => {
+            const txt = document.getElementById('msg-input').value;
+            if(!txt || !activeChatId) return;
             push(ref(db, 'messages/' + activeChatId), {
-                senderId: currentUser.uid,
-                text,
+                s: auth.currentUser.uid,
+                t: txt,
                 time: Date.now()
             });
-            document.getElementById('message-input').value = "";
+            document.getElementById('msg-input').value = "";
         };
 
         function loadMessages(id) {
             onValue(ref(db, 'messages/' + id), (snap) => {
-                const container = document.getElementById('messages-container');
-                container.innerHTML = "";
+                const cont = document.getElementById('msg-container');
+                cont.innerHTML = "";
                 snap.forEach(c => {
                     const m = c.val();
                     const d = document.createElement('div');
-                    d.className = `msg ${m.senderId === currentUser.uid ? 'sent' : 'received'}`;
-                    d.innerText = m.text;
-                    container.appendChild(d);
+                    d.style.cssText = `max-width: 80%; padding: 10px; margin: 5px; border-radius: 12px; ${m.s === auth.currentUser.uid ? 'align-self: flex-end; background: var(--primary);' : 'align-self: flex-start; background: var(--secondary);'}`;
+                    d.innerText = m.t;
+                    cont.appendChild(d);
                 });
-                container.scrollTop = container.scrollHeight;
+                cont.scrollTop = cont.scrollHeight;
             });
         }
 
-        // جلب النوتس
-        function listenToNotes() {
-            onValue(ref(db, 'notes'), (snap) => {
-                const bar = document.getElementById('notes-display');
-                const btn = bar.firstElementChild;
-                bar.innerHTML = ""; bar.appendChild(btn);
+        // --- Notes Logic (للمراسلين فقط) ---
+        window.addMyNote = async () => {
+            const n = prompt("اكتب نوتة قصيرة (مثلاً: مود البرمجة 🚀)");
+            if(n) await set(ref(db, 'notes/' + auth.currentUser.uid), { t: n, u: myData.username, time: Date.now() });
+        };
+
+        function loadFriendsAndNotes() {
+            // جلب الأصدقاء الذين تراسلهم
+            onValue(ref(db, `user_chats/${auth.currentUser.uid}`), (snap) => {
+                const list = document.getElementById('friends-list');
+                const notesList = document.getElementById('notes-list');
+                list.innerHTML = "";
+                // حفظ الأزرار الأساسية في النوتس
+                const addNoteBtn = notesList.firstElementChild;
+                notesList.innerHTML = ""; notesList.appendChild(addNoteBtn);
+
                 snap.forEach(c => {
-                    const n = c.val();
-                    if(Date.now() - n.createdAt < 86400000) { // 24 ساعة
-                        const item = document.createElement('div');
-                        item.className = 'note-item';
-                        item.innerHTML = `<div class="note-circle">${n.text}</div><span style="font-size:10px;">${n.username}</span>`;
-                        bar.appendChild(item);
-                    }
+                    const fId = c.key; const fName = c.val();
+                    // إضافة للقائمة
+                    const item = document.createElement('div');
+                    item.className = 'chat-item';
+                    item.onclick = () => openChatWindow(fId, fName);
+                    item.innerHTML = `<div class="avatar">${fName[0].toUpperCase()}</div><div><b>${fName}</b><br><small style="color:var(--text-dim)">اضغط للمراسلة</small></div>`;
+                    list.appendChild(item);
+
+                    // جلب نوتة هذا الصديق فقط
+                    get(child(ref(db), `notes/${fId}`)).then(nSnap => {
+                        if(nSnap.exists() && Date.now() - nSnap.val().time < 86400000) {
+                            const n = nSnap.val();
+                            const nCard = document.createElement('div');
+                            nCard.className = 'note-card';
+                            nCard.innerHTML = `<div class="note-bubble"><div class="note-text">${n.t}</div><div class="avatar" style="width:100%;height:100%;margin:0">${fName[0].toUpperCase()}</div></div><span style="font-size:11px;">${fName}</span>`;
+                            notesList.appendChild(nCard);
+                        }
+                    });
                 });
             });
         }
 
-        // مراقبة الحالة
+        // --- Monitoring State ---
         onAuthStateChanged(auth, async (user) => {
             if(user) {
-                currentUser = user;
                 const snap = await get(child(ref(db), `users/${user.uid}`));
-                if(snap.exists()){
+                if(snap.exists()) {
+                    myData = snap.val();
                     document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('main-app-screen').classList.remove('hidden');
-                    document.getElementById('user-display-name').innerText = snap.val().username;
-                    listenToNotes();
+                    document.getElementById('main-app').classList.remove('hidden');
+                    document.getElementById('display-my-name').innerText = myData.username;
+                    document.getElementById('display-my-email').innerText = user.email;
+                    document.getElementById('profile-big-avatar').innerText = myData.username[0].toUpperCase();
+                    loadFriendsAndNotes();
                 } else {
                     document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('profile-setup-screen').classList.remove('hidden');
+                    document.getElementById('profile-setup').classList.remove('hidden');
                 }
+            } else {
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('main-app').classList.add('hidden');
             }
         });
     </script>
