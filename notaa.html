@@ -73,7 +73,7 @@
         .reply-box { background: rgba(0,0,0,0.3); padding: 8px; border-right: 3px solid var(--primary); border-radius: 8px; margin-bottom: 8px; font-size: 12px; opacity: 0.9; }
         .react-badge { position: absolute; bottom: -8px; right: 10px; background: #222; border-radius: 12px; padding: 2px 6px; font-size: 13px; border: 1px solid #444; }
         audio { height: 40px; max-width: 200px; outline: none; border-radius: 20px; }
-        .msg-img { max-width: 100%; border-radius: 10px; margin-top: 5px; } /* تنسيق للصور المرسلة */
+        .msg-img { max-width: 100%; border-radius: 10px; margin-top: 5px; cursor: pointer; } /* تنسيق للصور المرسلة */
 
         /* منطقة الإدخال */
         .input-area { padding: 15px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--glass-border); display: flex; align-items: center; gap: 10px; }
@@ -216,8 +216,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        // إضافة off لإلغاء الاشتراك من المستمعين
-        import { getDatabase, ref, set, push, onValue, get, child, update, remove, increment, off } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, get, child, update, remove, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M",
@@ -233,9 +232,11 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
+        // إضافة متغير لتخزين دالة إلغاء الاشتراك في الرسائل
         let me = null, activeF = null, activeC = null;
         let isGhost = false, isWhisper = false, replyTo = null, selectedMsgId = null;
         let mediaRecorder, audioChunks = [];
+        let unsubscribeMsgs = null; // المتغير الجديد المسؤول عن الإلغاء
 
         window.authAction = async (t) => {
             const e = document.getElementById(t==='login'?'email':'s-email').value;
@@ -278,9 +279,10 @@
         };
 
         window.openChat = async (id, name, img) => {
-            // إلغاء الاستماع للرسائل القديمة إذا كانت هناك محادثة مفتوحة مسبقاً
-            if (activeC) {
-                off(ref(db, 'messages/' + activeC));
+            // إلغاء الاستماع لرسائل المحادثة القديمة بشكل صحيح
+            if (unsubscribeMsgs) {
+                unsubscribeMsgs();
+                unsubscribeMsgs = null;
             }
             
             activeF = id; activeC = [auth.currentUser.uid, id].sort().join("_");
@@ -288,7 +290,7 @@
             document.getElementById('h-name').innerText = name;
             document.getElementById('h-img').src = img;
             
-            // تفريغ الرسائل القديمة فوراً لتجنب ظهورها للحظات قبل تحميل الجديدة
+            // تفريغ الرسائل القديمة فوراً
             document.getElementById('msg-area').innerHTML = "";
 
             await update(ref(db, `friends/${auth.currentUser.uid}/${id}`), { n: name, img: img });
@@ -297,9 +299,10 @@
         };
 
         window.closeChat = () => { 
-            // إلغاء الاستماع عند إغلاق المحادثة أيضاً كإجراء احترازي
-            if (activeC) {
-                off(ref(db, 'messages/' + activeC));
+            // إلغاء الاستماع عند إغلاق النافذة
+            if (unsubscribeMsgs) {
+                unsubscribeMsgs();
+                unsubscribeMsgs = null;
             }
             document.getElementById('chat-window').classList.add('hidden'); 
             isGhost = false; isWhisper = false; updateStatus(); 
@@ -355,12 +358,10 @@
         window.sendImageMsg = async (event) => {
             const file = event.target.files[0];
             if (file) {
-                // يمكنك إضافة تحقق من حجم الصورة هنا إذا أردت
                 const imageB64 = await toB64(file);
                 pushData({ image: imageB64 });
                 cancelReply();
             }
-            // إعادة تعيين الإدخال لضمان القدرة على إرسال نفس الصورة مرة أخرى إذا لزم الأمر
             event.target.value = '';
         };
 
@@ -368,7 +369,7 @@
             const data = { s: auth.currentUser.uid, time: Date.now(), g: isGhost, w: isWhisper };
             if(content.text) data.t = content.text;
             if(content.audio) data.a = content.audio;
-            if(content.image) data.img = content.image; // إضافة حقل الصورة
+            if(content.image) data.img = content.image;
             if(replyTo) data.reply = replyTo;
             
             const mRef = push(ref(db, 'messages/'+activeC));
@@ -377,7 +378,8 @@
         }
 
         function loadMsgs() {
-            onValue(ref(db, 'messages/'+activeC), snap => {
+            // تخزين الدالة المرجعة (unsubscribe) لإيقافها لاحقاً
+            unsubscribeMsgs = onValue(ref(db, 'messages/'+activeC), snap => {
                 const box = document.getElementById('msg-area'); box.innerHTML = "";
                 snap.forEach(c => {
                     const m = c.val(), d = document.createElement('div');
@@ -396,20 +398,16 @@
                     if(m.reply) innerHTML += `<div class="reply-box">${m.reply}</div>`;
                     if(m.t) innerHTML += m.t;
                     if(m.a) innerHTML += `<audio src="${m.a}" controls></audio>`;
-                    if(m.img) innerHTML += `<img src="${m.img}" class="msg-img" onclick="window.open('${m.img}', '_blank')">`; // عرض الصورة المرفقة
+                    if(m.img) innerHTML += `<img src="${m.img}" class="msg-img" onclick="window.open('${m.img}', '_blank')">`; 
                     if(m.react) innerHTML += `<div class="react-badge">${m.react}</div>`;
                     
                     d.innerHTML = innerHTML;
                     d.onclick = (e) => { 
-                        // منع تفعيل الرد إذا تم النقر على الصورة لتكبيرها
                         if (e.target.tagName !== 'IMG') {
                             selectedMsgId = c.key; 
-                            
-                            // تحديد نص الرد بناءً على نوع الرسالة
                             if(m.t) replyTo = m.t.length>20?m.t.substring(0,20)+"...":m.t;
                             else if(m.img) replyTo = "صورة 🖼️";
                             else replyTo = "رسالة صوتية 🎵";
-                            
                             document.getElementById('react-modal').classList.remove('hidden'); 
                         }
                     };
