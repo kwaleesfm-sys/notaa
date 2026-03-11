@@ -3,64 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NootaChat Ultra Max</title>
+    <title>NootaChat Ultimate Glass</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #a29bfe; --primary-dark: #6c5ce7;
-            --danger: #ff7675; --ghost: #00cec9; --whisper: #fdcb6e; --success: #00e676;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --danger: #ff7675; --ghost: #00cec9; --whisper: #fdcb6e; --success: #55efc4;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        body { background: linear-gradient(135deg, #090a0f, #1b1625, #0f172a); background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        body { 
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
+            background-size: 400% 400%; animation: gradientBG 15s ease infinite; 
+            color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; 
+        }
         @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
         
-        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); }
+        .glass-panel { 
+            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+            border: 1px solid var(--glass-border); border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
+        }
+
         .hidden { display: none !important; }
         
-        /* الأزرار والمدخلات */
-        .btn-glass { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; padding: 16px; border-radius: 16px; color: white; font-weight: bold; width: 100%; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4); }
+        .btn-glass { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            border: none; padding: 16px; border-radius: 16px; color: white; font-weight: bold; width: 100%; cursor: pointer; transition: 0.3s; 
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+        }
         .btn-glass:active { transform: scale(0.97); }
-        .input-glass { background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px; color: white; width: 100%; text-align: center; margin-bottom: 15px; transition: 0.3s; }
         
-        /* شريط التنقل والنوتس */
-        .bottom-nav { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 70px; display: flex; z-index: 100; padding: 10px; }
+        .input-glass { 
+            background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); border-radius: 16px; 
+            padding: 16px; color: white; width: 100%; text-align: center; margin-bottom: 15px; transition: 0.3s;
+        }
+        .input-glass:focus { border-color: var(--primary); background: rgba(0, 0, 0, 0.4); box-shadow: 0 0 15px rgba(162, 155, 254, 0.3); }
+
+        .bottom-nav { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 70px; display: flex; z-index: 100; padding: 10px; border-radius: 35px;}
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 13px; color: rgba(255,255,255,0.5); cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--primary); font-weight: bold; text-shadow: 0 0 10px var(--primary); transform: translateY(-3px); }
+        .nav-item.active { color: var(--primary); font-weight: bold; text-shadow: 0 0 10px rgba(162, 155, 254, 0.5); transform: translateY(-3px); }
+
+        /* Notes (Stories) */
         .notes-bar { display: flex; gap: 15px; padding: 20px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--glass-border); }
         .note-wrap { min-width: 70px; text-align: center; position: relative; cursor: pointer; }
         .note-img { width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--primary); padding: 2px; object-fit: cover; }
-        .note-pop { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: white; color: black; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10; }
-
-        /* منطقة الشات والمؤشرات الجديدة */
-        #chat-window { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(25px); z-index: 300; display: flex; flex-direction: column; }
-        .chat-header { padding: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--glass-border); }
-        .msg-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         
-        .msg { max-width: 78%; padding: 12px 16px; border-radius: 20px; font-size: 15px; position: relative; word-wrap: break-word; line-height: 1.4; transition: 0.2s; }
-        .sent { align-self: flex-end; background: var(--primary-dark); border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2); }
+        /* Floating Action Button */
+        .fab-btn { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; font-size: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(108, 92, 231, 0.6); cursor: pointer; transition: 0.3s; z-index: 90; border: 1px solid rgba(255,255,255,0.2); }
+        .fab-btn:active { transform: scale(0.9); }
+
+        /* Chat Window */
+        #chat-window { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 12, 41, 0.9); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 300; display: flex; flex-direction: column; }
+        .chat-header { padding: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); }
+        .msg-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+        
+        .msg { max-width: 80%; padding: 12px 16px; border-radius: 20px; font-size: 15px; position: relative; word-wrap: break-word; line-height: 1.4; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .sent { align-self: flex-end; background: linear-gradient(135deg, var(--primary-dark), #4834d4); border-bottom-right-radius: 4px; }
         .received { align-self: flex-start; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-bottom-left-radius: 4px; }
+        .msg.loading { opacity: 0.6; }
         
-        .whisper-msg { filter: blur(5px); opacity: 0.7; transition: 0.3s; border: 1px dashed var(--whisper); }
-        .whisper-msg:hover, .whisper-msg:active { filter: blur(0); opacity: 1; }
-        .ghost-msg { border: 1px dashed var(--ghost); background: rgba(0, 206, 201, 0.1) !important; color: var(--ghost); }
+        .msg-img { max-width: 100%; border-radius: 12px; margin-top: 5px; }
+        .view-once-btn { background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         
-        .msg-status-icon { font-size: 11px; opacity: 0.7; margin-top: 5px; text-align: right; display: block; }
-        .status-seen { color: #fff; text-shadow: 0 0 5px var(--primary); font-weight: bold; }
-
-        .unread-badge { background: var(--danger); color: white; font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 12px; margin-left: auto; box-shadow: 0 0 10px var(--danger); }
-        .online-dot { width: 10px; height: 10px; background: var(--success); border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--success); margin-right: 5px; }
-        .offline-dot { width: 10px; height: 10px; background: #666; border-radius: 50%; display: inline-block; margin-right: 5px; }
-
-        .input-area { padding: 15px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--glass-border); display: flex; align-items: center; gap: 10px; }
-        .action-btn { width: 45px; height: 45px; border-radius: 50%; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 20px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .action-btn.recording { background: var(--danger); animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); box-shadow: 0 0 10px var(--danger); } 100% { transform: scale(1); } }
-
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        audio { height: 40px; max-width: 200px; outline: none; border-radius: 20px; }
+        /* Apple Style Audio Player */
+        .ios-audio { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 8px 15px; border-radius: 30px; cursor: pointer; width: 200px; border: 1px solid rgba(255,255,255,0.1); }
+        .ios-audio .play-btn { width: 30px; height: 30px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .ios-audio .waveform { flex: 1; display: flex; align-items: center; gap: 2px; height: 20px; }
+        .ios-audio .waveform span { flex: 1; background: rgba(255,255,255,0.5); border-radius: 2px; animation: wave 1s infinite ease-in-out paused; }
+        .ios-audio.playing .waveform span { animation-play-state: running; }
+        .ios-audio.playing .play-btn { background: var(--danger); }
+        @keyframes wave { 0%, 100% { height: 4px; } 50% { height: 18px; } }
+        
+        /* Input Area */
+        .input-area { padding: 15px; background: rgba(255,255,255,0.05); border-top: 1px solid var(--glass-border); display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); }
+        .action-btn { width: 42px; height: 42px; border-radius: 50%; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 18px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .action-btn.active-record { background: var(--danger); animation: pulse 1s infinite; }
+        .action-btn.active-1x { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+        
+        /* Posts Feed */
+        .post-card { padding: 20px; margin-bottom: 15px; border-radius: 20px; }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .post-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -68,7 +95,7 @@
     <div id="auth-screen" class="modal">
         <div class="glass-panel" style="padding: 30px; width: 100%; max-width: 380px; text-align: center;">
             <h1 style="color:var(--primary); font-size: 35px; margin-bottom: 5px;">NootaChat</h1>
-            <p style="color: rgba(255,255,255,0.6); margin-bottom: 30px; font-size: 14px;">الإصدار الألترا (سريع جداً)</p>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 30px; font-size: 14px;">الإصدار الزجاجي الفاخر</p>
             <input type="email" id="email" class="input-glass" placeholder="البريد الإلكتروني">
             <input type="password" id="pass" class="input-glass" placeholder="كلمة المرور">
             <button class="btn-glass" onclick="authAction('login')">دخول</button>
@@ -92,16 +119,16 @@
             <div style="position:relative; width:110px; height:110px; margin:0 auto 20px;">
                 <img id="prev-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:100%; height:100%; border-radius:50%; border:3px solid var(--primary); object-fit:cover;">
                 <input type="file" id="img-input" accept="image/*" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
-                <div style="position:absolute; bottom:0; right:0; background:var(--primary); width:30px; height:30px; border-radius:50%; line-height:30px;">📷</div>
             </div>
             <input type="text" id="set-user" class="input-glass" placeholder="Username (للبحث عنك)">
             <input type="text" id="set-nick" class="input-glass" placeholder="اللقب الظاهر للأصدقاء">
             <button class="btn-glass" onclick="saveUser()">حفظ</button>
-            <p id="close-setup-btn" onclick="document.getElementById('setup-screen').classList.add('hidden')" class="hidden" style="margin-top:15px; color:#ccc;">إغلاق</p>
+            <p id="close-setup-btn" onclick="document.getElementById('setup-screen').classList.add('hidden')" class="hidden" style="margin-top:15px; color:#ccc; cursor:pointer;">إغلاق</p>
         </div>
     </div>
 
     <div id="app-screen" class="hidden" style="height:100%; display:flex; flex-direction:column;">
+        
         <div id="page-chats" style="flex:1; overflow-y:auto; padding-bottom:100px;">
             <div style="padding: 25px 20px 10px; font-size: 28px; font-weight: 800;">الدردشات</div>
             <div class="notes-bar" id="notes-list">
@@ -110,8 +137,17 @@
                     <span style="font-size:11px; margin-top:5px; display:block;">حالة جديدة</span>
                 </div>
             </div>
-            <div id="chat-items-list" style="padding: 10px;"></div>
-            <button class="btn-glass" style="width: calc(100% - 40px); margin: 20px; box-shadow: none;" onclick="findFriend()">+ إضافة صديق (Username)</button>
+            <div id="chat-items-list" style="padding: 10px 20px;"></div>
+            <div class="fab-btn" onclick="findFriend()">+</div>
+        </div>
+
+        <div id="page-posts" class="hidden" style="flex:1; overflow-y:auto; padding:20px; padding-bottom:100px;">
+            <div style="font-size: 28px; font-weight: 800; margin-bottom: 20px;">المجتمع</div>
+            <div class="glass-panel" style="padding: 15px; margin-bottom: 20px;">
+                <textarea id="post-input" class="input-glass" placeholder="بم تفكر الآن؟" style="resize:none; height:80px;"></textarea>
+                <button class="btn-glass" onclick="publishPost()" style="padding:10px;">نشر</button>
+            </div>
+            <div id="posts-container"></div>
         </div>
 
         <div id="page-profile" class="hidden" style="flex:1; padding:50px 20px; text-align:center;">
@@ -120,76 +156,58 @@
                 <h2 id="my-name-display" style="margin-bottom: 5px;">...</h2>
                 <p id="my-user-display" style="color:rgba(255,255,255,0.5); margin-bottom: 30px;">@...</p>
                 <button class="btn-glass" style="background: rgba(255,255,255,0.1); margin-bottom: 15px;" onclick="editProfile()">تعديل البروفايل</button>
-                <button class="btn-glass" style="background: var(--danger);" onclick="logout()">تسجيل خروج</button>
+                <button class="btn-glass" style="background: var(--danger);" onclick="location.reload()">تسجيل خروج</button>
             </div>
         </div>
 
         <div class="glass-panel bottom-nav">
-            <div class="nav-item active" onclick="tab('chats', this)"><span style="font-size:22px; margin-bottom:4px;">💬</span>دردشة</div>
-            <div class="nav-item" onclick="tab('profile', this)"><span style="font-size:22px; margin-bottom:4px;">👤</span>حسابي</div>
+            <div class="nav-item active" onclick="tab('chats', this)"><span style="font-size:22px;">💬</span>دردشة</div>
+            <div class="nav-item" onclick="tab('posts', this)"><span style="font-size:22px;">🌐</span>المنشورات</div>
+            <div class="nav-item" onclick="tab('profile', this)"><span style="font-size:22px;">👤</span>حسابي</div>
         </div>
     </div>
 
     <div id="chat-window" class="hidden">
         <div class="chat-header">
             <div style="display:flex; align-items:center; gap:12px;">
-                <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:22px;">➔</button>
+                <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">➔</button>
                 <img id="h-img" src="" style="width:45px; height:45px; border-radius:50%; object-fit:cover;">
-                <div onclick="openOptions()">
-                    <b id="h-name" style="font-size: 16px; display:flex; align-items:center;">... <span id="h-online" class="offline-dot"></span></b><br>
-                    <small id="chat-status" style="color:var(--primary); font-size: 11px;">محادثة آمنة</small>
+                <div onclick="openOptions()" style="cursor:pointer;">
+                    <b id="h-name" style="font-size: 16px;">...</b><br>
+                    <small id="chat-status" style="color:var(--primary); font-size: 11px;">متصل</small>
                 </div>
-            </div>
-            <div style="display: flex; gap: 15px; font-size:20px;">
-                <span id="whisper-btn" style="color:var(--whisper); opacity:0.4; transition:0.3s;" onclick="toggleMode('whisper')">🤫</span>
-                <span id="ghost-btn" style="color:var(--ghost); opacity:0.4; transition:0.3s;" onclick="toggleMode('ghost')">👻</span>
-                <span onclick="openOptions()">⋮</span>
             </div>
         </div>
         
         <div class="msg-area" id="msg-area"></div>
 
-        <div id="reply-preview" class="hidden" style="background: rgba(0,0,0,0.6); padding: 10px 15px; display:flex; justify-content:space-between; align-items:center; border-left: 3px solid var(--primary);">
-            <div id="reply-text" style="font-size:12px; color:#ccc; max-width:85%; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;"></div>
-            <span onclick="cancelReply()" style="color:var(--danger); cursor:pointer; font-weight:bold;">✕</span>
-        </div>
-
         <div class="input-area" id="input-bar">
-            <label class="action-btn" style="cursor:pointer;">
-                📷 <input type="file" id="chat-img-input" accept="image/*" style="display:none;">
-            </label>
+            <button id="record-btn" class="action-btn" onmousedown="startRecord()" onmouseup="stopRecord()" ontouchstart="startRecord()" ontouchend="stopRecord()">🎤</button>
             
-            <input type="text" id="msg-input" placeholder="اكتب رسالة..." style="flex:1; background:rgba(255,255,255,0.1); border:none; border-radius:20px; padding:14px; color:white; font-size: 15px;">
+            <input type="file" id="chat-img" class="hidden" accept="image/*" onchange="sendImageMsg(this)">
+            <button class="action-btn" onclick="document.getElementById('chat-img').click()">🖼️</button>
             
-            <button id="record-btn" class="action-btn" onmousedown="startRecord(event)" onmouseup="stopRecord(event)" ontouchstart="startRecord(event)" ontouchend="stopRecord(event)">🎤</button>
-            <button id="send-btn" onclick="sendMsg()" class="action-btn hidden" style="background: var(--primary);">➤</button>
-        </div>
-        <div id="blocked-bar" class="hidden" style="padding:20px; text-align:center; background:rgba(255, 71, 87, 0.2); color: var(--danger); font-weight:bold; backdrop-filter: blur(10px);">لا يمكنك المراسلة، تم الحظر.</div>
-    </div>
-
-    <div id="opt-modal" class="modal hidden" onclick="this.classList.add('hidden')">
-        <div class="glass-panel" style="width: 100%; max-width: 300px; padding: 10px 0;" onclick="event.stopPropagation()">
-            <div style="padding:15px; text-align:center; border-bottom:1px solid var(--glass-border); cursor:pointer;" onclick="clearChat()">مسح المحادثة 🗑️</div>
-            <div id="block-btn-txt" style="padding:15px; text-align:center; border-bottom:1px solid var(--glass-border); cursor:pointer; color:var(--danger);" onclick="blockUser()">حظر المستخدم 🚫</div>
+            <button id="view-once-btn" class="action-btn" style="font-size:12px; font-weight:bold;" onclick="toggle1x()">1x</button>
+            
+            <input type="text" id="msg-input" placeholder="اكتب رسالة..." style="flex:1; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:12px 15px; color:white; font-size: 14px;">
+            <button onclick="sendTextMsg()" class="action-btn" style="background: var(--primary);">➤</button>
         </div>
     </div>
 
-    <div id="react-modal" class="modal hidden" onclick="this.classList.add('hidden')">
-        <div class="glass-panel" style="display:flex; justify-content:space-around; padding:15px; width: 90%; max-width: 320px;" onclick="event.stopPropagation()">
-            <span style="font-size:28px; cursor:pointer;" onclick="setReact('❤️')">❤️</span>
-            <span style="font-size:28px; cursor:pointer;" onclick="setReact('😂')">😂</span>
-            <span style="font-size:28px; cursor:pointer;" onclick="setReact('😮')">😮</span>
-            <span style="font-size:28px; cursor:pointer;" onclick="setReact('🔥')">🔥</span>
-            <div style="width: 1px; background: var(--glass-border); margin: 0 10px;"></div>
-            <span style="font-size:22px; cursor:pointer; color:var(--primary);" onclick="makeReply()">↩️ رد</span>
+    <div id="view-once-modal" class="modal hidden">
+        <div style="text-align:center;">
+            <img id="view-once-img" src="" style="max-width:90vw; max-height:80vh; border-radius:20px; margin-bottom:20px; box-shadow:0 0 30px rgba(0,0,0,0.8);">
+            <br>
+            <button class="btn-glass" style="background:var(--danger); width:auto; padding:10px 30px;" onclick="closeViewOnce()">إغلاق وحذف 🗑️</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        // إضافة query و limitToLast لضمان السرعة
-        import { getDatabase, ref, set, push, onValue, get, child, update, remove, increment, onDisconnect, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, get, child, update, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        // إضافة Firestore للمنشورات
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M",
@@ -204,325 +222,221 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
+        const dbFS = getFirestore(app); // تعريف الفايرستور
 
         let me = null, activeF = null, activeC = null;
-        let isGhost = false, isWhisper = false, replyTo = null, selectedMsgId = null;
+        let is1x = false;
         let mediaRecorder, audioChunks = [];
-        let isRecording = false; 
-        let chatListener = null; 
+        let currentlyPlayingAudio = null;
 
-        const msgInput = document.getElementById('msg-input');
-        const sendBtn = document.getElementById('send-btn');
-        const recordBtn = document.getElementById('record-btn');
-        msgInput.addEventListener('input', () => {
-            if(msgInput.value.trim().length > 0) { sendBtn.classList.remove('hidden'); recordBtn.classList.add('hidden'); }
-            else { sendBtn.classList.add('hidden'); recordBtn.classList.remove('hidden'); }
-        });
+        // التحويل لـ Base64
+        const toB64 = f => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(f); rd.onload = () => r(rd.result); });
+        document.getElementById('img-input').onchange = async e => { if(e.target.files[0]) document.getElementById('prev-img').src = await toB64(e.target.files[0]); };
 
         window.authAction = async (t) => {
             const e = document.getElementById(t==='login'?'email':'s-email').value;
             const p = document.getElementById(t==='login'?'pass':'s-pass').value;
             try { t==='login' ? await signInWithEmailAndPassword(auth, e, p) : await createUserWithEmailAndPassword(auth, e, p); }
-            catch(err) { alert("بيانات غير صحيحة."); }
-        };
-
-        window.logout = async () => {
-            await signOut(auth);
-            localStorage.clear(); // مسح الذاكرة المحلية عند الخروج
-            location.reload();
-        };
-
-        const toB64 = f => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(f); rd.onload = () => r(rd.result); });
-        document.getElementById('img-input').onchange = async e => { if(e.target.files[0]) document.getElementById('prev-img').src = await toB64(e.target.files[0]); };
-        
-        document.getElementById('chat-img-input').onchange = async e => { 
-            if(e.target.files[0]) { const imgB64 = await toB64(e.target.files[0]); pushData({ imgMsg: imgB64 }); } 
+            catch(err) { alert("بيانات غير صحيحة أو البريد مستخدم."); }
         };
 
         window.saveUser = async () => {
             const u = document.getElementById('set-user').value.trim().toLowerCase(), n = document.getElementById('set-nick').value.trim(), img = document.getElementById('prev-img').src;
-            if(!n) return;
+            if(!n) return alert("اللقب مطلوب");
             if(!me) {
                 const s = await get(child(ref(db), 'usernames/'+u));
-                if(s.exists()) return alert("يوزر مأخوذ");
+                if(s.exists()) return alert("اسم المستخدم مأخوذ مسبقاً");
                 await set(ref(db, 'usernames/'+u), auth.currentUser.uid);
                 await set(ref(db, 'users/'+auth.currentUser.uid), { u, n, img });
             } else { await update(ref(db, 'users/'+auth.currentUser.uid), { n, img }); }
-            
-            // تحديث اللوكل ستورج للبروفايل
-            me = { u, n, img };
-            localStorage.setItem('my_profile', JSON.stringify(me));
             location.reload();
         };
 
         window.tab = (t, el) => {
             document.getElementById('page-chats').classList.toggle('hidden', t!=='chats');
+            document.getElementById('page-posts').classList.toggle('hidden', t!=='posts');
             document.getElementById('page-profile').classList.toggle('hidden', t!=='profile');
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); el.classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
         };
 
+        /* نظام الدردشة */
         window.findFriend = async () => {
-            const u = prompt("أدخل Username:"); if(!u) return;
+            const u = prompt("أدخل Username صديقك:"); if(!u) return;
             const s = await get(child(ref(db), 'usernames/'+u.toLowerCase()));
             if(s.exists() && s.val() !== auth.currentUser.uid) {
                 const fData = (await get(child(ref(db), 'users/'+s.val()))).val();
                 openChat(s.val(), fData.n, fData.img);
-            } else alert("غير موجود.");
+            } else alert("مستخدم غير موجود!");
         };
 
         window.openChat = async (id, name, img) => {
-            if(chatListener) { chatListener(); chatListener = null; }
-
             activeF = id; activeC = [auth.currentUser.uid, id].sort().join("_");
             document.getElementById('chat-window').classList.remove('hidden');
-            document.getElementById('h-name').innerHTML = `${name} <span id="h-online" class="offline-dot"></span>`;
+            document.getElementById('h-name').innerText = name;
             document.getElementById('h-img').src = img;
-            
-            set(ref(db, `unread/${auth.currentUser.uid}/${id}`), 0);
             await update(ref(db, `friends/${auth.currentUser.uid}/${id}`), { n: name, img: img });
             await update(ref(db, `friends/${id}/${auth.currentUser.uid}`), { n: me.n, img: me.img });
-            
-            onValue(ref(db, `presence/${id}`), s => {
-                const dot = document.getElementById('h-online');
-                if(dot) { dot.className = s.val() === true ? 'online-dot' : 'offline-dot'; }
-            });
+            loadMsgs();
+        };
+        window.closeChat = () => document.getElementById('chat-window').classList.add('hidden');
 
-            checkBlock(); loadMsgs();
+        window.toggle1x = () => {
+            is1x = !is1x;
+            document.getElementById('view-once-btn').classList.toggle('active-1x', is1x);
         };
 
-        window.closeChat = () => { 
-            document.getElementById('chat-window').classList.add('hidden'); 
-            activeF = null; activeC = null; isGhost = false; isWhisper = false; 
-            if(chatListener) { chatListener(); chatListener = null; }
+        /* إرسال رسالة بنظام عدم اللاج (Optimistic) */
+        window.sendTextMsg = () => {
+            const text = document.getElementById('msg-input').value; if(!text) return;
+            document.getElementById('msg-input').value = "";
+            renderOptimisticMsg({ t: text }); // عرض فوراً
+            push(ref(db, 'messages/'+activeC), { s: auth.currentUser.uid, time: Date.now(), t: text });
         };
 
-        window.toggleMode = (m) => {
-            if(m==='ghost') { isGhost = !isGhost; document.getElementById('ghost-btn').style.opacity = isGhost ? "1" : "0.4"; }
-            if(m==='whisper') { isWhisper = !isWhisper; document.getElementById('whisper-btn').style.opacity = isWhisper ? "1" : "0.4"; }
-            let s = "آمنة";
-            if(isGhost && isWhisper) s = "👻 شبح + 🤫 همس"; else if(isGhost) s = "👻 وضع الشبح (اختفاء)"; else if(isWhisper) s = "🤫 رسائل مهموسة";
-            document.getElementById('chat-status').innerText = s;
+        window.sendImageMsg = async (input) => {
+            if(!input.files[0]) return;
+            const b64 = await toB64(input.files[0]);
+            renderOptimisticMsg({ img: b64, viewOnce: is1x }); // عرض فوراً
+            push(ref(db, 'messages/'+activeC), { s: auth.currentUser.uid, time: Date.now(), img: b64, viewOnce: is1x });
+            is1x = false; document.getElementById('view-once-btn').classList.remove('active-1x');
+            input.value = "";
         };
 
-        // الريكورد مع حماية اللمس المزدوج
-        window.startRecord = async (e) => {
-            if(e && e.type === "touchstart") e.preventDefault();
-            if(isRecording) return;
-            isRecording = true;
-            recordBtn.classList.add('recording'); audioChunks = [];
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
-                mediaRecorder = new MediaRecorder(stream, { mimeType });
-                mediaRecorder.ondataavailable = ev => { if (ev.data.size > 0) audioChunks.push(ev.data); };
-                mediaRecorder.onstop = async () => {
-                    const audioBlob = new Blob(audioChunks, { type: mimeType });
-                    pushData({ audio: await toB64(audioBlob) });
-                    stream.getTracks().forEach(t => t.stop());
-                };
-                mediaRecorder.start();
-            } catch(err) { alert("يرجى تفعيل المايك"); recordBtn.classList.remove('recording'); isRecording = false; }
-        };
-
-        window.stopRecord = (e) => { 
-            if(e && e.type === "touchend") e.preventDefault();
-            if(!isRecording) return;
-            isRecording = false;
-            if(mediaRecorder && mediaRecorder.state === "recording") { 
-                mediaRecorder.stop(); recordBtn.classList.remove('recording'); 
-            } 
-        };
-
-        window.sendMsg = () => {
-            const t = msgInput.value; if(!t) return;
-            pushData({ text: t }); msgInput.value = ""; 
-            sendBtn.classList.add('hidden'); recordBtn.classList.remove('hidden'); cancelReply();
-        };
-
-        function pushData(content) {
-            const data = { s: auth.currentUser.uid, time: Date.now(), g: isGhost, w: isWhisper, read: false };
-            if(content.text) data.t = content.text; if(content.audio) data.a = content.audio; if(content.imgMsg) data.imgMsg = content.imgMsg; if(replyTo) data.reply = replyTo;
-            
-            const mRef = push(ref(db, 'messages/'+activeC)); set(mRef, data);
-            
-            const unreadRef = ref(db, `unread/${activeF}/${auth.currentUser.uid}`);
-            get(unreadRef).then(s => set(unreadRef, (s.val() || 0) + 1));
-
-            if(isGhost) setTimeout(() => remove(mRef), 10000);
-        }
-
-        // دالة عرض الرسائل الموحدة (مستقلة عن قواعد البيانات)
-        function renderMessagesArray(msgsArray) {
+        function renderOptimisticMsg(data) {
             const box = document.getElementById('msg-area');
-            box.innerHTML = "";
-            msgsArray.forEach(item => {
-                const m = item.data;
-                const d = document.createElement('div');
-                let classes = `glass-panel msg ${m.s === auth.currentUser.uid ? 'sent' : 'received'} `;
-                if(m.g) classes += 'ghost-msg '; if(m.w) classes += 'whisper-msg ';
-                d.className = classes;
-                
-                let html = "";
-                if(m.reply) html += `<div style="background:rgba(0,0,0,0.3); padding:8px; border-right:3px solid var(--primary); border-radius:8px; margin-bottom:8px; font-size:12px;">${m.reply}</div>`;
-                if(m.t) html += m.t;
-                if(m.imgMsg) html += `<img src="${m.imgMsg}" style="width:100%; border-radius:10px; margin-top:5px;">`;
-                if(m.a) html += `<audio src="${m.a}" controls playsinline></audio>`;
-                if(m.react) html += `<div style="position:absolute; bottom:-8px; right:10px; background:#222; border-radius:12px; padding:2px 6px; font-size:13px;">${m.react}</div>`;
-                
-                if(m.s === auth.currentUser.uid) {
-                    html += `<span class="msg-status-icon ${m.read ? 'status-seen' : ''}">${m.read ? '👁️ شوهدت' : '☁️ أُرسلت'}</span>`;
-                }
-
-                d.innerHTML = html;
-                d.onclick = () => { selectedMsgId = item.key; replyTo = m.t ? m.t : (m.imgMsg ? "صورة" : "مقطع صوتي"); document.getElementById('react-modal').classList.remove('hidden'); };
-                box.appendChild(d);
-            });
+            const d = document.createElement('div');
+            d.className = 'glass-panel msg sent loading';
+            if(data.t) d.innerText = data.t;
+            if(data.img) {
+                if(data.viewOnce) d.innerHTML = '📸 صورة مؤقتة (جاري الإرسال...)';
+                else d.innerHTML = `<img src="${data.img}" class="msg-img">`;
+            }
+            if(data.audio) d.innerHTML = '🎤 جاري إرسال المقطع...';
+            box.appendChild(d);
             box.scrollTop = box.scrollHeight;
         }
 
-        // تحميل الرسائل بسرعة فائقة (استخدام LocalStorage + Firebase limitToLast)
-        function loadMsgs() {
-            if(!activeC) return;
-            
-            // 1. عرض الرسائل من الذاكرة المحلية فوراً (إذا وجدت)
-            const chatKey = 'chat_cache_' + activeC;
-            const cachedMsgs = localStorage.getItem(chatKey);
-            if(cachedMsgs) {
-                try { renderMessagesArray(JSON.parse(cachedMsgs)); } catch(e){}
-            }
+        /* نظام الصوتيات ستايل آبل */
+        window.startRecord = async () => {
+            document.getElementById('record-btn').classList.add('active-record');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const base64Audio = await toB64(audioBlob);
+                    renderOptimisticMsg({ audio: true });
+                    push(ref(db, 'messages/'+activeC), { s: auth.currentUser.uid, time: Date.now(), a: base64Audio });
+                    audioChunks = [];
+                };
+                mediaRecorder.start();
+            } catch(e) { alert("الميكروفون مطلوب"); document.getElementById('record-btn').classList.remove('active-record'); }
+        };
+        window.stopRecord = () => { if(mediaRecorder) { mediaRecorder.stop(); document.getElementById('record-btn').classList.remove('active-record'); }};
 
-            // 2. الاستماع لقاعدة البيانات بحد أقصى 40 رسالة
-            const msgQuery = query(ref(db, 'messages/' + activeC), limitToLast(40));
-            chatListener = onValue(msgQuery, snap => {
-                const msgsList = [];
+        window.playAppleAudio = (element, src) => {
+            if(currentlyPlayingAudio) currentlyPlayingAudio.pause();
+            const audio = new Audio(src);
+            currentlyPlayingAudio = audio;
+            element.classList.add('playing');
+            element.querySelector('.play-btn').innerText = "⏸";
+            audio.play();
+            audio.onended = () => { element.classList.remove('playing'); element.querySelector('.play-btn').innerText = "▶"; };
+        };
+
+        function loadMsgs() {
+            onValue(ref(db, 'messages/'+activeC), snap => {
+                const box = document.getElementById('msg-area'); box.innerHTML = "";
                 snap.forEach(c => {
-                    const m = c.val();
-                    msgsList.push({ key: c.key, data: m });
-                    // تحديث القراءة مباشرة
-                    if(m.s === activeF && m.read === false) { 
-                        update(ref(db, `messages/${activeC}/${c.key}`), { read: true }); 
+                    const m = c.val(), d = document.createElement('div');
+                    d.className = `glass-panel msg ${m.s === auth.currentUser.uid ? 'sent' : 'received'} `;
+                    
+                    let inner = "";
+                    if(m.t) inner += m.t;
+                    else if(m.a) {
+                        inner += `
+                        <div class="ios-audio" onclick="playAppleAudio(this, '${m.a}')">
+                            <div class="play-btn">▶</div>
+                            <div class="waveform"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                        </div>`;
                     }
+                    else if(m.img) {
+                        if(m.viewOnce) {
+                            if(m.s === auth.currentUser.uid) inner += `<div style="color:var(--danger); font-size:12px;">📸 تم إرسال صورة مؤقتة</div>`;
+                            else inner += `<button class="view-once-btn" onclick="openViewOnce('${c.key}', '${m.img}')">📸 اضغط لرؤية الصورة 1x</button>`;
+                        } else {
+                            inner += `<img src="${m.img}" class="msg-img">`;
+                        }
+                    }
+                    
+                    let timeStr = new Date(m.time).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
+                    inner += `<div style="font-size:10px; opacity:0.6; text-align:right; margin-top:5px;">${timeStr} ${m.s === auth.currentUser.uid ? '✓✓' : ''}</div>`;
+                    
+                    d.innerHTML = inner; box.appendChild(d);
                 });
-                
-                // حفظ أحدث الرسائل في الذاكرة المحلية لفتحها بسرعة المرة القادمة
-                try { localStorage.setItem(chatKey, JSON.stringify(msgsList)); } catch(e){}
-                
-                renderMessagesArray(msgsList);
+                box.scrollTop = box.scrollHeight;
             });
         }
 
-        window.setReact = (r) => { update(ref(db, `messages/${activeC}/${selectedMsgId}`), { react: r }); document.getElementById('react-modal').classList.add('hidden'); };
-        window.makeReply = () => { document.getElementById('reply-preview').classList.remove('hidden'); document.getElementById('reply-text').innerText = replyTo; document.getElementById('react-modal').classList.add('hidden'); };
-        window.cancelReply = () => { replyTo = null; document.getElementById('reply-preview').classList.add('hidden'); };
-
-        window.openOptions = () => { document.getElementById('opt-modal').classList.remove('hidden'); };
-        
-        window.blockUser = async () => { 
-            alert("تم حظر المستخدم بنجاح.");
-            document.getElementById('opt-modal').classList.add('hidden'); 
-            document.getElementById('blocked-bar').classList.remove('hidden');
-            document.getElementById('input-bar').classList.add('hidden');
+        /* نظام الصورة المؤقتة (View Once) */
+        let tempDelRef = null;
+        window.openViewOnce = (msgKey, imgSrc) => {
+            document.getElementById('view-once-modal').classList.remove('hidden');
+            document.getElementById('view-once-img').src = imgSrc;
+            tempDelRef = msgKey;
         };
-        
-        window.clearChat = async () => { if(confirm("مسح السجل للطرفين؟")) { await remove(ref(db, 'messages/'+activeC)); closeChat(); document.getElementById('opt-modal').classList.add('hidden'); } };
+        window.closeViewOnce = () => {
+            if(tempDelRef) { remove(ref(db, `messages/${activeC}/${tempDelRef}`)); tempDelRef = null; }
+            document.getElementById('view-once-modal').classList.add('hidden');
+            document.getElementById('view-once-img').src = "";
+        };
 
-        function checkBlock() { 
-            document.getElementById('blocked-bar').classList.add('hidden');
-            document.getElementById('input-bar').classList.remove('hidden');
-        }
+        /* نظام المنشورات (Firestore) */
+        window.publishPost = async () => {
+            const t = document.getElementById('post-input').value; if(!t) return;
+            await addDoc(collection(dbFS, "posts"), {
+                text: t, authorId: auth.currentUser.uid, authorName: me.n, authorImg: me.img,
+                createdAt: serverTimestamp()
+            });
+            document.getElementById('post-input').value = "";
+        };
 
-        window.addNote = async () => { const t = prompt("حالة جديدة (تختفي بعد 24 ساعة):"); if(t) await set(ref(db, 'notes/'+auth.currentUser.uid), { t, n: me.n, img: me.img, time: Date.now() }); };
-        window.editProfile = () => { document.getElementById('setup-screen').classList.remove('hidden'); document.getElementById('set-user').classList.add('hidden'); document.getElementById('close-setup-btn').classList.remove('hidden'); };
-
-        // إعداد الواجهة بمعلومات المستخدم
-        function setupMyProfile(userData) {
-            document.getElementById('auth-screen').classList.add('hidden'); 
-            document.getElementById('app-screen').classList.remove('hidden');
-            document.getElementById('my-avatar').src = userData.img; 
-            document.getElementById('my-name-display').innerText = userData.n; 
-            document.getElementById('my-user-display').innerText = "@" + userData.u;
-        }
-
-        // دالة موحدة لعرض الأصدقاء
-        function renderFriendsList(friendsObj) {
-            const box = document.getElementById('chat-items-list'); box.innerHTML = "";
-            for (const [fId, f] of Object.entries(friendsObj)) {
-                const d = document.createElement('div');
-                d.className = 'glass-panel'; d.style = "display:flex; align-items:center; padding:15px; margin-bottom:10px; cursor:pointer;";
-                d.onclick = () => openChat(fId, f.n, f.img);
-                
-                let inner = `<img src="${f.img}" style="width:55px; height:55px; border-radius:50%; margin-left:15px; object-fit:cover; border:2px solid var(--primary);"><div><b style="font-size:16px;">${f.n}</b><br><small id="status-${fId}" style="color:#aaa;">جاري التحقق...</small></div>`;
-                inner += `<div id="unread-${fId}" class="unread-badge hidden">0</div>`;
-                d.innerHTML = inner; box.appendChild(d);
-
-                onValue(ref(db, `presence/${fId}`), pSnap => {
-                    const statusTxt = document.getElementById(`status-${fId}`);
-                    if(statusTxt) { statusTxt.innerHTML = pSnap.val() === true ? `<span class="online-dot"></span> متصل الآن` : `<span class="offline-dot"></span> غير متصل`; }
+        function loadPosts() {
+            const q = query(collection(dbFS, "posts"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snapshot) => {
+                const box = document.getElementById('posts-container'); box.innerHTML = "";
+                snapshot.forEach((doc) => {
+                    const p = doc.data();
+                    box.innerHTML += `
+                    <div class="glass-panel post-card">
+                        <div class="post-header">
+                            <img src="${p.authorImg}" class="post-avatar">
+                            <b>${p.authorName}</b>
+                        </div>
+                        <p style="font-size:15px; line-height:1.5;">${p.text}</p>
+                    </div>`;
                 });
-
-                onValue(ref(db, `unread/${auth.currentUser.uid}/${fId}`), uSnap => {
-                    const count = uSnap.val() || 0;
-                    const badge = document.getElementById(`unread-${fId}`);
-                    if(badge) { badge.innerText = count; badge.classList.toggle('hidden', count === 0); }
-                });
-            }
+            });
         }
 
+        /* بدء التطبيق */
         onAuthStateChanged(auth, async u => {
             if(u) {
-                // الاتصال المباشر
-                const connectedRef = ref(db, '.info/connected');
-                onValue(connectedRef, snap => {
-                    if (snap.val() === true) {
-                        const myPresence = ref(db, `presence/${u.uid}`);
-                        set(myPresence, true); onDisconnect(myPresence).set(false);
-                    }
-                });
-
-                // التحقق من البروفايل في اللوكل ستورج أولاً للسرعة
-                const cachedMe = localStorage.getItem('my_profile');
-                if(cachedMe) {
-                    me = JSON.parse(cachedMe);
-                    setupMyProfile(me);
-                    initApp();
-                }
-
-                // التحقق من قاعدة البيانات في كل الأحوال للتحديث
                 const s = await get(child(ref(db), 'users/'+u.uid));
                 if(s.exists()) {
                     me = s.val();
-                    localStorage.setItem('my_profile', JSON.stringify(me));
-                    if(!cachedMe) { setupMyProfile(me); initApp(); }
+                    document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('app-screen').classList.remove('hidden');
+                    document.getElementById('my-avatar').src = me.img; document.getElementById('my-name-display').innerText = me.n; document.getElementById('my-user-display').innerText = "@" + me.u;
+                    initChats(); loadPosts();
                 } else { document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('setup-screen').classList.remove('hidden'); }
             }
         });
 
-        function initApp() {
-            // تحميل حالات الأصدقاء (Notes)
-            onValue(ref(db, 'notes'), snap => {
-                const box = document.getElementById('notes-list'); box.innerHTML = `<div class="note-wrap" onclick="addNote()"><div class="note-img" style="border: 2px dashed rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; font-size:25px;">+</div><span style="font-size:11px; margin-top:5px; display:block;">حالة جديدة</span></div>`;
-                snap.forEach(c => {
-                    get(child(ref(db), `friends/${auth.currentUser.uid}/${c.key}`)).then(isF => {
-                        if(isF.exists() || c.key === auth.currentUser.uid) {
-                            const n = c.val(); if(Date.now() - n.time < 86400000) {
-                                const d = document.createElement('div'); d.className = 'note-wrap';
-                                d.innerHTML = `<div class="note-pop">${n.t}</div><img class="note-img" src="${n.img}"><span style="font-size:10px; display:block; margin-top:5px;">${n.n}</span>`; box.appendChild(d);
-                            }
-                        }
-                    });
-                });
-            });
-
-            // قائمة الأصدقاء (تحميل من الذاكرة ثم من النت)
-            const cachedFriends = localStorage.getItem('friends_list_' + auth.currentUser.uid);
-            if(cachedFriends) { renderFriendsList(JSON.parse(cachedFriends)); }
-
+        function initChats() {
             onValue(ref(db, `friends/${auth.currentUser.uid}`), snap => {
-                const friendsObj = snap.val() || {};
-                localStorage.setItem('friends_list_' + auth.currentUser.uid, JSON.stringify(friendsObj));
-                renderFriendsList(friendsObj);
-            });
-        }
-    </script>
-</body>
-</html>
+                const box = document.getElementById('chat-items-list'); box.innerHTML = "";
+                snap.forEach(c => {
+                    const f = c.val(), d = document.createElement('div');
+                    d.className = 'glass-panel'; d
