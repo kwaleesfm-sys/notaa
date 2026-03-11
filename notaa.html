@@ -20,55 +20,55 @@
         .glass-panel { background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); }
         .hidden { display: none !important; }
         
-        /* الأزرار والمدخلات */
         .btn-glass { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; padding: 16px; border-radius: 16px; color: white; font-weight: bold; width: 100%; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4); }
-        .btn-glass:active { transform: scale(0.97); }
-        .input-glass { background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px; color: white; width: 100%; text-align: center; margin-bottom: 15px; transition: 0.3s; }
+        .input-glass { background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px; color: white; width: 100%; text-align: center; margin-bottom: 15px; }
         
-        /* شريط التنقل والنوتس */
         .bottom-nav { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 70px; display: flex; z-index: 100; padding: 10px; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 13px; color: rgba(255,255,255,0.5); cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--primary); font-weight: bold; text-shadow: 0 0 10px var(--primary); transform: translateY(-3px); }
+        .nav-item.active { color: var(--primary); font-weight: bold; transform: translateY(-3px); }
+        
         .notes-bar { display: flex; gap: 15px; padding: 20px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--glass-border); }
         .note-wrap { min-width: 70px; text-align: center; position: relative; cursor: pointer; }
         .note-img { width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--primary); padding: 2px; object-fit: cover; }
-        .note-pop { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: white; color: black; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10; }
-
-        /* منطقة الشات والمؤشرات الجديدة */
-        #chat-window { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(25px); z-index: 300; display: flex; flex-direction: column; }
-        .chat-header { padding: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--glass-border); }
-        .msg-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         
-        .msg { max-width: 78%; padding: 12px 16px; border-radius: 20px; font-size: 15px; position: relative; word-wrap: break-word; line-height: 1.4; transition: 0.2s; }
-        .sent { align-self: flex-end; background: var(--primary-dark); border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2); }
-        .received { align-self: flex-start; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-bottom-left-radius: 4px; }
+        /* تنظيم منطقة الشات */
+        #chat-window { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.95); z-index: 300; display: flex; flex-direction: column; }
+        .chat-header { padding: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.5); }
+        .msg-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
         
-        .whisper-msg { filter: blur(5px); opacity: 0.7; transition: 0.3s; border: 1px dashed var(--whisper); }
-        .whisper-msg:hover, .whisper-msg:active { filter: blur(0); opacity: 1; }
-        .ghost-msg { border: 1px dashed var(--ghost); background: rgba(0, 206, 201, 0.1) !important; color: var(--ghost); }
+        /* هيكلة الرسالة بشكل منظم */
+        .msg-row { display: flex; flex-direction: column; width: 100%; }
+        .msg { max-width: 75%; padding: 12px 16px; border-radius: 20px; font-size: 15px; word-wrap: break-word; line-height: 1.5; position: relative; }
+        .sent-row { align-items: flex-end; }
+        .sent { background: var(--primary-dark); border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2); }
+        .received-row { align-items: flex-start; }
+        .received { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-bottom-left-radius: 4px; }
         
-        .msg-status-icon { font-size: 11px; opacity: 0.7; margin-top: 5px; text-align: right; display: block; }
-        .status-seen { color: #fff; text-shadow: 0 0 5px var(--primary); font-weight: bold; }
-
+        .whisper-msg { filter: blur(6px); opacity: 0.8; transition: 0.3s; border: 1px dashed var(--whisper); cursor: pointer; }
+        .whisper-msg:active { filter: blur(0); opacity: 1; }
+        .ghost-msg { border: 1px dashed var(--ghost); background: rgba(0, 206, 201, 0.15) !important; color: var(--ghost); }
+        
+        .status-text { font-size: 11px; margin-top: 5px; opacity: 0.8; padding: 0 5px; }
+        .status-seen { color: var(--primary); font-weight: bold; text-shadow: 0 0 5px rgba(162, 155, 254, 0.5); }
+        
         .unread-badge { background: var(--danger); color: white; font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 12px; margin-left: auto; box-shadow: 0 0 10px var(--danger); }
         .online-dot { width: 10px; height: 10px; background: var(--success); border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--success); margin-right: 5px; }
         .offline-dot { width: 10px; height: 10px; background: #666; border-radius: 50%; display: inline-block; margin-right: 5px; }
-
-        .input-area { padding: 15px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--glass-border); display: flex; align-items: center; gap: 10px; }
+        
+        .input-area { padding: 15px; background: rgba(0,0,0,0.6); border-top: 1px solid var(--glass-border); display: flex; align-items: center; gap: 10px; }
         .action-btn { width: 45px; height: 45px; border-radius: 50%; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 20px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .action-btn.recording { background: var(--danger); animation: pulse 1s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); box-shadow: 0 0 10px var(--danger); } 100% { transform: scale(1); } }
-
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        audio { height: 40px; max-width: 200px; outline: none; border-radius: 20px; }
+        
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        audio { height: 40px; max-width: 220px; outline: none; border-radius: 20px; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <div id="auth-screen" class="modal">
         <div class="glass-panel" style="padding: 30px; width: 100%; max-width: 380px; text-align: center;">
-            <h1 style="color:var(--primary); font-size: 35px; margin-bottom: 5px;">NootaChat</h1>
-            <p style="color: rgba(255,255,255,0.6); margin-bottom: 30px; font-size: 14px;">الإصدار الألترا</p>
+            <h1 style="color:var(--primary); font-size: 35px; margin-bottom: 30px;">NootaChat</h1>
             <input type="email" id="email" class="input-glass" placeholder="البريد الإلكتروني">
             <input type="password" id="pass" class="input-glass" placeholder="كلمة المرور">
             <button class="btn-glass" onclick="authAction('login')">دخول</button>
@@ -104,12 +104,7 @@
     <div id="app-screen" class="hidden" style="height:100%; display:flex; flex-direction:column;">
         <div id="page-chats" style="flex:1; overflow-y:auto; padding-bottom:100px;">
             <div style="padding: 25px 20px 10px; font-size: 28px; font-weight: 800;">الدردشات</div>
-            <div class="notes-bar" id="notes-list">
-                <div class="note-wrap" onclick="addNote()">
-                    <div class="note-img" style="border: 2px dashed rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; font-size:25px; color:rgba(255,255,255,0.6);">+</div>
-                    <span style="font-size:11px; margin-top:5px; display:block;">حالة جديدة</span>
-                </div>
-            </div>
+            <div class="notes-bar" id="notes-list"></div>
             <div id="chat-items-list" style="padding: 10px;"></div>
             <button class="btn-glass" style="width: calc(100% - 40px); margin: 20px; box-shadow: none;" onclick="findFriend()">+ إضافة صديق (Username)</button>
         </div>
@@ -155,22 +150,19 @@
         </div>
 
         <div class="input-area" id="input-bar">
-            <label class="action-btn" style="cursor:pointer;">
-                📷 <input type="file" id="chat-img-input" accept="image/*" style="display:none;">
-            </label>
-            
+            <label class="action-btn" style="cursor:pointer;">📷 <input type="file" id="chat-img-input" accept="image/*" style="display:none;"></label>
             <input type="text" id="msg-input" placeholder="اكتب رسالة..." style="flex:1; background:rgba(255,255,255,0.1); border:none; border-radius:20px; padding:14px; color:white; font-size: 15px;">
-            
             <button id="record-btn" class="action-btn" onmousedown="startRecord()" onmouseup="stopRecord()" ontouchstart="startRecord()" ontouchend="stopRecord()">🎤</button>
             <button id="send-btn" onclick="sendMsg()" class="action-btn hidden" style="background: var(--primary);">➤</button>
         </div>
-        <div id="blocked-bar" class="hidden" style="padding:20px; text-align:center; background:rgba(255, 71, 87, 0.2); color: var(--danger); font-weight:bold; backdrop-filter: blur(10px);">لا يمكنك المراسلة، تم الحظر.</div>
+        <div id="blocked-bar" class="hidden" style="padding:20px; text-align:center; background:rgba(255, 71, 87, 0.2); color: var(--danger); font-weight:bold;">تم تقييد المحادثة.</div>
     </div>
 
     <div id="opt-modal" class="modal hidden" onclick="this.classList.add('hidden')">
         <div class="glass-panel" style="width: 100%; max-width: 300px; padding: 10px 0;" onclick="event.stopPropagation()">
             <div style="padding:15px; text-align:center; border-bottom:1px solid var(--glass-border); cursor:pointer;" onclick="clearChat()">مسح المحادثة 🗑️</div>
-            <div id="block-btn-txt" style="padding:15px; text-align:center; border-bottom:1px solid var(--glass-border); cursor:pointer; color:var(--danger);" onclick="blockUser()">حظر المستخدم 🚫</div>
+            <div id="block-btn-txt" style="padding:15px; text-align:center; border-bottom:1px solid var(--glass-border); cursor:pointer; color:var(--whisper);" onclick="reportUser()">إبلاغ عن المستخدم 🚩</div>
+            <div style="padding:15px; text-align:center; cursor:pointer; color:var(--danger);" onclick="blockUser()">حظر المستخدم 🚫</div>
         </div>
     </div>
 
@@ -178,7 +170,6 @@
         <div class="glass-panel" style="display:flex; justify-content:space-around; padding:15px; width: 90%; max-width: 320px;" onclick="event.stopPropagation()">
             <span style="font-size:28px; cursor:pointer;" onclick="setReact('❤️')">❤️</span>
             <span style="font-size:28px; cursor:pointer;" onclick="setReact('😂')">😂</span>
-            <span style="font-size:28px; cursor:pointer;" onclick="setReact('😮')">😮</span>
             <span style="font-size:28px; cursor:pointer;" onclick="setReact('🔥')">🔥</span>
             <div style="width: 1px; background: var(--glass-border); margin: 0 10px;"></div>
             <span style="font-size:22px; cursor:pointer; color:var(--primary);" onclick="makeReply()">↩️ رد</span>
@@ -186,10 +177,10 @@
     </div>
 
     <script type="module">
-        // التوصيلة بقاعدة البيانات (Firebase)
+        // **ملاحظة هامة:** أضفنا off لإيقاف الاستماع للمحادثات القديمة
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, get, child, update, remove, increment, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, get, child, update, remove, onDisconnect, off } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M",
@@ -205,14 +196,14 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let me = null, activeF = null, activeC = null;
+        let me = null, activeF = null, activeC = null, chatListenerRef = null;
         let isGhost = false, isWhisper = false, replyTo = null, selectedMsgId = null;
         let mediaRecorder, audioChunks = [];
 
-        // الزر الديناميكي للإدخال
         const msgInput = document.getElementById('msg-input');
         const sendBtn = document.getElementById('send-btn');
         const recordBtn = document.getElementById('record-btn');
+        
         msgInput.addEventListener('input', () => {
             if(msgInput.value.trim().length > 0) { sendBtn.classList.remove('hidden'); recordBtn.classList.add('hidden'); }
             else { sendBtn.classList.add('hidden'); recordBtn.classList.remove('hidden'); }
@@ -227,10 +218,7 @@
 
         const toB64 = f => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(f); rd.onload = () => r(rd.result); });
         document.getElementById('img-input').onchange = async e => { if(e.target.files[0]) document.getElementById('prev-img').src = await toB64(e.target.files[0]); };
-        
-        document.getElementById('chat-img-input').onchange = async e => { 
-            if(e.target.files[0]) { const imgB64 = await toB64(e.target.files[0]); pushData({ imgMsg: imgB64 }); } 
-        };
+        document.getElementById('chat-img-input').onchange = async e => { if(e.target.files[0]) { const imgB64 = await toB64(e.target.files[0]); pushData({ imgMsg: imgB64 }); } };
 
         window.saveUser = async () => {
             const u = document.getElementById('set-user').value.trim().toLowerCase(), n = document.getElementById('set-nick').value.trim(), img = document.getElementById('prev-img').src;
@@ -260,18 +248,19 @@
         };
 
         window.openChat = async (id, name, img) => {
+            // حل مشكلة التداخل: إيقاف الاستماع للشات القديم قبل فتح الجديد
+            if (chatListenerRef) { off(chatListenerRef); chatListenerRef = null; }
+            
             activeF = id; activeC = [auth.currentUser.uid, id].sort().join("_");
             document.getElementById('chat-window').classList.remove('hidden');
             document.getElementById('h-name').innerHTML = `${name} <span id="h-online" class="offline-dot"></span>`;
             document.getElementById('h-img').src = img;
             
-            // تصفير عداد الرسائل غير المقروءة عند فتح الشات
             set(ref(db, `unread/${auth.currentUser.uid}/${id}`), 0);
             
             await update(ref(db, `friends/${auth.currentUser.uid}/${id}`), { n: name, img: img });
             await update(ref(db, `friends/${id}/${auth.currentUser.uid}`), { n: me.n, img: me.img });
             
-            // متابعة حالة اتصال الصديق
             onValue(ref(db, `presence/${id}`), s => {
                 const dot = document.getElementById('h-online');
                 if(dot) { dot.className = s.val() === true ? 'online-dot' : 'offline-dot'; }
@@ -280,7 +269,11 @@
             checkBlock(); loadMsgs();
         };
 
-        window.closeChat = () => { document.getElementById('chat-window').classList.add('hidden'); activeF = null; activeC = null; isGhost = false; isWhisper = false; };
+        window.closeChat = () => { 
+            // حل مشكلة التداخل: إيقاف الاستماع عند الإغلاق
+            if (chatListenerRef) { off(chatListenerRef); chatListenerRef = null; }
+            document.getElementById('chat-window').classList.add('hidden'); activeF = null; activeC = null; isGhost = false; isWhisper = false; 
+        };
 
         window.toggleMode = (m) => {
             if(m==='ghost') { isGhost = !isGhost; document.getElementById('ghost-btn').style.opacity = isGhost ? "1" : "0.4"; }
@@ -290,7 +283,6 @@
             document.getElementById('chat-status').innerText = s;
         };
 
-        // الريكورد المعدل المتوافق مع الايفون
         window.startRecord = async () => {
             recordBtn.classList.add('recording'); audioChunks = [];
             try {
@@ -321,7 +313,6 @@
             
             const mRef = push(ref(db, 'messages/'+activeC)); set(mRef, data);
             
-            // زيادة عداد غير المقروء للطرف الآخر
             const unreadRef = ref(db, `unread/${activeF}/${auth.currentUser.uid}`);
             get(unreadRef).then(s => set(unreadRef, (s.val() || 0) + 1));
 
@@ -329,55 +320,81 @@
         }
 
         function loadMsgs() {
-            onValue(ref(db, 'messages/'+activeC), snap => {
-                if(!activeC) return; // لمنع تحميل رسائل في الخلفية بعد الإغلاق
+            chatListenerRef = ref(db, 'messages/'+activeC);
+            onValue(chatListenerRef, snap => {
                 const box = document.getElementById('msg-area'); box.innerHTML = "";
                 snap.forEach(c => {
-                    const m = c.val(), d = document.createElement('div');
-                    
-                    // إذا كانت الرسالة مرسلة من الصديق، قم بتعليمها كمقروءة فوراً
+                    const m = c.val();
                     if(m.s === activeF && m.read === false) { update(ref(db, `messages/${activeC}/${c.key}`), { read: true }); }
 
-                    let classes = `glass-panel msg ${m.s === auth.currentUser.uid ? 'sent' : 'received'} `;
-                    if(m.g) classes += 'ghost-msg '; if(m.w) classes += 'whisper-msg ';
-                    d.className = classes;
+                    // تصميم جديد ومنظم للرسالة
+                    const row = document.createElement('div');
+                    row.className = `msg-row ${m.s === auth.currentUser.uid ? 'sent-row' : 'received-row'}`;
                     
-                    let html = "";
-                    if(m.reply) html += `<div style="background:rgba(0,0,0,0.3); padding:8px; border-right:3px solid var(--primary); border-radius:8px; margin-bottom:8px; font-size:12px;">${m.reply}</div>`;
-                    if(m.t) html += m.t;
-                    if(m.imgMsg) html += `<img src="${m.imgMsg}" style="width:100%; border-radius:10px; margin-top:5px;">`;
-                    if(m.a) html += `<audio src="${m.a}" controls playsinline></audio>`;
-                    if(m.react) html += `<div style="position:absolute; bottom:-8px; right:10px; background:#222; border-radius:12px; padding:2px 6px; font-size:13px;">${m.react}</div>`;
+                    let bubbleClasses = `msg ${m.s === auth.currentUser.uid ? 'sent' : 'received'} ${m.g ? 'ghost-msg' : ''} ${m.w ? 'whisper-msg' : ''}`;
                     
-                    // نظام القراءة الجديد (سحابة للإرسال / عين متوهجة للرؤية)
+                    let bubbleHTML = `<div class="${bubbleClasses}" onclick="selectMsg('${c.key}', '${m.t ? m.t : (m.imgMsg ? 'صورة' : 'مقطع صوتي')}')">`;
+                    if(m.reply) bubbleHTML += `<div style="background:rgba(0,0,0,0.3); padding:8px; border-right:3px solid var(--primary); border-radius:8px; margin-bottom:8px; font-size:12px;">${m.reply}</div>`;
+                    if(m.t) bubbleHTML += m.t;
+                    if(m.imgMsg) bubbleHTML += `<img src="${m.imgMsg}" style="width:100%; border-radius:10px; margin-top:5px;">`;
+                    if(m.a) bubbleHTML += `<audio src="${m.a}" controls playsinline></audio>`;
+                    if(m.react) bubbleHTML += `<div style="position:absolute; bottom:-10px; right:10px; background:#222; border-radius:12px; padding:2px 6px; font-size:13px; z-index:2;">${m.react}</div>`;
+                    bubbleHTML += `</div>`;
+
+                    // فصل حالة القراءة عن فقاعة الرسالة لتكون منظمة
+                    let statusHTML = '';
                     if(m.s === auth.currentUser.uid) {
-                        html += `<span class="msg-status-icon ${m.read ? 'status-seen' : ''}">${m.read ? '👁️ شوهدت' : '☁️ أُرسلت'}</span>`;
+                        statusHTML = `<div class="status-text ${m.read ? 'status-seen' : ''}">${m.read ? '👁️ تمت الرؤية' : '☁️ أُرسلت'}</div>`;
                     }
 
-                    d.innerHTML = html;
-                    d.onclick = () => { selectedMsgId = c.key; replyTo = m.t ? m.t : (m.imgMsg ? "صورة" : "مقطع صوتي"); document.getElementById('react-modal').classList.remove('hidden'); };
-                    box.appendChild(d);
+                    row.innerHTML = bubbleHTML + statusHTML;
+                    box.appendChild(row);
                 });
                 box.scrollTop = box.scrollHeight;
             });
         }
 
+        window.selectMsg = (id, text) => { selectedMsgId = id; replyTo = text; document.getElementById('react-modal').classList.remove('hidden'); };
         window.setReact = (r) => { update(ref(db, `messages/${activeC}/${selectedMsgId}`), { react: r }); document.getElementById('react-modal').classList.add('hidden'); };
         window.makeReply = () => { document.getElementById('reply-preview').classList.remove('hidden'); document.getElementById('reply-text').innerText = replyTo; document.getElementById('react-modal').classList.add('hidden'); };
         window.cancelReply = () => { replyTo = null; document.getElementById('reply-preview').classList.add('hidden'); };
 
         window.openOptions = () => { document.getElementById('opt-modal').classList.remove('hidden'); };
-        window.blockUser = async () => { /* نفس الكود السابق للحظر */ };
         window.clearChat = async () => { if(confirm("مسح السجل للطرفين؟")) { await remove(ref(db, 'messages/'+activeC)); closeChat(); document.getElementById('opt-modal').classList.add('hidden'); } };
 
-        function checkBlock() { /* نفس الكود السابق */ }
+        // نظام الإبلاغ الجديد
+        window.reportUser = async () => {
+            if(confirm("هل أنت متأكد من الإبلاغ عن هذا المستخدم لانتهاك القواعد؟ (10 بلاغات تغلق حسابه)")) {
+                const repRef = ref(db, `reports/${activeF}`);
+                const snap = await get(repRef);
+                let count = (snap.val() || 0) + 1;
+                await set(repRef, count);
+                if(count >= 10) { await update(ref(db, `users/${activeF}`), { banned: true }); }
+                alert("تم إرسال البلاغ للإدارة. شكراً لمساعدتنا في الحفاظ على أمان التطبيق.");
+                document.getElementById('opt-modal').classList.add('hidden');
+            }
+        };
+
+        window.blockUser = async () => {
+            await update(ref(db, `blocks/${auth.currentUser.uid}/${activeF}`), { blocked: true });
+            document.getElementById('opt-modal').classList.add('hidden'); alert("تم حظر المستخدم."); checkBlock();
+        };
+
+        function checkBlock() {
+            get(ref(db, `blocks/${auth.currentUser.uid}/${activeF}`)).then(s1 => {
+                get(ref(db, `blocks/${activeF}/${auth.currentUser.uid}`)).then(s2 => {
+                    const blocked = (s1.exists() && s1.val().blocked) || (s2.exists() && s2.val().blocked);
+                    document.getElementById('input-bar').classList.toggle('hidden', blocked);
+                    document.getElementById('blocked-bar').classList.toggle('hidden', !blocked);
+                });
+            });
+        }
 
         window.addNote = async () => { const t = prompt("حالة جديدة (تختفي بعد 24 ساعة):"); if(t) await set(ref(db, 'notes/'+auth.currentUser.uid), { t, n: me.n, img: me.img, time: Date.now() }); };
         window.editProfile = () => { document.getElementById('setup-screen').classList.remove('hidden'); document.getElementById('set-user').classList.add('hidden'); document.getElementById('close-setup-btn').classList.remove('hidden'); };
 
         onAuthStateChanged(auth, async u => {
             if(u) {
-                // نظام الأونلاين والأوفلاين التلقائي
                 const connectedRef = ref(db, '.info/connected');
                 onValue(connectedRef, snap => {
                     if (snap.val() === true) {
@@ -388,6 +405,7 @@
 
                 const s = await get(child(ref(db), 'users/'+u.uid));
                 if(s.exists()) {
+                    if(s.val().banned) return alert("هذا الحساب محظور نهائياً بسبب كثرة البلاغات.");
                     me = s.val();
                     document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('app-screen').classList.remove('hidden');
                     document.getElementById('my-avatar').src = me.img; document.getElementById('my-name-display').innerText = me.n; document.getElementById('my-user-display').innerText = "@" + me.u;
@@ -397,7 +415,6 @@
         });
 
         function initApp() {
-            // تحميل حالات الأصدقاء
             onValue(ref(db, 'notes'), snap => {
                 const box = document.getElementById('notes-list'); box.innerHTML = `<div class="note-wrap" onclick="addNote()"><div class="note-img" style="border: 2px dashed rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; font-size:25px;">+</div><span style="font-size:11px; margin-top:5px; display:block;">حالة جديدة</span></div>`;
                 snap.forEach(c => {
@@ -405,14 +422,13 @@
                         if(isF.exists() || c.key === auth.currentUser.uid) {
                             const n = c.val(); if(Date.now() - n.time < 86400000) {
                                 const d = document.createElement('div'); d.className = 'note-wrap';
-                                d.innerHTML = `<div class="note-pop">${n.t}</div><img class="note-img" src="${n.img}"><span style="font-size:10px; display:block; margin-top:5px;">${n.n}</span>`; box.appendChild(d);
+                                d.innerHTML = `<div class="note-pop" style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: white; color: black; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10;">${n.t}</div><img class="note-img" src="${n.img}"><span style="font-size:10px; display:block; margin-top:5px;">${n.n}</span>`; box.appendChild(d);
                             }
                         }
                     });
                 });
             });
 
-            // تحميل قائمة الأصدقاء مع نظام الرسائل غير المقروءة والاتصال
             onValue(ref(db, `friends/${auth.currentUser.uid}`), snap => {
                 const box = document.getElementById('chat-items-list'); box.innerHTML = "";
                 snap.forEach(c => {
@@ -425,13 +441,11 @@
                     inner += `<div id="unread-${fId}" class="unread-badge hidden">0</div>`;
                     d.innerHTML = inner; box.appendChild(d);
 
-                    // تحديث الأونلاين في القائمة
                     onValue(ref(db, `presence/${fId}`), pSnap => {
                         const statusTxt = document.getElementById(`status-${fId}`);
                         if(statusTxt) { statusTxt.innerHTML = pSnap.val() === true ? `<span class="online-dot"></span> متصل الآن` : `<span class="offline-dot"></span> غير متصل`; }
                     });
 
-                    // تحديث العداد
                     onValue(ref(db, `unread/${auth.currentUser.uid}/${fId}`), uSnap => {
                         const count = uSnap.val() || 0;
                         const badge = document.getElementById(`unread-${fId}`);
