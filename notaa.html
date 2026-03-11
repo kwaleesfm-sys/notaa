@@ -3,111 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NootaChat Pro | النسخة المتكاملة</title>
+    <title>NootaChat Ultra | Ghost Mode</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #090e11; --panel-dark: #111b21; --primary: #8A2BE2;
             --secondary: #202c33; --text-main: #e9edef; --text-dim: #8696a0; --danger: #ff4757;
+            --ghost: #00f2ff;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-dark); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         .hidden { display: none !important; }
         
-        /* واجهات الدخول والإعداد */
-        .auth-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 30px; text-align: center; }
-        .input-group { background: var(--secondary); border-radius: 12px; padding: 12px; margin-bottom: 12px; width: 100%; max-width: 320px; border: 1px solid #2f3e46; }
-        input { background: transparent; border: none; color: white; width: 100%; outline: none; font-size: 16px; text-align: center; }
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; max-width: 320px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-primary:active { transform: scale(0.98); }
+        /* واجهات الدخول */
+        .auth-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 30px; }
+        .input-group { background: var(--secondary); border-radius: 15px; padding: 12px; margin-bottom: 15px; width: 100%; max-width: 350px; border: 1px solid #2f3e46; }
+        input { background: transparent; border: none; color: white; width: 100%; font-size: 16px; text-align: center; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; width: 100%; max-width: 350px; font-weight: bold; cursor: pointer; transition: 0.3s; }
 
         /* التطبيق الرئيسي */
-        .main-content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--panel-dark); display: flex; border-top: 1px solid #222d34; height: 70px; z-index: 100; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--panel-dark); display: flex; border-top: 1px solid #222d34; height: 75px; z-index: 100; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: var(--text-dim); cursor: pointer; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
 
-        /* شريط النوت المطور */
+        /* النوتس المطور */
         .notes-container { display: flex; gap: 15px; padding: 20px; overflow-x: auto; scrollbar-width: none; background: var(--bg-dark); }
-        .note-item { min-width: 75px; text-align: center; position: relative; }
-        .note-circle { width: 65px; height: 65px; border-radius: 50%; border: 2.5px solid var(--primary); padding: 3px; background: var(--secondary); overflow: hidden; }
+        .note-circle { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--primary); padding: 3px; background: var(--secondary); position: relative; }
         .note-circle img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        .note-bubble { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); background: white; color: black; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: bold; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 10; }
+        .note-bubble { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: white; color: black; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10; max-width: 80px; overflow: hidden; text-overflow: ellipsis; }
 
-        /* قائمة الشاتات */
-        .chat-row { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #222d34; cursor: pointer; }
-        .chat-row img { width: 55px; height: 55px; border-radius: 50%; margin-left: 15px; object-fit: cover; border: 1px solid var(--secondary); }
-
-        /* نافذة الدردشة */
+        /* شاشة الشات */
         #chat-window { position: fixed; top: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 200; display: flex; flex-direction: column; }
-        .chat-header { padding: 15px; background: var(--panel-dark); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222d34; }
-        .msg-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; background-color: #0b141a; }
-        .msg { max-width: 80%; padding: 12px; margin: 5px; border-radius: 15px; font-size: 15px; line-height: 1.4; position: relative; }
-        .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
-        .received { align-self: flex-start; background: var(--secondary); color: white; border-bottom-left-radius: 2px; }
+        .chat-header { padding: 15px; background: var(--panel-dark); display: flex; align-items: center; justify-content: space-between; }
+        .msg-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; background-color: #0b141a; }
+        .msg { max-width: 85%; padding: 12px 16px; margin: 8px 0; border-radius: 18px; font-size: 15px; position: relative; animation: fadeIn 0.3s; }
+        .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+        .received { align-self: flex-start; background: var(--secondary); color: white; border-bottom-left-radius: 4px; }
+        .ghost-msg { border: 2px dashed var(--ghost); background: rgba(0, 242, 255, 0.1) !important; color: var(--ghost) !important; }
 
-        /* قائمة الخيارات (Modal) */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 300; display: flex; align-items: flex-end; }
-        .modal-content { width: 100%; background: var(--panel-dark); border-radius: 25px 25px 0 0; padding: 20px; animation: slideUp 0.3s ease-out; }
-        .modal-btn { width: 100%; padding: 15px; text-align: center; font-weight: bold; border-bottom: 1px solid #222d34; cursor: pointer; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* مفتاح وضع الشبح */
+        .ghost-toggle { width: 40px; height: 20px; background: #333; border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; }
+        .ghost-toggle.active { background: var(--ghost); box-shadow: 0 0 10px var(--ghost); }
+        .ghost-circle { width: 16px; height: 16px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
+        .ghost-toggle.active .ghost-circle { left: 22px; }
     </style>
 </head>
 <body>
 
     <div id="ban-screen" class="auth-screen hidden">
-        <h1 style="color:var(--danger)">الحساب موقوف</h1>
-        <p>لقد تجاوزت الحد المسموح به من البلاغات (10 إبلاغات).</p>
+        <h1 style="color:var(--danger)">🚫 الحساب موقوف</h1>
+        <p>لقد تجاوزت الحد المسموح به من البلاغات.</p>
     </div>
 
     <div id="login-screen" class="auth-screen">
-        <h1 style="color: var(--primary); font-size: 40px; margin-bottom: 10px;">NootaChat</h1>
-        <p style="color: var(--text-dim); margin-bottom: 30px;">تواصل بخصوصية تامة</p>
+        <h1 style="color: var(--primary); font-size: 45px; margin:0;">NootaChat</h1>
+        <p style="color: var(--text-dim); margin-bottom: 40px;">الجيل الجديد من الدردشة</p>
         <div class="input-group"><input type="email" id="email" placeholder="البريد الإلكتروني"></div>
         <div class="input-group"><input type="password" id="pass" placeholder="كلمة المرور"></div>
-        <button class="btn-primary" id="btn-login-action">تسجيل الدخول</button>
-        <p onclick="toggleAuth(true)" style="margin-top:20px; color:var(--text-dim); cursor:pointer;">ليس لديك حساب؟ <span style="color:var(--primary)">سجل هنا</span></p>
+        <button class="btn-primary" id="btn-login-action">دخول</button>
+        <p onclick="toggleAuth(true)" style="margin-top:25px; color:var(--text-dim);">مستخدم جديد؟ <span style="color:var(--primary)">أنشئ حسابك</span></p>
     </div>
 
     <div id="signup-screen" class="auth-screen hidden">
-        <h2 style="color: var(--primary);">إنشاء حساب جديد</h2>
-        <div class="input-group"><input type="email" id="s-email" placeholder="البريد الإلكتروني"></div>
-        <div class="input-group"><input type="password" id="s-pass" placeholder="كلمة المرور"></div>
-        <button class="btn-primary" id="btn-signup-action">إنشاء الحساب</button>
-        <p onclick="toggleAuth(false)" style="margin-top:20px; color:var(--text-dim); cursor:pointer;">لديك حساب؟ <span style="color:var(--primary)">ادخل هنا</span></p>
+        <h2 style="color: var(--primary);">سجل الآن</h2>
+        <div class="input-group"><input type="email" id="s-email" placeholder="بريد جديد"></div>
+        <div class="input-group"><input type="password" id="s-pass" placeholder="كلمة مرور"></div>
+        <button class="btn-primary" id="btn-signup-action">إنشاء</button>
+        <p onclick="toggleAuth(false)" style="margin-top:25px; color:var(--text-dim);">لديك حساب؟ <span style="color:var(--primary)">ادخل</span></p>
     </div>
 
     <div id="setup-screen" class="auth-screen hidden">
-        <h2>إعداد ملفك الشخصي</h2>
-        <div style="position:relative; margin-bottom:20px;">
-            <img id="preview-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
-            <input type="file" id="avatar-input" accept="image/*" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
+        <h2>مرحباً بك! أخبرنا عنك</h2>
+        <div style="position:relative; margin:20px;">
+            <img id="preview-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid var(--primary);">
+            <input type="file" id="avatar-input" accept="image/*" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0;">
         </div>
-        <div class="input-group"><input type="text" id="setup-user" placeholder="اسم المستخدم (Username)"></div>
-        <div class="input-group"><input type="text" id="setup-nick" placeholder="اللقب (يظهر للجميع)"></div>
-        <button class="btn-primary" id="btn-save-setup">حفظ وابدأ المحادثة</button>
+        <div class="input-group"><input type="text" id="setup-user" placeholder="اسم المستخدم (English)"></div>
+        <div class="input-group"><input type="text" id="setup-nick" placeholder="لقبك (Nickname)"></div>
+        <button class="btn-primary" id="btn-save-setup">حفظ وابدأ</button>
     </div>
 
     <div id="app-screen" class="hidden" style="height:100%;">
-        <div id="page-chats" class="main-content">
-            <div style="padding: 20px; font-size: 24px; font-weight: bold;">المحادثات</div>
+        <div id="page-chats" class="main-page">
+            <div style="padding: 25px 20px 10px; font-size: 26px; font-weight: bold;">الدردشات</div>
             <div class="notes-container" id="notes-list">
-                <div class="note-item" onclick="createNewNote()">
-                    <div class="note-circle" style="border-style:dashed; color:var(--text-dim); display:flex; align-items:center; justify-content:center; font-size:30px;">+</div>
-                    <span style="font-size:11px;">نوتة</span>
+                <div onclick="createNewNote()" style="min-width:75px; text-align:center;">
+                    <div class="note-circle" style="border-style:dashed; color:var(--text-dim); display:flex; align-items:center; justify-content:center; font-size:35px;">+</div>
+                    <span style="font-size:11px;">أضف حالة</span>
                 </div>
             </div>
-            <div id="chats-list-items"></div>
-            <button class="btn-primary" style="margin:20px; width:calc(100% - 40px);" onclick="findFriend()">+ محادثة جديدة بالاسم</button>
+            <div id="chats-list-items" style="padding-bottom: 100px;"></div>
+            <button class="btn-primary" style="position:fixed; bottom:90px; left:20px; right:20px; width:auto;" onclick="findFriend()">+ محادثة جديدة</button>
         </div>
 
-        <div id="page-profile" class="main-content hidden" style="padding:40px; text-align:center;">
-            <img id="my-p-img" src="" style="width:120px; height:120px; border-radius:50%; border:3px solid var(--primary); object-fit:cover; margin-bottom:15px;">
-            <h2 id="my-p-nick" style="margin:5px;">Nickname</h2>
-            <p id="my-p-user" style="color:var(--text-dim); margin:0;">@username</p>
-            <div style="margin-top:50px;">
-                <button class="btn-primary" style="background:var(--danger);" onclick="location.reload()">تسجيل الخروج</button>
-            </div>
+        <div id="page-profile" class="main-page hidden" style="padding:50px 20px; text-align:center;">
+            <img id="my-p-img" src="" style="width:130px; height:130px; border-radius:50%; border:4px solid var(--primary); object-fit:cover; margin-bottom:20px;">
+            <h2 id="my-p-nick" style="margin:5px;">...</h2>
+            <p id="my-p-user" style="color:var(--text-dim);">@...</p>
+            <button class="btn-primary" style="background:var(--danger); margin-top:60px;" onclick="location.reload()">تسجيل خروج</button>
         </div>
 
         <nav class="bottom-nav">
@@ -118,26 +113,32 @@
 
     <div id="chat-window" class="hidden">
         <div class="chat-header">
-            <div style="display:flex; align-items:center;" onclick="openOptions()">
-                <button onclick="event.stopPropagation(); closeChat()" style="background:none; border:none; color:white; font-size:22px; margin-left:10px;">→</button>
-                <img id="chat-h-img" src="" style="width:40px; height:40px; border-radius:50%; margin-left:10px; object-fit:cover;">
-                <b id="chat-h-name">...</b>
+            <div style="display:flex; align-items:center;">
+                <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:24px; margin-left:10px;">→</button>
+                <img id="chat-h-img" src="" style="width:42px; height:42px; border-radius:50%; object-fit:cover; margin-left:10px;">
+                <div onclick="openOptions()">
+                    <b id="chat-h-name">...</b><br>
+                    <small style="color:var(--text-dim)" id="ghost-status">عادي</small>
+                </div>
             </div>
-            <span onclick="openOptions()" style="font-size:20px; cursor:pointer;">⋮</span>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div id="ghost-btn" class="ghost-toggle" onclick="toggleGhostMode()"><div class="ghost-circle"></div></div>
+                <span onclick="openOptions()" style="font-size:22px;">⋮</span>
+            </div>
         </div>
-        <div class="msg-container" id="messages-box"></div>
-        <div style="padding:15px; background:var(--panel-dark); display:flex; gap:10px;">
-            <input type="text" id="m-input" placeholder="اكتب رسالة..." style="flex:1; background:var(--secondary); border-radius:25px; padding:12px; text-align:right;">
-            <button id="btn-send" style="background:var(--primary); color:white; border:none; border-radius:50%; width:48px; height:48px; display:flex; align-items:center; justify-content:center;">➤</button>
+        <div class="msg-box" id="msg-box"></div>
+        <div style="padding:15px; background:var(--panel-dark); display:flex; gap:12px; align-items:center;">
+            <input type="text" id="m-input" placeholder="رسالة..." style="flex:1; background:var(--secondary); border-radius:30px; padding:14px;">
+            <button id="btn-send" style="background:var(--primary); color:white; border:none; border-radius:50%; width:50px; height:50px; font-size:20px;">➤</button>
         </div>
     </div>
 
-    <div id="options-modal" class="modal-overlay hidden" onclick="this.classList.add('hidden')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-btn" onclick="deleteHistory()" style="color:var(--text-main)">🗑️ مسح المحادثة</div>
-            <div class="modal-btn" onclick="reportAction()" style="color:orange">⚠️ إبلاغ عن المستخدم</div>
-            <div class="modal-btn" onclick="blockAction()" style="color:var(--danger)">🚫 حظر ومسح</div>
-            <div class="modal-btn" onclick="document.getElementById('options-modal').classList.add('hidden')">إلغاء</div>
+    <div id="options-modal" class="modal-overlay hidden" onclick="this.classList.add('hidden')" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:500; display:flex; align-items:flex-end;">
+        <div style="width:100%; background:var(--panel-dark); border-radius:25px 25px 0 0; padding:20px;" onclick="event.stopPropagation()">
+            <div onclick="deleteHistory()" style="padding:20px; text-align:center; border-bottom:1px solid #222d34;">🗑️ مسح المحادثة</div>
+            <div onclick="reportAction()" style="padding:20px; text-align:center; border-bottom:1px solid #222d34; color:orange;">⚠️ إبلاغ عن المستخدم</div>
+            <div onclick="blockAction()" style="padding:20px; text-align:center; color:var(--danger);">🚫 حظر هذا الشخص</div>
+            <div onclick="document.getElementById('options-modal').classList.add('hidden')" style="padding:20px; text-align:center; color:var(--text-dim);">إغلاق</div>
         </div>
     </div>
 
@@ -160,193 +161,138 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let currentUserData = null;
-        let activeFId = null;
-        let activeCId = null;
+        let me = null, activeF = null, activeC = null, ghostMode = false;
 
-        // --- المساعدة ---
-        window.toggleAuth = (showSignup) => {
-            document.getElementById('login-screen').classList.toggle('hidden', showSignup);
-            document.getElementById('signup-screen').classList.toggle('hidden', !showSignup);
+        window.toggleAuth = (s) => {
+            document.getElementById('login-screen').classList.toggle('hidden', s);
+            document.getElementById('signup-screen').classList.toggle('hidden', !s);
         };
 
-        window.navTo = (page, el) => {
-            document.querySelectorAll('.main-content').forEach(p => p.classList.add('hidden'));
-            document.getElementById('page-'+page).classList.remove('hidden');
+        window.navTo = (p, el) => {
+            document.querySelectorAll('.main-page').forEach(x => x.classList.add('hidden'));
+            document.getElementById('page-'+p).classList.remove('hidden');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
         };
 
-        const toBase64 = f => new Promise((res) => {
-            const r = new FileReader(); r.readAsDataURL(f);
-            r.onload = () => res(r.result);
-        });
+        const toB64 = f => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(f); rd.onload = () => r(rd.result); });
+        document.getElementById('avatar-input').onchange = async e => { if(e.target.files[0]) document.getElementById('preview-img').src = await toB64(e.target.files[0]); };
 
-        // --- الصور ---
-        document.getElementById('avatar-input').onchange = async (e) => {
-            if(e.target.files[0]) document.getElementById('preview-img').src = await toBase64(e.target.files[0]);
-        };
-
-        // --- الأكشنز ---
         document.getElementById('btn-signup-action').onclick = async () => {
-            const e = document.getElementById('s-email').value, p = document.getElementById('s-pass').value;
-            try { await createUserWithEmailAndPassword(auth, e, p); } catch(err) { alert(err.message); }
+            try { await createUserWithEmailAndPassword(auth, document.getElementById('s-email').value, document.getElementById('s-pass').value); } catch(e) { alert(e.message); }
         };
 
         document.getElementById('btn-login-action').onclick = async () => {
-            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
-            try { await signInWithEmailAndPassword(auth, e, p); } catch(err) { alert("بيانات خاطئة"); }
+            try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value); } catch(e) { alert("بيانات غير صحيحة"); }
         };
 
         document.getElementById('btn-save-setup').onclick = async () => {
-            const u = document.getElementById('setup-user').value.trim().toLowerCase();
-            const n = document.getElementById('setup-nick').value.trim();
-            const img = document.getElementById('preview-img').src;
-            if(!u || !n) return alert("املأ الحقول");
+            const u = document.getElementById('setup-user').value.trim().toLowerCase(), n = document.getElementById('setup-nick').value.trim(), img = document.getElementById('preview-img').src;
+            if(!u || !n) return alert("أكمل البيانات");
             const snap = await get(child(ref(db), 'usernames/'+u));
-            if(snap.exists()) return alert("اسم المستخدم مأخوذ");
-
+            if(snap.exists()) return alert("اليوزر نيم مأخوذ");
             await set(ref(db, 'users/'+auth.currentUser.uid), { u, n, img, reports: 0 });
             await set(ref(db, 'usernames/'+u), auth.currentUser.uid);
             location.reload();
         };
 
         window.findFriend = async () => {
-            const name = prompt("ادخل اسم المستخدم (Username):");
+            const name = prompt("اسم المستخدم للصديق:");
             if(!name) return;
             const snap = await get(child(ref(db), `usernames/${name.toLowerCase()}`));
             if(snap.exists() && snap.val() !== auth.currentUser.uid) {
-                const fId = snap.val();
-                const fData = (await get(child(ref(db), `users/${fId}`))).val();
-                startConversation(fId, fData.n, fData.img);
-            } else alert("المستخدم غير موجود أو هذا حسابك!");
+                const fId = snap.val(), fData = (await get(child(ref(db), `users/${fId}`))).val();
+                openChat(fId, fData.n, fData.img);
+            } else alert("غير موجود أو هذا حسابك!");
         };
 
-        window.startConversation = async (fId, fName, fImg) => {
-            activeFId = fId;
-            activeCId = [auth.currentUser.uid, fId].sort().join("_");
+        window.openChat = async (id, name, img) => {
+            activeF = id; activeC = [auth.currentUser.uid, id].sort().join("_");
             document.getElementById('chat-window').classList.remove('hidden');
-            document.getElementById('chat-h-name').innerText = fName;
-            document.getElementById('chat-h-img').src = fImg;
-            // حفظ في القائمة
-            await update(ref(db, `user_lists/${auth.currentUser.uid}/${fId}`), { n: fName, img: fImg });
-            await update(ref(db, `user_lists/${fId}/${auth.currentUser.uid}`), { n: currentUserData.n, img: currentUserData.img });
-            loadMessages();
+            document.getElementById('chat-h-name').innerText = name;
+            document.getElementById('chat-h-img').src = img;
+            await update(ref(db, `user_lists/${auth.currentUser.uid}/${id}`), { n: name, img: img });
+            await update(ref(db, `user_lists/${id}/${auth.currentUser.uid}`), { n: me.n, img: me.img });
+            loadMsgs();
         };
 
         window.closeChat = () => document.getElementById('chat-window').classList.add('hidden');
 
-        document.getElementById('btn-send').onclick = () => {
-            const t = document.getElementById('m-input').value;
-            if(!t) return;
-            push(ref(db, 'messages/' + activeCId), { s: auth.currentUser.uid, t, time: Date.now() });
-            document.getElementById('m-input').value = "";
+        window.toggleGhostMode = () => {
+            ghostMode = !ghostMode;
+            document.getElementById('ghost-btn').classList.toggle('active', ghostMode);
+            document.getElementById('ghost-status').innerText = ghostMode ? "وضع الشبح نشط 👻" : "عادي";
+            document.getElementById('ghost-status').style.color = ghostMode ? "var(--ghost)" : "var(--text-dim)";
         };
 
-        function loadMessages() {
-            onValue(ref(db, 'messages/' + activeCId), snap => {
-                const box = document.getElementById('messages-box');
-                box.innerHTML = "";
+        document.getElementById('btn-send').onclick = () => {
+            const t = document.getElementById('m-input').value; if(!t) return;
+            const msgRef = push(ref(db, 'messages/' + activeC));
+            set(msgRef, { s: auth.currentUser.uid, t, time: Date.now(), ghost: ghostMode });
+            document.getElementById('m-input').value = "";
+            if(ghostMode) setTimeout(() => remove(msgRef), 10000); // حذف بعد 10 ثواني
+        };
+
+        function loadMsgs() {
+            onValue(ref(db, 'messages/' + activeC), snap => {
+                const box = document.getElementById('msg-box'); box.innerHTML = "";
                 snap.forEach(c => {
-                    const m = c.val();
-                    const d = document.createElement('div');
-                    d.className = `msg ${m.s === auth.currentUser.uid ? 'sent' : 'received'}`;
-                    d.innerText = m.t;
+                    const m = c.val(), d = document.createElement('div');
+                    d.className = `msg ${m.s === auth.currentUser.uid ? 'sent' : 'received'} ${m.ghost ? 'ghost-msg' : ''}`;
+                    d.innerHTML = m.ghost ? `👻 ${m.t} <br><small style="font-size:9px">سيختفي قريباً</small>` : m.t;
                     box.appendChild(d);
+                    // حذف الرسالة الشبح عند الطرف الآخر أيضاً بعد قراءتها بـ 10 ثواني
+                    if(m.ghost && m.s !== auth.currentUser.uid) setTimeout(() => remove(child(ref(db, 'messages/'+activeC), c.key)), 10000);
                 });
                 box.scrollTop = box.scrollHeight;
             });
         }
 
-        // --- الخيارات ---
         window.openOptions = () => document.getElementById('options-modal').classList.remove('hidden');
-
-        window.reportAction = async () => {
-            if(confirm("إبلاغ عن هذا المستخدم؟")) {
-                await update(ref(db, `users/${activeFId}`), { reports: increment(1) });
-                alert("تم الإبلاغ");
-                document.getElementById('options-modal').classList.add('hidden');
-            }
-        };
-
-        window.deleteHistory = async () => {
-            if(confirm("مسح الشات؟")) {
-                await remove(ref(db, 'messages/'+activeCId));
-                closeChat();
-                document.getElementById('options-modal').classList.add('hidden');
-            }
-        };
-
-        window.blockAction = async () => {
-            if(confirm("حظر هذا المستخدم؟")) {
-                await remove(ref(db, `user_lists/${auth.currentUser.uid}/${activeFId}`));
-                closeChat();
-                document.getElementById('options-modal').classList.add('hidden');
-            }
-        };
+        window.reportAction = async () => { if(confirm("إبلاغ؟")) { await update(ref(db, `users/${activeF}`), { reports: increment(1) }); alert("تم"); } };
+        window.deleteHistory = async () => { if(confirm("مسح؟")) { await remove(ref(db, 'messages/'+activeC)); closeChat(); } };
+        window.blockAction = async () => { if(confirm("حظر؟")) { await remove(ref(db, `user_lists/${auth.currentUser.uid}/${activeF}`)); closeChat(); } };
 
         window.createNewNote = async () => {
             const t = prompt("ماذا يدور في ذهنك؟");
-            if(t) await set(ref(db, 'notes/'+auth.currentUser.uid), { t, n: currentUserData.n, img: currentUserData.img, time: Date.now() });
+            if(t) await set(ref(db, 'notes/'+auth.currentUser.uid), { t, n: me.n, img: me.img, time: Date.now() });
         };
-
-        function initApp() {
-            onValue(ref(db, `user_lists/${auth.currentUser.uid}`), snap => {
-                const list = document.getElementById('chats-list-items');
-                list.innerHTML = "";
-                snap.forEach(c => {
-                    const f = c.val();
-                    const row = document.createElement('div');
-                    row.className = 'chat-row';
-                    row.onclick = () => startConversation(c.key, f.n, f.img);
-                    row.innerHTML = `<img src="${f.img}"><div><b>${f.n}</b><br><small style="color:var(--text-dim)">اضغط للمراسلة</small></div>`;
-                    list.appendChild(row);
-                });
-            });
-
-            onValue(ref(db, 'notes'), snap => {
-                const nList = document.getElementById('notes-list');
-                const btn = nList.firstElementChild; nList.innerHTML = ""; nList.appendChild(btn);
-                snap.forEach(c => {
-                    const n = c.val();
-                    if(Date.now() - n.time < 86400000) {
-                        const d = document.createElement('div');
-                        d.className = 'note-item';
-                        d.innerHTML = `<div class="note-bubble">${n.t}</div><div class="note-circle"><img src="${n.img}"></div><span style="font-size:10px">${n.n}</span>`;
-                        nList.appendChild(d);
-                    }
-                });
-            });
-        }
 
         onAuthStateChanged(auth, async u => {
             if(u) {
                 const snap = await get(child(ref(db), `users/${u.uid}`));
                 if(snap.exists()) {
-                    currentUserData = snap.val();
-                    if(currentUserData.reports >= 10) {
-                        document.body.innerHTML = document.getElementById('ban-screen').outerHTML;
-                        document.getElementById('ban-screen').classList.remove('hidden');
-                        return;
-                    }
-                    document.getElementById('login-screen').classList.add('hidden');
-                    document.getElementById('signup-screen').classList.add('hidden');
-                    document.getElementById('setup-screen').classList.add('hidden');
+                    me = snap.val();
+                    if(me.reports >= 10) { document.body.innerHTML = document.getElementById('ban-screen').outerHTML; document.getElementById('ban-screen').classList.remove('hidden'); return; }
+                    document.getElementById('login-screen').classList.add('hidden'); document.getElementById('setup-screen').classList.add('hidden');
                     document.getElementById('app-screen').classList.remove('hidden');
-                    document.getElementById('my-p-img').src = currentUserData.img;
-                    document.getElementById('my-p-nick').innerText = currentUserData.n;
-                    document.getElementById('my-p-user').innerText = "@" + currentUserData.u;
-                    initApp();
-                } else {
-                    document.getElementById('login-screen').classList.add('hidden');
-                    document.getElementById('signup-screen').classList.add('hidden');
-                    document.getElementById('setup-screen').classList.remove('hidden');
-                }
-            } else {
-                document.getElementById('login-screen').classList.remove('hidden');
-                document.getElementById('app-screen').classList.add('hidden');
-            }
+                    document.getElementById('my-p-img').src = me.img || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                    document.getElementById('my-p-nick').innerText = me.n;
+                    document.getElementById('my-p-user').innerText = "@" + me.u;
+                    initAppData();
+                } else { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('setup-screen').classList.remove('hidden'); }
+            } else { document.getElementById('login-screen').classList.remove('hidden'); document.getElementById('app-screen').classList.add('hidden'); }
         });
+
+        function initAppData() {
+            onValue(ref(db, `user_lists/${auth.currentUser.uid}`), snap => {
+                const list = document.getElementById('chats-list-items'); list.innerHTML = "";
+                snap.forEach(c => { const f = c.val(); const d = document.createElement('div');
+                    d.style = "display:flex; align-items:center; padding:15px; border-bottom:1px solid #222d34; cursor:pointer;";
+                    d.onclick = () => openChat(c.key, f.n, f.img);
+                    d.innerHTML = `<img src="${f.img}" style="width:55px; height:55px; border-radius:50%; margin-left:15px; object-fit:cover;"><div><b>${f.n}</b></div>`;
+                    list.appendChild(d);
+                });
+            });
+            onValue(ref(db, 'notes'), snap => {
+                const nList = document.getElementById('notes-list'); const btn = nList.firstElementChild; nList.innerHTML = ""; nList.appendChild(btn);
+                snap.forEach(c => { const n = c.val(); if(Date.now() - n.time < 86400000) {
+                    const d = document.createElement('div'); d.className = 'note-item';
+                    d.innerHTML = `<div class="note-circle"><div class="note-bubble">${n.t}</div><img src="${n.img}"></div><span style="font-size:10px; display:block; text-align:center; margin-top:5px;">${n.n}</span>`;
+                    nList.appendChild(d);
+                }});
+            });
+        }
     </script>
 </body>
 </html>
