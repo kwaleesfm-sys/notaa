@@ -3,261 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NootaChat Pro</title>
+    <title>NootaChat Pro | النسخة المتكاملة</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #090e11;
-            --panel-dark: #111b21;
-            --primary: #8A2BE2;
-            --secondary: #202c33;
-            --accent: #00a884;
-            --text-main: #e9edef;
-            --text-dim: #8696a0;
+            --bg-dark: #090e11; --panel-dark: #111b21; --primary: #8A2BE2;
+            --secondary: #202c33; --text-main: #e9edef; --text-dim: #8696a0; --danger: #ff4757;
         }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-dark); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         .hidden { display: none !important; }
+        
+        /* واجهات الدخول والإعداد */
+        .auth-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 30px; text-align: center; }
+        .input-group { background: var(--secondary); border-radius: 12px; padding: 12px; margin-bottom: 12px; width: 100%; max-width: 320px; border: 1px solid #2f3e46; }
+        input { background: transparent; border: none; color: white; width: 100%; outline: none; font-size: 16px; text-align: center; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; max-width: 320px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-primary:active { transform: scale(0.98); }
 
-        /* شاشات الدخول */
-        .auth-container {
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+        /* التطبيق الرئيسي */
+        .main-content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--panel-dark); display: flex; border-top: 1px solid #222d34; height: 70px; z-index: 100; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: var(--text-dim); cursor: pointer; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
 
-        .input-group {
-            background: var(--secondary);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 15px;
-            width: 100%;
-            max-width: 320px;
-            border: 1px solid #2f3e46;
-        }
-
-        input {
-            background: transparent;
-            border: none;
-            color: white;
-            width: 100%;
-            outline: none;
-            font-size: 16px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 345px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
-        }
-
-        /* القائمة السفلية (Modern Bottom Nav) */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            height: 65px;
-            background: var(--panel-dark);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid #222d34;
-            z-index: 100;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 11px;
-            color: var(--text-dim);
-            cursor: pointer;
-        }
-
-        .nav-item.active { color: var(--primary); }
-
-        /* الشاشات الرئيسية */
-        .main-screen {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 80px; /* لترك مساحة للـ nav */
-        }
+        /* شريط النوت المطور */
+        .notes-container { display: flex; gap: 15px; padding: 20px; overflow-x: auto; scrollbar-width: none; background: var(--bg-dark); }
+        .note-item { min-width: 75px; text-align: center; position: relative; }
+        .note-circle { width: 65px; height: 65px; border-radius: 50%; border: 2.5px solid var(--primary); padding: 3px; background: var(--secondary); overflow: hidden; }
+        .note-circle img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .note-bubble { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); background: white; color: black; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: bold; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 10; }
 
         /* قائمة الشاتات */
-        .chat-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #222d34;
-            cursor: pointer;
-        }
+        .chat-row { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #222d34; cursor: pointer; }
+        .chat-row img { width: 55px; height: 55px; border-radius: 50%; margin-left: 15px; object-fit: cover; border: 1px solid var(--secondary); }
 
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--secondary);
-            margin-left: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: var(--primary);
-        }
+        /* نافذة الدردشة */
+        #chat-window { position: fixed; top: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 200; display: flex; flex-direction: column; }
+        .chat-header { padding: 15px; background: var(--panel-dark); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222d34; }
+        .msg-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; background-color: #0b141a; }
+        .msg { max-width: 80%; padding: 12px; margin: 5px; border-radius: 15px; font-size: 15px; line-height: 1.4; position: relative; }
+        .sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
+        .received { align-self: flex-start; background: var(--secondary); color: white; border-bottom-left-radius: 2px; }
 
-        /* النوتس (انستجرام ستايل) */
-        .notes-scroll {
-            display: flex;
-            gap: 15px;
-            padding: 20px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .note-card {
-            min-width: 75px;
-            text-align: center;
-        }
-
-        .note-bubble {
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            border: 2px solid var(--primary);
-            padding: 3px;
-            margin-bottom: 5px;
-            position: relative;
-        }
-
-        .note-text {
-            position: absolute;
-            top: -10px;
-            background: white;
-            color: black;
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            white-space: nowrap;
-            max-width: 60px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        /* نافذة الدردشة الكاملة */
-        #full-chat-window {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: var(--bg-dark);
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-        }
+        /* قائمة الخيارات (Modal) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 300; display: flex; align-items: flex-end; }
+        .modal-content { width: 100%; background: var(--panel-dark); border-radius: 25px 25px 0 0; padding: 20px; animation: slideUp 0.3s ease-out; }
+        .modal-btn { width: 100%; padding: 15px; text-align: center; font-weight: bold; border-bottom: 1px solid #222d34; cursor: pointer; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="auth-screen" class="auth-container">
-        <h1 style="color: var(--primary);">NootaChat</h1>
-        <div id="login-form" style="width: 100%; text-align: center;">
-            <div class="input-group"><input type="email" id="login-email" placeholder="البريد الإلكتروني"></div>
-            <div class="input-group"><input type="password" id="login-password" placeholder="كلمة المرور"></div>
-            <button class="btn-primary" id="btn-login">تسجيل الدخول</button>
-            <p onclick="toggleAuth()" style="color: var(--text-dim); margin-top: 20px;">إنشاء حساب جديد</p>
-        </div>
-        
-        <div id="signup-form" class="hidden" style="width: 100%; text-align: center;">
-            <div class="input-group"><input type="email" id="signup-email" placeholder="بريد جديد"></div>
-            <div class="input-group"><input type="password" id="signup-password" placeholder="كلمة مرور قوية"></div>
-            <button class="btn-primary" id="btn-signup">ابدأ الآن مجاناً</button>
-            <p onclick="toggleAuth()" style="color: var(--text-dim); margin-top: 20px;">لديك حساب؟ سجل دخولك</p>
-        </div>
+    <div id="ban-screen" class="auth-screen hidden">
+        <h1 style="color:var(--danger)">الحساب موقوف</h1>
+        <p>لقد تجاوزت الحد المسموح به من البلاغات (10 إبلاغات).</p>
     </div>
 
-    <div id="profile-setup" class="auth-container hidden">
-        <h2>أكمل بروفايلك</h2>
-        <div class="input-group"><input type="text" id="username-input" placeholder="اسم المستخدم (بالإنجليزي)"></div>
-        <button class="btn-primary" id="btn-save-profile">حفظ والدخول</button>
+    <div id="login-screen" class="auth-screen">
+        <h1 style="color: var(--primary); font-size: 40px; margin-bottom: 10px;">NootaChat</h1>
+        <p style="color: var(--text-dim); margin-bottom: 30px;">تواصل بخصوصية تامة</p>
+        <div class="input-group"><input type="email" id="email" placeholder="البريد الإلكتروني"></div>
+        <div class="input-group"><input type="password" id="pass" placeholder="كلمة المرور"></div>
+        <button class="btn-primary" id="btn-login-action">تسجيل الدخول</button>
+        <p onclick="toggleAuth(true)" style="margin-top:20px; color:var(--text-dim); cursor:pointer;">ليس لديك حساب؟ <span style="color:var(--primary)">سجل هنا</span></p>
     </div>
 
-    <div id="main-app" class="hidden" style="height: 100%;">
-        
-        <div id="page-chats" class="main-screen">
+    <div id="signup-screen" class="auth-screen hidden">
+        <h2 style="color: var(--primary);">إنشاء حساب جديد</h2>
+        <div class="input-group"><input type="email" id="s-email" placeholder="البريد الإلكتروني"></div>
+        <div class="input-group"><input type="password" id="s-pass" placeholder="كلمة المرور"></div>
+        <button class="btn-primary" id="btn-signup-action">إنشاء الحساب</button>
+        <p onclick="toggleAuth(false)" style="margin-top:20px; color:var(--text-dim); cursor:pointer;">لديك حساب؟ <span style="color:var(--primary)">ادخل هنا</span></p>
+    </div>
+
+    <div id="setup-screen" class="auth-screen hidden">
+        <h2>إعداد ملفك الشخصي</h2>
+        <div style="position:relative; margin-bottom:20px;">
+            <img id="preview-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
+            <input type="file" id="avatar-input" accept="image/*" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
+        </div>
+        <div class="input-group"><input type="text" id="setup-user" placeholder="اسم المستخدم (Username)"></div>
+        <div class="input-group"><input type="text" id="setup-nick" placeholder="اللقب (يظهر للجميع)"></div>
+        <button class="btn-primary" id="btn-save-setup">حفظ وابدأ المحادثة</button>
+    </div>
+
+    <div id="app-screen" class="hidden" style="height:100%;">
+        <div id="page-chats" class="main-content">
             <div style="padding: 20px; font-size: 24px; font-weight: bold;">المحادثات</div>
-            
-            <div class="notes-scroll" id="notes-list">
-                <div class="note-card" onclick="addMyNote()">
-                    <div class="note-bubble" style="border-style: dashed; border-color: var(--text-dim);">
-                        <div style="margin-top: 15px; font-size: 25px;">+</div>
-                    </div>
-                    <span style="font-size: 11px;">نوتة</span>
+            <div class="notes-container" id="notes-list">
+                <div class="note-item" onclick="createNewNote()">
+                    <div class="note-circle" style="border-style:dashed; color:var(--text-dim); display:flex; align-items:center; justify-content:center; font-size:30px;">+</div>
+                    <span style="font-size:11px;">نوتة</span>
                 </div>
             </div>
-
-            <div id="friends-list">
-                </div>
-            
-            <button class="btn-primary" style="margin: 20px; width: calc(100% - 40px);" onclick="startNewChat()">+ مراسلة شخص جديد</button>
+            <div id="chats-list-items"></div>
+            <button class="btn-primary" style="margin:20px; width:calc(100% - 40px);" onclick="findFriend()">+ محادثة جديدة بالاسم</button>
         </div>
 
-        <div id="page-profile" class="main-screen hidden">
-            <div style="padding: 20px; text-align: center;">
-                <div class="avatar" style="width: 100px; height: 100px; font-size: 40px; margin: 0 auto 20px;" id="profile-big-avatar">M</div>
-                <h2 id="display-my-name">Username</h2>
-                <p id="display-my-email" style="color: var(--text-dim);">email@example.com</p>
-                <hr style="border: 0.5px solid #222d34; margin: 30px 0;">
-                <button class="btn-primary" style="background: #ff4757;" onclick="logout()">تسجيل الخروج</button>
+        <div id="page-profile" class="main-content hidden" style="padding:40px; text-align:center;">
+            <img id="my-p-img" src="" style="width:120px; height:120px; border-radius:50%; border:3px solid var(--primary); object-fit:cover; margin-bottom:15px;">
+            <h2 id="my-p-nick" style="margin:5px;">Nickname</h2>
+            <p id="my-p-user" style="color:var(--text-dim); margin:0;">@username</p>
+            <div style="margin-top:50px;">
+                <button class="btn-primary" style="background:var(--danger);" onclick="location.reload()">تسجيل الخروج</button>
             </div>
         </div>
 
         <nav class="bottom-nav">
-            <div class="nav-item active" onclick="showPage('chats')">
-                <span>💬</span><span>دردشة</span>
-            </div>
-            <div class="nav-item" onclick="showPage('profile')">
-                <span>👤</span><span>حسابي</span>
-            </div>
+            <div class="nav-item active" onclick="navTo('chats', this)">💬<span>دردشة</span></div>
+            <div class="nav-item" onclick="navTo('profile', this)">👤<span>حسابي</span></div>
         </nav>
     </div>
 
-    <div id="full-chat-window" class="hidden">
-        <div style="padding: 15px; background: var(--panel-dark); display: flex; align-items: center;">
-            <button onclick="closeChat()" style="background: none; border: none; color: white; font-size: 20px; margin-left: 15px;">→</button>
-            <div class="avatar" id="chat-header-avatar" style="width: 35px; height: 35px; margin-left: 10px;">?</div>
-            <b id="chat-header-name">اسم الصديق</b>
+    <div id="chat-window" class="hidden">
+        <div class="chat-header">
+            <div style="display:flex; align-items:center;" onclick="openOptions()">
+                <button onclick="event.stopPropagation(); closeChat()" style="background:none; border:none; color:white; font-size:22px; margin-left:10px;">→</button>
+                <img id="chat-h-img" src="" style="width:40px; height:40px; border-radius:50%; margin-left:10px; object-fit:cover;">
+                <b id="chat-h-name">...</b>
+            </div>
+            <span onclick="openOptions()" style="font-size:20px; cursor:pointer;">⋮</span>
         </div>
-        <div id="msg-container" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column;"></div>
-        <div style="padding: 15px; background: var(--panel-dark); display: flex; gap: 10px;">
-            <input type="text" id="msg-input" placeholder="اكتب رسالة..." style="flex: 1; background: var(--secondary); padding: 10px; border-radius: 20px; margin: 0;">
-            <button id="btn-send" style="background: var(--primary); border-radius: 50%; width: 45px; height: 45px; border: none; color: white;">➤</button>
+        <div class="msg-container" id="messages-box"></div>
+        <div style="padding:15px; background:var(--panel-dark); display:flex; gap:10px;">
+            <input type="text" id="m-input" placeholder="اكتب رسالة..." style="flex:1; background:var(--secondary); border-radius:25px; padding:12px; text-align:right;">
+            <button id="btn-send" style="background:var(--primary); color:white; border:none; border-radius:50%; width:48px; height:48px; display:flex; align-items:center; justify-content:center;">➤</button>
+        </div>
+    </div>
+
+    <div id="options-modal" class="modal-overlay hidden" onclick="this.classList.add('hidden')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-btn" onclick="deleteHistory()" style="color:var(--text-main)">🗑️ مسح المحادثة</div>
+            <div class="modal-btn" onclick="reportAction()" style="color:orange">⚠️ إبلاغ عن المستخدم</div>
+            <div class="modal-btn" onclick="blockAction()" style="color:var(--danger)">🚫 حظر ومسح</div>
+            <div class="modal-btn" onclick="document.getElementById('options-modal').classList.add('hidden')">إلغاء</div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, get, child, remove, update, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M",
@@ -273,155 +160,191 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let myData = null;
-        let activeChatId = null;
+        let currentUserData = null;
+        let activeFId = null;
+        let activeCId = null;
 
-        // دالة التبديل بين الشاشات
-        window.showPage = (page) => {
-            document.querySelectorAll('.main-screen').forEach(s => s.classList.add('hidden'));
+        // --- المساعدة ---
+        window.toggleAuth = (showSignup) => {
+            document.getElementById('login-screen').classList.toggle('hidden', showSignup);
+            document.getElementById('signup-screen').classList.toggle('hidden', !showSignup);
+        };
+
+        window.navTo = (page, el) => {
+            document.querySelectorAll('.main-content').forEach(p => p.classList.add('hidden'));
+            document.getElementById('page-'+page).classList.remove('hidden');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('page-' + page).classList.remove('hidden');
-            event.currentTarget.classList.add('active');
+            el.classList.add('active');
         };
 
-        window.toggleAuth = () => {
-            document.getElementById('login-form').classList.toggle('hidden');
-            document.getElementById('signup-form').classList.toggle('hidden');
+        const toBase64 = f => new Promise((res) => {
+            const r = new FileReader(); r.readAsDataURL(f);
+            r.onload = () => res(r.result);
+        });
+
+        // --- الصور ---
+        document.getElementById('avatar-input').onchange = async (e) => {
+            if(e.target.files[0]) document.getElementById('preview-img').src = await toBase64(e.target.files[0]);
         };
 
-        // --- Auth Logic ---
-        document.getElementById('btn-signup').onclick = async () => {
-            const email = document.getElementById('signup-email').value;
-            const pass = document.getElementById('signup-password').value;
-            try { await createUserWithEmailAndPassword(auth, email, pass); } catch (e) { alert("خطأ: " + e.message); }
+        // --- الأكشنز ---
+        document.getElementById('btn-signup-action').onclick = async () => {
+            const e = document.getElementById('s-email').value, p = document.getElementById('s-pass').value;
+            try { await createUserWithEmailAndPassword(auth, e, p); } catch(err) { alert(err.message); }
         };
 
-        document.getElementById('btn-login').onclick = async () => {
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-password').value;
-            try { await signInWithEmailAndPassword(auth, email, pass); } catch (e) { alert("تأكد من البيانات"); }
+        document.getElementById('btn-login-action').onclick = async () => {
+            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+            try { await signInWithEmailAndPassword(auth, e, p); } catch(err) { alert("بيانات خاطئة"); }
         };
 
-        document.getElementById('btn-save-profile').onclick = async () => {
-            const user = document.getElementById('username-input').value.trim().toLowerCase();
-            if(!user) return;
-            await set(ref(db, 'users/' + auth.currentUser.uid), { username: user, email: auth.currentUser.email });
-            await set(ref(db, 'usernames/' + user), auth.currentUser.uid);
+        document.getElementById('btn-save-setup').onclick = async () => {
+            const u = document.getElementById('setup-user').value.trim().toLowerCase();
+            const n = document.getElementById('setup-nick').value.trim();
+            const img = document.getElementById('preview-img').src;
+            if(!u || !n) return alert("املأ الحقول");
+            const snap = await get(child(ref(db), 'usernames/'+u));
+            if(snap.exists()) return alert("اسم المستخدم مأخوذ");
+
+            await set(ref(db, 'users/'+auth.currentUser.uid), { u, n, img, reports: 0 });
+            await set(ref(db, 'usernames/'+u), auth.currentUser.uid);
             location.reload();
         };
 
-        window.logout = () => signOut(auth).then(() => location.reload());
-
-        // --- Chat Logic ---
-        window.startNewChat = async () => {
-            const name = prompt("ادخل اسم المستخدم للصديق:");
+        window.findFriend = async () => {
+            const name = prompt("ادخل اسم المستخدم (Username):");
             if(!name) return;
-            const snap = await get(child(ref(db), `usernames/${name}`));
-            if(snap.exists()) {
-                openChatWindow(snap.val(), name);
-                // حفظ الصديق في قائمة المحادثات
-                await set(ref(db, `user_chats/${auth.currentUser.uid}/${snap.val()}`), name);
-                await set(ref(db, `user_chats/${snap.val()}/${auth.currentUser.uid}`), myData.username);
-            } else { alert("غير موجود!"); }
+            const snap = await get(child(ref(db), `usernames/${name.toLowerCase()}`));
+            if(snap.exists() && snap.val() !== auth.currentUser.uid) {
+                const fId = snap.val();
+                const fData = (await get(child(ref(db), `users/${fId}`))).val();
+                startConversation(fId, fData.n, fData.img);
+            } else alert("المستخدم غير موجود أو هذا حسابك!");
         };
 
-        function openChatWindow(fId, fName) {
-            activeChatId = [auth.currentUser.uid, fId].sort().join("_");
-            document.getElementById('full-chat-window').classList.remove('hidden');
-            document.getElementById('chat-header-name').innerText = fName;
-            document.getElementById('chat-header-avatar').innerText = fName[0].toUpperCase();
-            loadMessages(activeChatId);
-        }
-
-        window.closeChat = () => {
-            document.getElementById('full-chat-window').classList.add('hidden');
-            activeChatId = null;
+        window.startConversation = async (fId, fName, fImg) => {
+            activeFId = fId;
+            activeCId = [auth.currentUser.uid, fId].sort().join("_");
+            document.getElementById('chat-window').classList.remove('hidden');
+            document.getElementById('chat-h-name').innerText = fName;
+            document.getElementById('chat-h-img').src = fImg;
+            // حفظ في القائمة
+            await update(ref(db, `user_lists/${auth.currentUser.uid}/${fId}`), { n: fName, img: fImg });
+            await update(ref(db, `user_lists/${fId}/${auth.currentUser.uid}`), { n: currentUserData.n, img: currentUserData.img });
+            loadMessages();
         };
+
+        window.closeChat = () => document.getElementById('chat-window').classList.add('hidden');
 
         document.getElementById('btn-send').onclick = () => {
-            const txt = document.getElementById('msg-input').value;
-            if(!txt || !activeChatId) return;
-            push(ref(db, 'messages/' + activeChatId), {
-                s: auth.currentUser.uid,
-                t: txt,
-                time: Date.now()
-            });
-            document.getElementById('msg-input').value = "";
+            const t = document.getElementById('m-input').value;
+            if(!t) return;
+            push(ref(db, 'messages/' + activeCId), { s: auth.currentUser.uid, t, time: Date.now() });
+            document.getElementById('m-input').value = "";
         };
 
-        function loadMessages(id) {
-            onValue(ref(db, 'messages/' + id), (snap) => {
-                const cont = document.getElementById('msg-container');
-                cont.innerHTML = "";
+        function loadMessages() {
+            onValue(ref(db, 'messages/' + activeCId), snap => {
+                const box = document.getElementById('messages-box');
+                box.innerHTML = "";
                 snap.forEach(c => {
                     const m = c.val();
                     const d = document.createElement('div');
-                    d.style.cssText = `max-width: 80%; padding: 10px; margin: 5px; border-radius: 12px; ${m.s === auth.currentUser.uid ? 'align-self: flex-end; background: var(--primary);' : 'align-self: flex-start; background: var(--secondary);'}`;
+                    d.className = `msg ${m.s === auth.currentUser.uid ? 'sent' : 'received'}`;
                     d.innerText = m.t;
-                    cont.appendChild(d);
+                    box.appendChild(d);
                 });
-                cont.scrollTop = cont.scrollHeight;
+                box.scrollTop = box.scrollHeight;
             });
         }
 
-        // --- Notes Logic (للمراسلين فقط) ---
-        window.addMyNote = async () => {
-            const n = prompt("اكتب نوتة قصيرة (مثلاً: مود البرمجة 🚀)");
-            if(n) await set(ref(db, 'notes/' + auth.currentUser.uid), { t: n, u: myData.username, time: Date.now() });
+        // --- الخيارات ---
+        window.openOptions = () => document.getElementById('options-modal').classList.remove('hidden');
+
+        window.reportAction = async () => {
+            if(confirm("إبلاغ عن هذا المستخدم؟")) {
+                await update(ref(db, `users/${activeFId}`), { reports: increment(1) });
+                alert("تم الإبلاغ");
+                document.getElementById('options-modal').classList.add('hidden');
+            }
         };
 
-        function loadFriendsAndNotes() {
-            // جلب الأصدقاء الذين تراسلهم
-            onValue(ref(db, `user_chats/${auth.currentUser.uid}`), (snap) => {
-                const list = document.getElementById('friends-list');
-                const notesList = document.getElementById('notes-list');
+        window.deleteHistory = async () => {
+            if(confirm("مسح الشات؟")) {
+                await remove(ref(db, 'messages/'+activeCId));
+                closeChat();
+                document.getElementById('options-modal').classList.add('hidden');
+            }
+        };
+
+        window.blockAction = async () => {
+            if(confirm("حظر هذا المستخدم؟")) {
+                await remove(ref(db, `user_lists/${auth.currentUser.uid}/${activeFId}`));
+                closeChat();
+                document.getElementById('options-modal').classList.add('hidden');
+            }
+        };
+
+        window.createNewNote = async () => {
+            const t = prompt("ماذا يدور في ذهنك؟");
+            if(t) await set(ref(db, 'notes/'+auth.currentUser.uid), { t, n: currentUserData.n, img: currentUserData.img, time: Date.now() });
+        };
+
+        function initApp() {
+            onValue(ref(db, `user_lists/${auth.currentUser.uid}`), snap => {
+                const list = document.getElementById('chats-list-items');
                 list.innerHTML = "";
-                // حفظ الأزرار الأساسية في النوتس
-                const addNoteBtn = notesList.firstElementChild;
-                notesList.innerHTML = ""; notesList.appendChild(addNoteBtn);
-
                 snap.forEach(c => {
-                    const fId = c.key; const fName = c.val();
-                    // إضافة للقائمة
-                    const item = document.createElement('div');
-                    item.className = 'chat-item';
-                    item.onclick = () => openChatWindow(fId, fName);
-                    item.innerHTML = `<div class="avatar">${fName[0].toUpperCase()}</div><div><b>${fName}</b><br><small style="color:var(--text-dim)">اضغط للمراسلة</small></div>`;
-                    list.appendChild(item);
+                    const f = c.val();
+                    const row = document.createElement('div');
+                    row.className = 'chat-row';
+                    row.onclick = () => startConversation(c.key, f.n, f.img);
+                    row.innerHTML = `<img src="${f.img}"><div><b>${f.n}</b><br><small style="color:var(--text-dim)">اضغط للمراسلة</small></div>`;
+                    list.appendChild(row);
+                });
+            });
 
-                    // جلب نوتة هذا الصديق فقط
-                    get(child(ref(db), `notes/${fId}`)).then(nSnap => {
-                        if(nSnap.exists() && Date.now() - nSnap.val().time < 86400000) {
-                            const n = nSnap.val();
-                            const nCard = document.createElement('div');
-                            nCard.className = 'note-card';
-                            nCard.innerHTML = `<div class="note-bubble"><div class="note-text">${n.t}</div><div class="avatar" style="width:100%;height:100%;margin:0">${fName[0].toUpperCase()}</div></div><span style="font-size:11px;">${fName}</span>`;
-                            notesList.appendChild(nCard);
-                        }
-                    });
+            onValue(ref(db, 'notes'), snap => {
+                const nList = document.getElementById('notes-list');
+                const btn = nList.firstElementChild; nList.innerHTML = ""; nList.appendChild(btn);
+                snap.forEach(c => {
+                    const n = c.val();
+                    if(Date.now() - n.time < 86400000) {
+                        const d = document.createElement('div');
+                        d.className = 'note-item';
+                        d.innerHTML = `<div class="note-bubble">${n.t}</div><div class="note-circle"><img src="${n.img}"></div><span style="font-size:10px">${n.n}</span>`;
+                        nList.appendChild(d);
+                    }
                 });
             });
         }
 
-        // --- Monitoring State ---
-        onAuthStateChanged(auth, async (user) => {
-            if(user) {
-                const snap = await get(child(ref(db), `users/${user.uid}`));
+        onAuthStateChanged(auth, async u => {
+            if(u) {
+                const snap = await get(child(ref(db), `users/${u.uid}`));
                 if(snap.exists()) {
-                    myData = snap.val();
-                    document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('main-app').classList.remove('hidden');
-                    document.getElementById('display-my-name').innerText = myData.username;
-                    document.getElementById('display-my-email').innerText = user.email;
-                    document.getElementById('profile-big-avatar').innerText = myData.username[0].toUpperCase();
-                    loadFriendsAndNotes();
+                    currentUserData = snap.val();
+                    if(currentUserData.reports >= 10) {
+                        document.body.innerHTML = document.getElementById('ban-screen').outerHTML;
+                        document.getElementById('ban-screen').classList.remove('hidden');
+                        return;
+                    }
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('signup-screen').classList.add('hidden');
+                    document.getElementById('setup-screen').classList.add('hidden');
+                    document.getElementById('app-screen').classList.remove('hidden');
+                    document.getElementById('my-p-img').src = currentUserData.img;
+                    document.getElementById('my-p-nick').innerText = currentUserData.n;
+                    document.getElementById('my-p-user').innerText = "@" + currentUserData.u;
+                    initApp();
                 } else {
-                    document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('profile-setup').classList.remove('hidden');
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('signup-screen').classList.add('hidden');
+                    document.getElementById('setup-screen').classList.remove('hidden');
                 }
             } else {
-                document.getElementById('auth-screen').classList.remove('hidden');
-                document.getElementById('main-app').classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('app-screen').classList.add('hidden');
             }
         });
     </script>
