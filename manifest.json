@@ -1,0 +1,21 @@
+{
+  "name": "Zagel App V4",
+  "short_name": "Zagel",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0d0d12",
+  "theme_color": "#0d0d12",
+  "description": "تطبيق زاجل للتواصل الاجتماعي",
+  "icons": [
+    {
+      "src": "https://ui-avatars.com/api/?name=Z&background=00f3ff&color=000&size=192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://ui-avatars.com/api/?name=Z&background=00f3ff&color=000&size=512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
