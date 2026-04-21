@@ -1,242 +1,650 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZAGEL V3</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZAGEL | زاجل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg: #0d0d12;
+            --surface: #1a1a24;
+            --accent-blue: #00f3ff;
+            --accent-pink: #ff007c;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --font-family: 'Tajawal', sans-serif;
+            --border-radius: 16px;
+        }
 
-<style>
-:root{
-  --bg:#0d0d12;
-  --card:#1a1a24;
-  --blue:#00f3ff;
-  --pink:#ff007c;
-}
-body{margin:0;background:var(--bg);color:#fff;font-family:sans-serif}
-.hidden{display:none}
-.screen{height:80vh;overflow:auto;padding:10px}
-.card{background:var(--card);padding:10px;margin:10px;border-radius:10px}
-input,button,textarea{
-  width:100%;margin:5px 0;padding:10px;border:none;border-radius:8px
-}
-button{background:var(--blue);cursor:pointer}
-nav{position:fixed;bottom:0;width:100%;display:flex;background:#111}
-nav button{flex:1;background:none;color:#aaa}
-.active{color:var(--blue)}
-img{max-width:100%;border-radius:10px}
-</style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg);
+            color: var(--text-main);
+            overflow: hidden; /* Prevent body scroll, handle internally */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Scrollbar Customization --- */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 10px; }
+
+        /* --- Utility Classes --- */
+        .hidden { display: none !important; }
+        .neon-text-blue { text-shadow: 0 0 10px var(--accent-blue); color: var(--accent-blue); }
+        .neon-text-pink { text-shadow: 0 0 10px var(--accent-pink); color: var(--accent-pink); }
+        .btn {
+            background: linear-gradient(45deg, var(--accent-blue), #007bb5);
+            border: none;
+            color: #000;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-family: var(--font-family);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+            width: 100%;
+        }
+        .btn:hover { box-shadow: 0 0 25px rgba(0, 243, 255, 0.7); transform: scale(1.02); }
+        .btn-pink { background: linear-gradient(45deg, var(--accent-pink), #b50058); color: #fff; box-shadow: 0 0 15px rgba(255, 0, 124, 0.4); }
+        .btn-pink:hover { box-shadow: 0 0 25px rgba(255, 0, 124, 0.7); }
+        
+        input, textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 12px 15px;
+            border-radius: 12px;
+            font-family: var(--font-family);
+            width: 100%;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--accent-blue); }
+
+        /* --- Auth Section --- */
+        #auth-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            z-index: 100;
+            background: radial-gradient(circle at top right, #1a1a24, #0d0d12);
+        }
+        .auth-container {
+            background: var(--surface);
+            padding: 40px 30px;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+        }
+        .auth-logo { font-size: 3rem; text-align: center; margin-bottom: 30px; font-weight: 900; }
+        .auth-switch { text-align: center; margin-top: 15px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; }
+        .auth-switch span { color: var(--accent-blue); font-weight: bold; }
+
+        /* --- Main App Layout --- */
+        #app-section { display: flex; flex-direction: column; height: 100vh; }
+        header {
+            background: var(--surface);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        .app-title { font-size: 1.5rem; font-weight: 900; }
+        
+        .main-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            position: relative;
+            padding-bottom: 70px; /* Space for bottom nav */
+            /* Hardware Acceleration for smooth scrolling */
+            transform: translateZ(0); 
+            will-change: transform;
+        }
+
+        .tab-content { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: var(--surface);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            z-index: 20;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+            padding-bottom: env(safe-area-inset-bottom, 10px);
+        }
+        .nav-item {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .nav-item span { font-size: 0.7rem; margin-top: 4px; font-weight: bold; }
+        .nav-item.active { color: var(--accent-blue); text-shadow: 0 0 10px rgba(0,243,255,0.5); transform: translateY(-5px); }
+        .nav-item.active:nth-child(2) { color: var(--accent-pink); text-shadow: 0 0 10px rgba(255,0,124,0.5); }
+
+        /* --- Feed & Posts --- */
+        .fab {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-pink));
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 0, 124, 0.4);
+            cursor: pointer;
+            z-index: 15;
+            transition: transform 0.3s;
+        }
+        .fab:hover { transform: scale(1.1) rotate(90deg); }
+
+        .post-card {
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+        .post-header { display: flex; align-items: center; margin-bottom: 10px; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--accent-blue); object-fit: cover; }
+        .post-author { margin-right: 10px; font-weight: bold; }
+        .post-time { font-size: 0.7rem; color: var(--text-muted); display: block; }
+        .post-text { margin-bottom: 10px; line-height: 1.6; white-space: pre-wrap; }
+        .post-image {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            max-height: 400px;
+            object-fit: cover;
+            background: #2a2a36; /* Placeholder color */
+        }
+        .post-actions { display: flex; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; }
+        .like-btn { cursor: pointer; color: var(--text-muted); transition: color 0.3s; display: flex; align-items: center; gap: 5px; }
+        .like-btn.liked { color: var(--accent-pink); text-shadow: 0 0 8px var(--accent-pink); }
+        
+        /* --- Modal (Create Post) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 50;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: var(--surface);
+            width: 90%; max-width: 500px;
+            padding: 20px; border-radius: var(--border-radius);
+            position: relative;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        .close-modal { position: absolute; top: 15px; left: 15px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+        .image-preview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; display: none; margin-bottom: 10px; }
+        .file-upload-label { display: inline-block; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; margin-bottom: 15px; color: var(--accent-blue); }
+        
+        /* --- Global Chat --- */
+        .chat-container { display: flex; flex-direction: column; height: calc(100vh - 140px); }
+        .chat-messages { flex-grow: 1; overflow-y: auto; padding-right: 5px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+        .chat-input-area { display: flex; gap: 10px; margin-top: 10px; }
+        .chat-input-area input { margin-bottom: 0; }
+        .chat-input-area button { width: auto; padding: 0 20px; border-radius: 12px; }
+        
+        .msg-bubble { max-width: 75%; padding: 10px 15px; border-radius: 20px; position: relative; clear: both; word-wrap: break-word; }
+        .msg-row { display: flex; margin-bottom: 15px; align-items: flex-end; gap: 8px; }
+        
+        .msg-mine { flex-direction: row-reverse; }
+        .msg-mine .msg-bubble { background: linear-gradient(135deg, #005c8a, #003a5c); border-bottom-left-radius: 5px; }
+        
+        .msg-other .msg-bubble { background: #2a2a36; border-bottom-right-radius: 5px; border: 1px solid rgba(255,255,255,0.05); }
+        .msg-sender { font-size: 0.7rem; color: var(--accent-pink); margin-bottom: 4px; font-weight: bold; }
+        
+        /* --- Profile --- */
+        .profile-card { text-align: center; padding: 30px 20px; background: var(--surface); border-radius: var(--border-radius); border: 1px solid rgba(255,0,124,0.2); }
+        .profile-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--accent-pink); margin-bottom: 15px; }
+
+        /* Loader */
+        .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--accent-blue); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
-
 <body>
 
-<!-- AUTH -->
-<div id="auth">
-<h2>ZAGEL</h2>
-<input id="email" placeholder="Email">
-<input id="pass" type="password" placeholder="Password">
-<input id="username" placeholder="Username">
-<input type="file" id="avatar">
-<button id="signup">إنشاء حساب</button>
-<button id="login">دخول</button>
-<button id="google">Google</button>
-</div>
+    <div id="auth-section">
+        <div id="login-form" class="auth-container">
+            <h1 class="auth-logo neon-text-blue">ZAGEL</h1>
+            <h3 style="margin-bottom: 20px; text-align: center;">تسجيل الدخول</h3>
+            <input type="email" id="login-email" placeholder="البريد الإلكتروني">
+            <input type="password" id="login-password" placeholder="كلمة المرور">
+            <button class="btn" id="btn-login">
+                <span class="btn-text">دخول</span>
+                <div class="loader" id="login-loader"></div>
+            </button>
+            <div class="auth-switch" onclick="toggleAuth()">ليس لديك حساب؟ <span>سجل الآن</span></div>
+        </div>
 
-<!-- APP -->
-<div id="app" class="hidden">
-<div id="feed" class="screen"></div>
-<div id="chat" class="screen hidden"></div>
-<div id="dm" class="screen hidden"></div>
-<div id="profile" class="screen hidden"></div>
+        <div id="register-form" class="auth-container hidden">
+            <h1 class="auth-logo neon-text-pink">ZAGEL</h1>
+            <h3 style="margin-bottom: 20px; text-align: center;">إنشاء حساب جديد</h3>
+            <input type="text" id="reg-name" placeholder="الاسم الكامل">
+            <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
+            <input type="password" id="reg-password" placeholder="كلمة المرور">
+            <button class="btn btn-pink" id="btn-register">
+                <span class="btn-text">تسجيل</span>
+                <div class="loader" id="reg-loader"></div>
+            </button>
+            <div class="auth-switch" onclick="toggleAuth()">لديك حساب بالفعل؟ <span>سجل الدخول</span></div>
+        </div>
+    </div>
 
-<nav>
-<button data="feed" class="active">🏠</button>
-<button data="chat">💬</button>
-<button data="dm">📩</button>
-<button data="profile">👤</button>
-</nav>
-</div>
+    <div id="app-section" class="hidden">
+        <header>
+            <div class="app-title neon-text-blue">زاجل <i class="fa-solid fa-paper-plane" style="font-size: 1.2rem;"></i></div>
+            <div>
+                <img src="" id="header-avatar" class="avatar" style="width: 35px; height: 35px; border-color: var(--accent-pink);">
+            </div>
+        </header>
 
-<script type="module">
+        <div class="main-content" id="main-content">
+            <div id="tab-feed" class="tab-content active">
+                <div id="feed-container">
+                    </div>
+            </div>
 
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,
-GoogleAuthProvider,signInWithPopup,onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+            <div id="tab-chat" class="tab-content">
+                <div class="chat-container">
+                    <div id="chat-messages" class="chat-messages">
+                        </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="اكتب رسالتك هنا..." autocomplete="off">
+                        <button class="btn btn-pink" id="btn-send-chat"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
 
-import {
-getFirestore,doc,setDoc,getDoc,collection,addDoc,
-onSnapshot,updateDoc,arrayUnion,arrayRemove,serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+            <div id="tab-profile" class="tab-content">
+                <div class="profile-card">
+                    <img src="" id="profile-avatar" class="profile-avatar">
+                    <h2 id="profile-name" style="margin-bottom: 5px;"></h2>
+                    <p id="profile-email" style="color: var(--text-muted); margin-bottom: 20px;"></p>
+                    <button class="btn" id="btn-logout" style="background: transparent; border: 1px solid var(--accent-blue); color: var(--accent-blue); box-shadow: none;">تسجيل الخروج</button>
+                </div>
+            </div>
+        </div>
 
-import {
-getDatabase,ref,push,onChildAdded,set
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        <div class="fab" id="fab-create" onclick="openModal()">
+            <i class="fa-solid fa-feather-pointed"></i>
+        </div>
 
-const firebaseConfig={
-apiKey:"AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M",
-authDomain:"fir-c3e88.firebaseapp.com",
-projectId:"fir-c3e88",
-databaseURL:"https://fir-c3e88-default-rtdb.firebaseio.com"
-};
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab('feed', this)">
+                <i class="fa-solid fa-house-chimney"></i>
+                <span>الرئيسية</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('chat', this)">
+                <i class="fa-solid fa-earth-americas"></i>
+                <span>العام</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('profile', this)">
+                <i class="fa-solid fa-user-astronaut"></i>
+                <span>حسابي</span>
+            </div>
+        </nav>
+    </div>
 
-const app=initializeApp(firebaseConfig);
-const auth=getAuth();
-const db=getFirestore();
-const rtdb=getDatabase();
+    <div id="post-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <i class="fa-solid fa-times close-modal" onclick="closeModal()"></i>
+            <h3 style="margin-bottom: 15px; color: var(--accent-blue);">إضافة منشور جديد</h3>
+            <textarea id="post-text" rows="4" placeholder="ماذا يدور في ذهنك؟"></textarea>
+            
+            <label class="file-upload-label" for="post-image-input">
+                <i class="fa-regular fa-image"></i> إرفاق صورة
+            </label>
+            <input type="file" id="post-image-input" accept="image/*" class="hidden">
+            <img id="post-image-preview" class="image-preview">
+            
+            <button class="btn" id="btn-publish">
+                <span class="btn-text">نشر</span>
+                <div class="loader" id="publish-loader"></div>
+            </button>
+        </div>
+    </div>
 
-let userData;
+    <script type="module">
+        // 1. Firebase Initialization (v10 Modular)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, updateDoc, arrayUnion, arrayRemove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getDatabase, ref, push, onChildAdded, serverTimestamp as rtdbTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-/* ===== Cloudinary ===== */
-async function upload(file){
-const f=new FormData();
-f.append("file",file);
-f.append("upload_preset","j1a241e9_preset");
+        const firebaseConfig = {
+            apiKey: "AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M",
+            authDomain: "fir-c3e88.firebaseapp.com",
+            databaseURL: "https://fir-c3e88-default-rtdb.firebaseio.com",
+            projectId: "fir-c3e88",
+            storageBucket: "fir-c3e88.firebasestorage.app",
+            messagingSenderId: "202130175288",
+            appId: "1:202130175288:web:0d7ad99c3c828501b4fdcd"
+        };
 
-const res=await fetch("https://api.cloudinary.com/v1_1/j1a241e9/image/upload",{method:"POST",body:f});
-const d=await res.json();
-return d.secure_url+"?w=600&q=auto&f=auto";
-}
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const rtdb = getDatabase(app);
 
-/* ===== AUTH ===== */
-signup.onclick=async()=>{
-const u=await createUserWithEmailAndPassword(auth,email.value,pass.value);
-let avatarUrl="";
-if(avatar.files[0]) avatarUrl=await upload(avatar.files[0]);
+        // 2. Global State & Cloudinary Config
+        let currentUser = null;
+        let selectedImageFile = null;
+        const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/j1a241e9/image/upload";
+        const CLOUDINARY_PRESET = "j1a241e9_preset";
 
-await setDoc(doc(db,"users",u.user.uid),{
-username:username.value,
-avatar:avatarUrl,
-followers:[],
-following:[],
-online:true
-});
-};
+        // Generate Avatar based on Name
+        const getAvatarUrl = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0d0d12&color=00f3ff&rounded=true&bold=true`;
 
-login.onclick=()=>signInWithEmailAndPassword(auth,email.value,pass.value);
-google.onclick=()=>signInWithPopup(auth,new GoogleAuthProvider());
+        // 3. UI Helpers
+        window.toggleAuth = () => {
+            document.getElementById('login-form').classList.toggle('hidden');
+            document.getElementById('register-form').classList.toggle('hidden');
+        };
 
-onAuthStateChanged(auth,async(u)=>{
-if(u){
-authUI(false);
-const snap=await getDoc(doc(db,"users",u.uid));
-userData=snap.data();
+        window.switchTab = (tabId, element) => {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            element.classList.add('active');
+            
+            const fab = document.getElementById('fab-create');
+            if(tabId === 'feed') fab.classList.remove('hidden');
+            else fab.classList.add('hidden');
 
-set(ref(rtdb,"status/"+u.uid),{online:true});
+            if(tabId === 'chat') scrollToBottomChat();
+        };
 
-loadFeed();
-loadChat();
-loadDM();
-loadProfile();
-}
-});
+        window.openModal = () => { document.getElementById('post-modal').classList.remove('hidden'); };
+        window.closeModal = () => {
+            document.getElementById('post-modal').classList.add('hidden');
+            document.getElementById('post-text').value = '';
+            document.getElementById('post-image-input').value = '';
+            selectedImageFile = null;
+            document.getElementById('post-image-preview').style.display = 'none';
+        };
 
-/* ===== FEED ===== */
-function loadFeed(){
-onSnapshot(collection(db,"posts"),snap=>{
-feed.innerHTML=`
-<textarea id="ptext"></textarea>
-<input type="file" id="pimg">
-<button onclick="createPost()">نشر</button>
-`;
+        const toggleLoader = (btnId, loaderId, isLoading) => {
+            const btn = document.getElementById(btnId);
+            const text = btn.querySelector('.btn-text');
+            const loader = document.getElementById(loaderId);
+            if(isLoading) {
+                btn.disabled = true;
+                text.style.display = 'none';
+                loader.style.display = 'block';
+            } else {
+                btn.disabled = false;
+                text.style.display = 'block';
+                loader.style.display = 'none';
+            }
+        };
 
-snap.forEach(d=>{
-const p=d.data();
-feed.innerHTML+=`
-<div class="card">
-<b>${p.username}</b>
-<p>${p.text}</p>
-${p.img?`<img loading="lazy" src="${p.img}">`:""}
-<button onclick="like('${d.id}')">❤️ ${p.likes?.length||0}</button>
-<button onclick="follow('${p.uid}')">Follow</button>
-</div>
-`;
-});
-});
-}
+        // 4. Authentication Logic (Email/Password)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('app-section').classList.remove('hidden');
+                
+                // Set Profile UI
+                const avatar = getAvatarUrl(user.displayName || 'User');
+                document.getElementById('header-avatar').src = avatar;
+                document.getElementById('profile-avatar').src = avatar;
+                document.getElementById('profile-name').innerText = user.displayName || 'مستخدم زاجل';
+                document.getElementById('profile-email').innerText = user.email;
 
-window.createPost=async()=>{
-let img="";
-if(pimg.files[0]) img=await upload(pimg.files[0]);
+                initFeed();
+                initChat();
+            } else {
+                currentUser = null;
+                document.getElementById('auth-section').classList.remove('hidden');
+                document.getElementById('app-section').classList.add('hidden');
+            }
+        });
 
-await addDoc(collection(db,"posts"),{
-text:ptext.value,
-img,
-uid:auth.currentUser.uid,
-username:userData.username,
-likes:[],
-time:serverTimestamp()
-});
-};
+        document.getElementById('btn-login').addEventListener('click', async () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            if(!email || !password) return alert("الرجاء إدخال البريد وكلمة المرور");
+            
+            toggleLoader('btn-login', 'login-loader', true);
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                alert("خطأ في تسجيل الدخول: " + error.message);
+            }
+            toggleLoader('btn-login', 'login-loader', false);
+        });
 
-window.like=async(id)=>{
-await updateDoc(doc(db,"posts",id),{
-likes:arrayUnion(auth.currentUser.uid)
-});
-};
+        document.getElementById('btn-register').addEventListener('click', async () => {
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            if(!name || !email || !password) return alert("الرجاء تعبئة جميع الحقول");
+            
+            toggleLoader('btn-register', 'reg-loader', true);
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(userCredential.user, { displayName: name });
+                // Force reload user to get updated profile in listener
+                window.location.reload(); 
+            } catch (error) {
+                alert("خطأ في التسجيل: " + error.message);
+            }
+            toggleLoader('btn-register', 'reg-loader', false);
+        });
 
-window.follow=async(uid)=>{
-await updateDoc(doc(db,"users",uid),{
-followers:arrayUnion(auth.currentUser.uid)
-});
-};
+        document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
-/* ===== GLOBAL CHAT ===== */
-function loadChat(){
-onChildAdded(ref(rtdb,"global"),snap=>{
-const m=snap.val();
-chat.innerHTML+=`
-<div class="card">
-<b>${m.username}</b>
-<p>${m.text}</p>
-</div>`;
-});
-}
+        // 5. Cloudinary Image Upload Function
+        const uploadImageToCloudinary = async (file) => {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", CLOUDINARY_PRESET);
 
-document.addEventListener("keydown",e=>{
-if(e.key==="Enter"){
-push(ref(rtdb,"global"),{
-text:"رسالة",
-username:userData.username
-});
-}
-});
+            const res = await fetch(CLOUDINARY_URL, { method: "POST", body: formData });
+            if (!res.ok) throw new Error("فشل رفع الصورة");
+            const data = await res.json();
+            
+            // Apply Cloudinary Transformations for optimization (w_600,q_auto,f_auto)
+            return data.secure_url.replace("/upload/", "/upload/w_600,q_auto,f_auto/");
+        };
 
-/* ===== DM ===== */
-function loadDM(){
-onChildAdded(ref(rtdb,"dm/"+auth.currentUser.uid),snap=>{
-const m=snap.val();
-dm.innerHTML+=`
-<div class="card">
-<p>${m.text}</p>
-</div>`;
-});
-}
+        document.getElementById('post-image-input').addEventListener('change', (e) => {
+            if(e.target.files && e.target.files[0]) {
+                selectedImageFile = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const preview = document.getElementById('post-image-preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(selectedImageFile);
+            }
+        });
 
-/* ===== PROFILE ===== */
-function loadProfile(){
-profile.innerHTML=`
-<h2>${userData.username}</h2>
-<img src="${userData.avatar}">
-`;
-}
+        // 6. Feed System (Firestore)
+        document.getElementById('btn-publish').addEventListener('click', async () => {
+            const text = document.getElementById('post-text').value;
+            if(!text && !selectedImageFile) return alert("لا يمكنك نشر محتوى فارغ");
 
-/* ===== UI ===== */
-function authUI(show){
-document.getElementById("auth").classList.toggle("hidden",!show);
-document.getElementById("app").classList.toggle("hidden",show);
-}
+            toggleLoader('btn-publish', 'publish-loader', true);
+            try {
+                let imageUrl = "";
+                if(selectedImageFile) {
+                    imageUrl = await uploadImageToCloudinary(selectedImageFile);
+                }
 
-document.querySelectorAll("nav button").forEach(b=>{
-b.onclick=()=>{
-document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));
-document.getElementById(b.dataset).classList.remove("hidden");
+                await addDoc(collection(db, "posts"), {
+                    text: text,
+                    imageUrl: imageUrl,
+                    authorId: currentUser.uid,
+                    authorName: currentUser.displayName,
+                    createdAt: serverTimestamp(),
+                    likes: []
+                });
 
-document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
-b.classList.add("active");
-};
-});
+                closeModal();
+            } catch (error) {
+                alert("حدث خطأ أثناء النشر: " + error.message);
+            }
+            toggleLoader('btn-publish', 'publish-loader', false);
+        });
 
-</script>
+        const initFeed = () => {
+            const q = query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(50));
+            onSnapshot(q, (snapshot) => {
+                const feedContainer = document.getElementById('feed-container');
+                feedContainer.innerHTML = '';
+                snapshot.forEach((docSnap) => {
+                    const post = docSnap.data();
+                    const isLiked = post.likes && post.likes.includes(currentUser.uid);
+                    
+                    // Time formatting fallback
+                    const timeString = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('ar-EG', {hour: '2-digit', minute:'2-digit', month:'short', day:'numeric'}) : 'الآن';
+
+                    const postEl = document.createElement('div');
+                    postEl.className = 'post-card';
+                    postEl.innerHTML = `
+                        <div class="post-header">
+                            <img src="${getAvatarUrl(post.authorName)}" class="avatar">
+                            <div>
+                                <div class="post-author">${post.authorName}</div>
+                                <span class="post-time">${timeString}</span>
+                            </div>
+                        </div>
+                        <div class="post-text">${post.text}</div>
+                        ${post.imageUrl ? `<img src="${post.imageUrl}" class="post-image" loading="lazy" alt="صورة المنشور">` : ''}
+                        <div class="post-actions">
+                            <div class="like-btn ${isLiked ? 'liked' : ''}" data-id="${docSnap.id}" data-liked="${isLiked}">
+                                <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                                <span style="margin-right: 5px;">${post.likes ? post.likes.length : 0}</span>
+                            </div>
+                        </div>
+                    `;
+                    feedContainer.appendChild(postEl);
+                });
+
+                // Attach Like Listeners
+                document.querySelectorAll('.like-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const postId = e.currentTarget.getAttribute('data-id');
+                        const isCurrentlyLiked = e.currentTarget.getAttribute('data-liked') === 'true';
+                        const postRef = doc(db, "posts", postId);
+                        
+                        // Optimistic UI updates handled seamlessly by Firebase onSnapshot local cache!
+                        if(isCurrentlyLiked) {
+                            await updateDoc(postRef, { likes: arrayRemove(currentUser.uid) });
+                        } else {
+                            await updateDoc(postRef, { likes: arrayUnion(currentUser.uid) });
+                        }
+                    });
+                });
+            });
+        };
+
+        // 7. Global Chat System (Realtime Database)
+        const chatMessages = document.getElementById('chat-messages');
+        let isChatInitialized = false;
+
+        const scrollToBottomChat = () => {
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 100);
+        };
+
+        const initChat = () => {
+            if(isChatInitialized) return;
+            isChatInitialized = true;
+            
+            const chatRef = ref(rtdb, 'global_chat');
+            onChildAdded(chatRef, (data) => {
+                const msg = data.val();
+                const isMine = msg.senderId === currentUser.uid;
+                
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `msg-row ${isMine ? 'msg-mine' : 'msg-other'}`;
+                
+                msgDiv.innerHTML = `
+                    <img src="${getAvatarUrl(msg.senderName)}" class="avatar" style="width: 30px; height: 30px;">
+                    <div class="msg-bubble">
+                        ${!isMine ? `<div class="msg-sender">${msg.senderName}</div>` : ''}
+                        ${msg.text}
+                    </div>
+                `;
+                
+                chatMessages.appendChild(msgDiv);
+                
+                // Only scroll to bottom if user is currently looking at chat tab
+                if(document.getElementById('tab-chat').classList.contains('active')) {
+                    scrollToBottomChat();
+                }
+            });
+        };
+
+        const sendChatMessage = async () => {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            input.value = ''; // Clear instantly
+            try {
+                await push(ref(rtdb, 'global_chat'), {
+                    text: text,
+                    senderId: currentUser.uid,
+                    senderName: currentUser.displayName || 'مستخدم',
+                    timestamp: rtdbTimestamp()
+                });
+                scrollToBottomChat();
+            } catch (error) {
+                console.error("Chat error:", error);
+            }
+        };
+
+        document.getElementById('btn-send-chat').addEventListener('click', sendChatMessage);
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') sendChatMessage();
+        });
+
+    </script>
 </body>
 </html>
