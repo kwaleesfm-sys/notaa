@@ -3,203 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZAGEL V3 | زاجل الأسطوري</title>
+    <meta name="theme-color" content="#0d0d12">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>ZAGEL V4 | زاجل الأسطوري</title>
+    
+    <link rel="manifest" id="pwa-manifest">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg: #0d0d12;
-            --surface: #1a1a24;
-            --surface-light: #252533;
-            --accent-blue: #00f3ff;
-            --accent-pink: #ff007c;
-            --text-main: #ffffff;
-            --text-muted: #a0a0a0;
-            --font-family: 'Tajawal', sans-serif;
-            --mood-color: #00f3ff; /* Default */
+            --bg: #0d0d12; --surface: #1a1a24; --surface-light: #252533;
+            --accent-blue: #00f3ff; --accent-pink: #ff007c; --text-main: #ffffff;
+            --text-muted: #a0a0a0; --font-family: 'Tajawal', sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: var(--font-family); background-color: var(--bg); color: var(--text-main); overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
         
-        /* أدوات عامة */
         .hidden { display: none !important; }
         .neon-text { text-shadow: 0 0 10px var(--accent-blue); color: var(--accent-blue); }
-        .btn { background: linear-gradient(45deg, var(--accent-blue), #007bb5); border: none; color: #000; padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; font-family: var(--font-family); }
-        .btn:active { transform: scale(0.95); }
+        .btn { background: linear-gradient(45deg, var(--accent-blue), #007bb5); border: none; color: #000; padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-pink { background: linear-gradient(45deg, var(--accent-pink), #b50058); color: #fff; }
-        input, textarea, select { background: var(--surface-light); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 10px; width: 100%; outline: none; font-family: var(--font-family); margin-bottom: 10px; }
-        input:focus, textarea:focus { border-color: var(--mood-color); box-shadow: 0 0 8px rgba(0,243,255,0.2); }
-
-        /* الأقسام والتنقل */
-        header { background: var(--surface); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 10; }
-        .main-content { flex-grow: 1; overflow-y: auto; padding-bottom: 80px; }
+        
+        input, textarea { background: var(--surface-light); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 10px; width: 100%; outline: none; margin-bottom: 10px; }
+        
+        header { background: var(--surface); padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .main-content { flex-grow: 1; overflow-y: auto; padding-bottom: 80px; position: relative; }
         .tab-content { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--surface); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-bottom: env(safe-area-inset-bottom, 10px); z-index: 20; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
-        .nav-item { color: var(--text-muted); font-size: 1.2rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; transition: 0.3s; position: relative; }
+        /* شريط التنقل */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--surface); display: flex; justify-content: space-around; padding: 10px 0; z-index: 20; border-top: 1px solid rgba(255,255,255,0.05); }
+        .nav-item { color: var(--text-muted); font-size: 1.2rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
         .nav-item span { font-size: 0.6rem; margin-top: 3px; font-weight: bold; }
-        .nav-item.active { color: var(--mood-color); transform: translateY(-3px); text-shadow: 0 0 10px var(--mood-color); }
+        .nav-item.active { color: var(--accent-blue); transform: translateY(-3px); text-shadow: 0 0 10px var(--accent-blue); }
 
         /* القصص (Stories) */
-        .stories-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px; }
-        .story-circle { min-width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--accent-pink); padding: 2px; cursor: pointer; position: relative; }
-        .story-circle img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        .story-add { position: absolute; bottom: 0; right: 0; background: var(--accent-blue); color: #000; border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 0.8rem; font-weight: bold; }
+        .stories-bar { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .story-ring { min-width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--accent-pink); padding: 2px; position: relative; cursor: pointer; }
+        .story-ring img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .story-add-btn { position: absolute; bottom: 0; right: 0; background: var(--accent-blue); color: #000; border-radius: 50%; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 14px; border: 2px solid var(--bg); }
 
-        /* المنشورات */
-        .post-card { background: var(--surface); border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.03); box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: relative; }
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .avatar-container { position: relative; }
-        .avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--mood-color); object-fit: cover; box-shadow: 0 0 8px var(--mood-color); }
-        .online-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #0f0; border-radius: 50%; border: 2px solid var(--surface); }
-        .verified-badge { color: #1da1f2; font-size: 0.9rem; margin-right: 5px; }
+        /* النوتس (Notes) */
+        .notes-bar { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .note-container { display: flex; flex-direction: column; align-items: center; position: relative; min-width: 70px; cursor: pointer; }
+        .note-bubble { background: var(--surface-light); padding: 8px 10px; border-radius: 15px; font-size: 0.75rem; text-align: center; margin-bottom: -10px; z-index: 2; border: 1px solid rgba(0,243,255,0.2); max-width: 80px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .note-avatar { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid var(--surface-light); }
+
+        /* المنشورات واكتشف */
+        .post-card { background: var(--surface); border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.03); }
+        .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .post-user-info { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+        .username-tag { font-size: 0.75rem; color: var(--accent-blue); }
+        .delete-btn { color: #ff4d4d; cursor: pointer; font-size: 1.1rem; }
+        .post-img { width: 100%; border-radius: 10px; margin: 10px 0; max-height: 400px; object-fit: cover; }
         
-        /* الصور المتعددة */
-        .post-images-grid { display: flex; gap: 5px; overflow-x: auto; margin: 10px 0; border-radius: 10px; scroll-snap-type: x mandatory; }
-        .post-images-grid img { height: 250px; min-width: 80%; object-fit: cover; border-radius: 10px; scroll-snap-align: center; }
-        
-        .spotify-embed { width: 100%; height: 80px; border-radius: 12px; border: none; margin: 10px 0; }
-        .flash-tag { position: absolute; top: 15px; left: 15px; background: rgba(255,0,124,0.2); color: var(--accent-pink); padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
-        .post-meta { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px; }
-        
-        .post-actions { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; margin-top: 10px; }
-        .action-item { cursor: pointer; color: var(--text-muted); display: flex; align-items: center; gap: 5px; font-size: 0.9rem; transition: 0.3s; }
-        .action-item.active-heart { color: var(--accent-pink); }
-        .action-item.active-bookmark { color: var(--accent-blue); }
+        .explore-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .explore-item { background: var(--surface); border-radius: 10px; padding: 10px; text-align: center; }
 
-        /* البحث واكتشاف */
-        .search-bar { position: relative; margin-bottom: 15px; }
-        .search-bar i { position: absolute; right: 15px; top: 15px; color: var(--text-muted); }
-        .search-bar input { padding-right: 40px; border-radius: 20px; }
-        .user-row { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 12px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; }
-        .user-row:hover { background: var(--surface-light); }
+        /* الريلز (Reels) */
+        #tab-reels { padding: 0; height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; }
+        .reel-container { height: calc(100vh - 140px); width: 100%; scroll-snap-align: start; position: relative; background: #000; }
+        .reel-video { width: 100%; height: 100%; object-fit: cover; }
+        .reel-ui { position: absolute; bottom: 20px; left: 15px; right: 15px; display: flex; justify-content: space-between; align-items: flex-end; z-index: 2; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .reel-actions { display: flex; flex-direction: column; gap: 20px; font-size: 1.5rem; }
 
-        /* صندوق الرسائل (Inbox) */
-        .inbox-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--surface); border-radius: 12px; margin-bottom: 10px; cursor: pointer; }
-        .inbox-info { flex-grow: 1; }
-        .inbox-name { font-weight: bold; font-size: 1rem; }
-        .inbox-msg { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
-        .inbox-time { font-size: 0.7rem; color: var(--text-muted); }
-
-        /* الدردشة الخاصة */
-        #chat-window { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; }
-        .chat-header { background: var(--surface); padding: 15px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .messages-area { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
-        .msg { max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; position: relative; word-wrap: break-word; }
-        .msg-sent { align-self: flex-end; background: var(--accent-blue); color: #000; border-bottom-left-radius: 2px; }
-        .msg-received { align-self: flex-start; background: var(--surface-light); color: #fff; border-bottom-right-radius: 2px; border: 1px solid rgba(255,255,255,0.05); }
-        .typing-indicator { font-size: 0.8rem; color: var(--accent-pink); font-style: italic; align-self: flex-start; margin-left: 10px; }
-
-        /* الملف الشخصي وزاجل السري */
-        .profile-header { text-align: center; padding: 20px; background: var(--surface); border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(0,243,255,0.1); }
-        .stats-box { display: flex; justify-content: space-around; background: var(--surface-light); padding: 15px; border-radius: 15px; margin: 15px 0; }
-        .stat-item { text-align: center; }
-        .stat-item b { font-size: 1.2rem; color: var(--accent-blue); }
-        .zagel-secret-box { background: linear-gradient(135deg, #1a1a24, #2a1a24); border: 1px dashed var(--accent-pink); padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 20px; cursor: pointer; }
-        
-        /* Modal */
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px); z-index: 2000; display:flex; align-items:center; justify-content:center; padding: 20px; }
+        /* Modals */
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 2000; display:flex; align-items:center; justify-content:center; padding: 20px; }
         .modal-content { background: var(--surface); width: 100%; max-width: 400px; padding: 20px; border-radius: 20px; position: relative; }
         .close-modal { position: absolute; top: 15px; left: 15px; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
         
-        /* إنشاء منشور */
-        .create-fab { position: fixed; bottom: 80px; left: 20px; width: 55px; height: 55px; background: var(--mood-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: #000; box-shadow: 0 4px 15px rgba(0,243,255,0.4); cursor: pointer; z-index: 15; transition: 0.3s; }
-        .create-fab:hover { transform: scale(1.1) rotate(15deg); }
-        .preview-images { display: flex; gap: 5px; overflow-x: auto; margin-top: 10px; }
-        .preview-images img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
-
+        .create-fab { position: fixed; bottom: 80px; left: 20px; width: 60px; height: 60px; background: var(--accent-blue); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: #000; box-shadow: 0 4px 15px rgba(0,243,255,0.4); cursor: pointer; z-index: 15; }
+        
+        /* Story Viewer */
+        #story-viewer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .story-progress { position: absolute; top: 10px; left: 10px; right: 10px; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; }
+        .story-bar { height: 100%; background: #fff; width: 0%; transition: width linear; }
     </style>
 </head>
 <body>
 
     <div id="auth-page" class="modal" style="background: var(--bg);">
         <div style="width: 100%; max-width: 350px; text-align: center;">
-            <h1 class="neon-text" style="font-size: 3.5rem; margin-bottom: 10px; font-weight: 900;">ZAGEL</h1>
-            <p style="color: var(--text-muted); margin-bottom: 30px;">تواصل بلا حدود، صفر تأخير.</p>
+            <h1 class="neon-text" style="font-size: 3.5rem; margin-bottom: 20px; font-weight: 900;">ZAGEL</h1>
             <div id="login-box">
                 <input type="email" id="email" placeholder="البريد الإلكتروني">
                 <input type="password" id="password" placeholder="كلمة المرور">
-                <button class="btn" id="btn-action" style="width: 100%; margin-top: 10px; font-size: 1.1rem;">دخول</button>
-                <p id="switch-auth" style="margin-top: 20px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;">ليس لديك حساب؟ <span style="color: var(--accent-pink); font-weight: bold;">سجل الآن</span></p>
+                <div id="register-fields" class="hidden">
+                    <input type="text" id="fullname" placeholder="الاسم الكامل (اللقب)">
+                    <input type="text" id="username" placeholder="اليوزر نيم (@)">
+                </div>
+                <button class="btn" id="btn-action" style="width: 100%; margin-top: 10px;">دخول</button>
+                <p id="switch-auth" style="margin-top: 20px; font-size: 0.9rem; cursor: pointer; color: var(--text-muted);">ليس لديك حساب؟ <span style="color: var(--accent-pink);">سجل الآن</span></p>
             </div>
         </div>
     </div>
 
     <div id="app-page" class="hidden">
         <header>
-            <div class="neon-text" style="font-weight: 900; font-size: 1.5rem;">زاجل <i class="fa-solid fa-feather-pointed"></i></div>
-            <div class="avatar-container">
-                <img src="" id="header-avatar" class="avatar" style="width: 35px; height: 35px;">
-                <div class="online-dot"></div>
-            </div>
+            <div class="neon-text" style="font-weight: 900; font-size: 1.5rem;">زاجل V4</div>
+            <img src="" id="header-avatar" class="avatar" style="width: 35px; height: 35px;">
         </header>
 
         <div class="main-content">
-            
             <div id="tab-home" class="tab-content active">
-                <div class="stories-container">
-                    <div class="story-circle" onclick="alert('قريباً: إضافة حالة مؤقتة!')">
+                <div class="stories-bar" id="stories-container">
+                    <div class="story-ring" onclick="document.getElementById('add-story-modal').classList.remove('hidden')">
                         <img src="" id="my-story-avatar">
-                        <div class="story-add"><i class="fa-solid fa-plus"></i></div>
+                        <div class="story-add-btn"><i class="fa-solid fa-plus"></i></div>
                     </div>
-                    <div class="story-circle"><img src="https://ui-avatars.com/api/?name=A"></div>
-                    <div class="story-circle"><img src="https://ui-avatars.com/api/?name=M"></div>
                 </div>
-
                 <div id="posts-container"></div>
             </div>
 
-            <div id="tab-users" class="tab-content">
-                <div class="search-bar">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="search-input" placeholder="ابحث عن مستخدم باسمه...">
+            <div id="tab-explore" class="tab-content">
+                <h3 style="margin-bottom: 15px;">منشورات رائجة 🌍</h3>
+                <div class="explore-grid" id="explore-container"></div>
+            </div>
+
+            <div id="tab-reels" class="tab-content">
+                <div id="reels-container"></div>
+                <div class="create-fab" style="background: var(--accent-pink); bottom: 150px;" onclick="document.getElementById('add-reel-modal').classList.remove('hidden')">
+                    <i class="fa-solid fa-video"></i>
                 </div>
-                <div id="users-container"></div>
             </div>
 
             <div id="tab-inbox" class="tab-content">
-                <h2 style="margin-bottom: 15px;">المحادثات <i class="fa-solid fa-inbox"></i></h2>
-                <div id="inbox-container">
-                    <p style="text-align: center; color: var(--text-muted); margin-top: 50px;">لا توجد محادثات سابقة.</p>
+                <div class="notes-bar" id="notes-container">
+                    <div class="note-container" onclick="addNotePrompt()">
+                        <div class="note-bubble">أضف ملاحظة +</div>
+                        <img src="" id="my-note-avatar" class="note-avatar">
+                    </div>
                 </div>
+                <h3 style="margin-bottom: 15px;">المحادثات <i class="fa-solid fa-message"></i></h3>
+                <div id="inbox-list"></div>
             </div>
 
             <div id="tab-profile" class="tab-content">
-                <div class="profile-header">
-                    <img src="" id="my-avatar" class="avatar" style="width: 90px; height: 90px; margin-bottom: 10px;">
+                <div style="text-align: center; padding: 20px; background: var(--surface); border-radius: 20px;">
+                    <img src="" id="my-profile-avatar" class="avatar" style="width: 90px; height: 90px; margin-bottom: 10px;">
                     <h2 id="my-name"></h2>
-                    <p id="my-email" style="font-size: 0.8rem; color: var(--text-muted);"></p>
-                    
-                    <div style="margin-top: 15px;">
-                        <label style="font-size: 0.8rem; color: var(--text-muted);">هالة المزاج الخاص بك:</label>
-                        <select id="mood-selector" style="margin-top: 5px; width: 150px; display: inline-block;">
-                            <option value="#00f3ff">🔵 رايق (افتراضي)</option>
-                            <option value="#ff007c">🔥 مشتعل (وردي)</option>
-                            <option value="#00ff00">💡 مبدع (أخضر)</option>
-                            <option value="#ffeb3b">🌟 سعيد (أصفر)</option>
-                        </select>
-                    </div>
-
-                    <div class="stats-box">
-                        <div class="stat-item"><b id="stat-posts">0</b><br><small>منشور</small></div>
-                        <div class="stat-item"><b id="count-followers">0</b><br><small>متابع</small></div>
-                        <div class="stat-item"><b id="count-following">0</b><br><small>يتابع</small></div>
-                    </div>
-
-                    <div class="zagel-secret-box" onclick="toggleZagelInbox()">
-                        <h3><i class="fa-solid fa-user-secret"></i> صندوق زاجل السري</h3>
-                        <p style="font-size: 0.8rem; color: var(--text-muted);">اضغط لرؤية الرسائل المجهولة التي وصلتك</p>
-                    </div>
-                    <div id="zagel-messages-container" class="hidden" style="text-align: right; background: var(--surface-light); padding: 10px; border-radius: 10px; margin-bottom: 15px;"></div>
-
-                    <button class="btn btn-pink" id="btn-logout" style="width: 100%;"><i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل الخروج</button>
+                    <p id="my-username" class="username-tag"></p>
+                    <button class="btn btn-pink" id="btn-logout" style="width: 100%; margin-top: 20px;">تسجيل الخروج</button>
                 </div>
-                <h3 style="margin-bottom: 10px;"><i class="fa-solid fa-bookmark" style="color: var(--accent-blue);"></i> محفوظاتي</h3>
-                <div id="saved-posts-container"></div>
             </div>
         </div>
 
@@ -209,8 +160,9 @@
 
         <nav class="bottom-nav">
             <div class="nav-item active" onclick="showTab('home')"><i class="fa-solid fa-house"></i><span>الرئيسية</span></div>
-            <div class="nav-item" onclick="showTab('users')"><i class="fa-solid fa-compass"></i><span>اكتشف</span></div>
-            <div class="nav-item" onclick="showTab('inbox')"><i class="fa-solid fa-message"></i><span>الدردشة</span></div>
+            <div class="nav-item" onclick="showTab('explore')"><i class="fa-solid fa-magnifying-glass"></i><span>اكتشف</span></div>
+            <div class="nav-item" onclick="showTab('reels')"><i class="fa-solid fa-play"></i><span>ريلز</span></div>
+            <div class="nav-item" onclick="showTab('inbox')"><i class="fa-solid fa-inbox"></i><span>الرسائل</span></div>
             <div class="nav-item" onclick="showTab('profile')"><i class="fa-solid fa-user"></i><span>حسابي</span></div>
         </nav>
     </div>
@@ -218,56 +170,59 @@
     <div id="post-modal" class="modal hidden">
         <div class="modal-content">
             <i class="fa-solid fa-times close-modal" onclick="document.getElementById('post-modal').classList.add('hidden')"></i>
-            <h3 style="margin-bottom: 15px; color: var(--accent-blue);">إنشاء منشور جديد</h3>
-            <textarea id="post-input" placeholder="اكتب شيئاً... يدعم الهاشتاج #زاجل" rows="3"></textarea>
-            <input type="text" id="spotify-input" placeholder="رابط أغنية من Spotify (اختياري)">
+            <h3 style="margin-bottom: 15px; color: var(--accent-blue);">إنشاء منشور</h3>
+            <textarea id="post-text" placeholder="ماذا يدور في ذهنك؟" rows="3"></textarea>
             
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <label for="img-input" style="cursor: pointer; color: var(--accent-pink); font-size: 1.2rem; background: rgba(255,0,124,0.1); padding: 10px; border-radius: 10px;"><i class="fa-regular fa-images"></i> صور</label>
-                <input type="file" id="img-input" class="hidden" accept="image/*" multiple>
-                
-                <label style="color: var(--text-muted); font-size: 0.9rem; display: flex; align-items: center; gap: 5px;">
-                    <input type="checkbox" id="flash-post"> فلاش ⚡ (يختفي بعد ساعة)
-                </label>
-            </div>
-            <div id="img-preview-container" class="preview-images"></div>
+            <label style="font-size: 0.8rem; color: var(--text-muted);">رابط أغنية (يوتيوب أو سبوتيفاي):</label>
+            <input type="text" id="post-music" placeholder="ضع الرابط هنا...">
             
-            <button class="btn" id="btn-post" style="width: 100%;">نشر الآن</button>
+            <input type="file" id="post-img" accept="image/*" style="margin-bottom: 15px;">
+            <button class="btn" id="btn-publish" style="width: 100%;">نشر الآن <i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <div id="send-zagel-modal" class="modal hidden">
+    <div id="add-reel-modal" class="modal hidden">
         <div class="modal-content">
-            <i class="fa-solid fa-times close-modal" onclick="document.getElementById('send-zagel-modal').classList.add('hidden')"></i>
-            <h3 style="margin-bottom: 15px; color: var(--accent-pink);"><i class="fa-solid fa-user-secret"></i> إرسال زاجل مجهول</h3>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">رسالتك ستكون سرية تماماً، ولن يعرف هويتك.</p>
-            <textarea id="zagel-secret-input" placeholder="اكتب رسالتك السرية هنا..." rows="3"></textarea>
-            <button class="btn btn-pink" id="btn-send-zagel" style="width: 100%;">إرسال الطائر</button>
+            <i class="fa-solid fa-times close-modal" onclick="document.getElementById('add-reel-modal').classList.add('hidden')"></i>
+            <h3 style="margin-bottom: 15px; color: var(--accent-pink);"><i class="fa-solid fa-video"></i> تصوير/رفع ريلز</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">الريلز يتم رفعه على Storage لضمان السرعة.</p>
+            
+            <label class="btn" style="display:block; text-align:center; margin-bottom:10px;">
+                <i class="fa-solid fa-camera"></i> اختر أو صوّر فيديو
+                <input type="file" id="reel-video-file" accept="video/*" capture="camcorder" class="hidden">
+            </label>
+            
+            <label class="btn btn-pink" style="display:block; text-align:center; margin-bottom:15px;">
+                <i class="fa-solid fa-music"></i> اختر "ساوند" للخلفية (اختياري)
+                <input type="file" id="reel-audio-file" accept="audio/*" class="hidden">
+            </label>
+            
+            <input type="text" id="reel-caption" placeholder="اكتب وصفاً للريلز...">
+            <button class="btn" id="btn-upload-reel" style="width: 100%;">رفع الريلز</button>
         </div>
     </div>
 
-    <div id="chat-window" class="hidden">
-        <div class="chat-header">
-            <i class="fa-solid fa-arrow-right" onclick="closeChat()" style="cursor: pointer; font-size: 1.2rem;"></i>
-            <img src="" id="chat-target-avatar" class="avatar" style="width: 40px; height: 40px;">
-            <div>
-                <div id="chat-target-name" style="font-weight: bold;"></div>
-                <div id="chat-typing" class="typing-indicator hidden">يكتب الآن...</div>
-            </div>
+    <div id="add-story-modal" class="modal hidden">
+        <div class="modal-content">
+            <i class="fa-solid fa-times close-modal" onclick="document.getElementById('add-story-modal').classList.add('hidden')"></i>
+            <h3 style="margin-bottom: 15px;">إضافة قصة (Story)</h3>
+            <input type="file" id="story-img" accept="image/*">
+            <button class="btn btn-pink" id="btn-upload-story" style="width: 100%;">نشر القصة</button>
         </div>
-        <div class="messages-area" id="chat-msgs"></div>
-        <div style="padding: 10px; background: var(--surface); display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
-            <input type="text" id="chat-input" placeholder="رسالتك..." style="margin-bottom: 0;">
-            <button class="btn" id="btn-send-chat"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
+    </div>
+
+    <div id="story-viewer" class="hidden" onclick="closeStory()">
+        <div class="story-progress"><div class="story-bar" id="story-progress-bar"></div></div>
+        <img src="" id="story-viewer-img" style="width: 100%; max-height: 90vh; object-fit: contain;">
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, limit, updateDoc, arrayUnion, arrayRemove, serverTimestamp, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        import { getDatabase, ref, push, set, onChildAdded, onValue, serverTimestamp as rtdbTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, limit, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
+        // إعدادات Firebase الخاصة بك
         const firebaseConfig = {
             apiKey: "AIzaSyAhg6oTG1EJ44ST1zkkeYvKpfLMD2JDV3M",
             authDomain: "fir-c3e88.firebaseapp.com",
@@ -281,409 +236,350 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const rtdb = getDatabase(app);
+        const storage = getStorage(app);
 
         let me = null;
         let myData = null;
         let isRegister = false;
-        let selectedImagesBase64 = [];
-        let activeChatId = null;
-        let targetChatUid = null;
-        let targetChatName = "";
 
-        // --- ضغط الصور لتفادي حد 1MB ---
-        const compressImage = (file) => {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 600;
-                        const scale = img.width > MAX_WIDTH ? MAX_WIDTH / img.width : 1;
-                        canvas.width = img.width * scale;
-                        canvas.height = img.height * scale;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.6)); // ضغط الجودة 60%
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
+        // PWA Setup (ديناميكي)
+        const manifestData = {
+            "name": "Zagel App", "short_name": "Zagel", "start_url": ".", "display": "standalone",
+            "background_color": "#0d0d12", "theme_color": "#0d0d12",
+            "icons": [{"src": "https://ui-avatars.com/api/?name=Z&background=00f3ff&color=000&size=512", "sizes": "512x512", "type": "image/png"}]
         };
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+        document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
+        if('serviceWorker' in navigator) {
+            const swCode = `self.addEventListener('fetch', function(e) {});`;
+            const swBlob = new Blob([swCode], {type: 'application/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob));
+        }
+
+        // تحويل الصورة لـ Base64 للمنشورات
+        const fileToBase64 = (file) => new Promise((res, rej) => {
+            const reader = new FileReader();
+            reader.onload = () => res(reader.result);
+            reader.onerror = rej;
+            reader.readAsDataURL(file);
+        });
+
+        // استخراج روابط الأغاني (يوتيوب وسبوتيفاي)
+        function extractEmbedLink(url) {
+            if(!url) return null;
+            if(url.includes("spotify.com")) {
+                const match = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+                return match ? `https://open.spotify.com/embed/${match[1]}/${match[2]}` : null;
+            }
+            if(url.includes("youtube.com") || url.includes("youtu.be")) {
+                const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+                return match ? `https://www.youtube.com/embed/${match[1]}` : null;
+            }
+            return null;
+        }
 
         // --- التوثيق ---
         document.getElementById('switch-auth').onclick = () => {
             isRegister = !isRegister;
             document.getElementById('btn-action').innerText = isRegister ? 'إنشاء حساب جديد' : 'دخول';
-            document.getElementById('switch-auth').innerHTML = isRegister ? 'لديك حساب؟ <span style="color:var(--accent-blue);">سجل دخول</span>' : 'ليس لديك حساب؟ <span style="color:var(--accent-pink);">سجل الآن</span>';
+            document.getElementById('register-fields').classList.toggle('hidden');
         };
 
         document.getElementById('btn-action').onclick = async () => {
             const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            if(!email || !password) return alert("الرجاء ملء البيانات");
-
+            const pass = document.getElementById('password').value;
+            
             try {
                 if(isRegister) {
-                    const name = prompt("ما اسمك؟ (سيكون هذا اسم المستخدم الخاص بك)");
-                    if(!name) return;
-                    const res = await createUserWithEmailAndPassword(auth, email, password);
-                    await updateProfile(res.user, { displayName: name });
-                    await setDoc(doc(db, "users", res.user.uid), { 
-                        uid: res.user.uid, name: name, nameLower: name.toLowerCase(), email: email, 
-                        following: [], followers: [], mood: "#00f3ff", bookmarks: [] 
-                    });
+                    const fullname = document.getElementById('fullname').value;
+                    const username = document.getElementById('username').value.replace('@', '');
+                    if(!fullname || !username) return alert("املأ الاسم واليوزر نيم");
+                    
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await updateProfile(res.user, { displayName: fullname });
+                    await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, name: fullname, username: `@${username}` });
                 } else {
-                    await signInWithEmailAndPassword(auth, email, password);
+                    await signInWithEmailAndPassword(auth, email, pass);
                 }
-            } catch (e) { alert("خطأ: " + e.message); }
+            } catch (e) { alert(e.message); }
         };
 
         onAuthStateChanged(auth, async (user) => {
             if(user) {
                 me = user;
-                // إعداد Online Presence
-                const myStatusRef = ref(rtdb, `status/${me.uid}`);
-                set(myStatusRef, "online");
-                onDisconnect(myStatusRef).set("offline");
-
+                const userDoc = await getDoc(doc(db, "users", me.uid));
+                myData = userDoc.data();
+                
                 document.getElementById('auth-page').classList.add('hidden');
                 document.getElementById('app-page').classList.remove('hidden');
                 
-                const avatarUrl = `https://ui-avatars.com/api/?name=${me.displayName}&background=0d0d12&color=fff`;
-                document.getElementById('header-avatar').src = avatarUrl;
-                document.getElementById('my-story-avatar').src = avatarUrl;
-                document.getElementById('my-avatar').src = avatarUrl;
+                const av = `https://ui-avatars.com/api/?name=${me.displayName}&background=00f3ff&color=000`;
+                document.getElementById('header-avatar').src = av;
+                document.getElementById('my-story-avatar').src = av;
+                document.getElementById('my-note-avatar').src = av;
+                document.getElementById('my-profile-avatar').src = av;
                 document.getElementById('my-name').innerText = me.displayName;
-                document.getElementById('my-email').innerText = me.email;
+                document.getElementById('my-username').innerText = myData.username || "";
 
-                loadMyProfile();
-                loadHome();
-                loadUsers();
-                loadInbox();
+                loadPosts();
+                loadExplore();
+                loadStories();
+                loadNotes();
+                loadReels();
             } else {
                 document.getElementById('auth-page').classList.remove('hidden');
                 document.getElementById('app-page').classList.add('hidden');
             }
         });
 
-        document.getElementById('btn-logout').onclick = () => {
-            set(ref(rtdb, `status/${me.uid}`), "offline");
-            signOut(auth);
-        };
+        document.getElementById('btn-logout').onclick = () => signOut(auth);
 
-        // --- الملف الشخصي والإحصائيات ---
-        function loadMyProfile() {
-            onSnapshot(doc(db, "users", me.uid), async (d) => {
-                myData = d.data();
-                if(!myData) return;
-                
-                document.getElementById('count-following').innerText = myData.following?.length || 0;
-                document.getElementById('count-followers').innerText = myData.followers?.length || 0;
-                document.getElementById('mood-selector').value = myData.mood || "#00f3ff";
-                document.documentElement.style.setProperty('--mood-color', myData.mood || "#00f3ff");
+        // --- النشر والتحميل ---
+        document.getElementById('btn-publish').onclick = async () => {
+            const btn = document.getElementById('btn-publish');
+            const text = document.getElementById('post-text').value;
+            const musicLink = document.getElementById('post-music').value;
+            const fileInput = document.getElementById('post-img');
+            
+            if(!text && !fileInput.files[0] && !musicLink) return;
 
-                // حساب عدد المنشورات
-                const qPosts = query(collection(db, "posts"), where("uid", "==", me.uid));
-                const snapPosts = await getDocs(qPosts);
-                document.getElementById('stat-posts').innerText = snapPosts.size;
+            // تفعيل حالة التحميل لمنع التكرار
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري النشر...';
 
-                // زاجل السري
-                const zagelContainer = document.getElementById('zagel-messages-container');
-                zagelContainer.innerHTML = (myData.zagelMessages || []).length === 0 ? "<p>لا توجد رسائل سرية بعد.</p>" : "";
-                (myData.zagelMessages || []).reverse().forEach(msg => {
-                    zagelContainer.innerHTML += `<div style="border-bottom:1px solid rgba(255,255,255,0.05); padding:10px 0;">${msg}</div>`;
-                });
-            });
-        }
-
-        document.getElementById('mood-selector').onchange = async (e) => {
-            const newMood = e.target.value;
-            document.documentElement.style.setProperty('--mood-color', newMood);
-            await updateDoc(doc(db, "users", me.uid), { mood: newMood });
-        };
-
-        window.toggleZagelInbox = () => {
-            document.getElementById('zagel-messages-container').classList.toggle('hidden');
-        };
-
-        // --- المنشورات (عدة صور + فلاش + سبوتيفاي) ---
-        document.getElementById('img-input').onchange = async (e) => {
-            const files = Array.from(e.target.files);
-            selectedImagesBase64 = [];
-            document.getElementById('img-preview-container').innerHTML = "";
-            for(let file of files) {
-                const b64 = await compressImage(file);
-                selectedImagesBase64.push(b64);
-                const img = document.createElement('img');
-                img.src = b64;
-                document.getElementById('img-preview-container').appendChild(img);
+            let imgB64 = null;
+            if(fileInput.files[0]) {
+                imgB64 = await fileToBase64(fileInput.files[0]);
             }
-        };
-
-        function parseSpotify(url) {
-            if(!url) return null;
-            const match = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
-            return match ? `https://open.spotify.com/embed/${match[1]}/${match[2]}` : null;
-        }
-
-        document.getElementById('btn-post').onclick = async () => {
-            const text = document.getElementById('post-input').value;
-            const spotLink = document.getElementById('spotify-input').value;
-            const isFlash = document.getElementById('flash-post').checked;
-            
-            if(!text && selectedImagesBase64.length === 0 && !spotLink) return alert("لا يمكن نشر محتوى فارغ");
-            
-            // حساب وقت القراءة (كلمة في الثانية للتبسيط)
-            const readTime = text ? Math.ceil(text.split(' ').length / 3) + " ثانية قراءة" : "";
 
             await addDoc(collection(db, "posts"), {
-                uid: me.uid, name: me.displayName, text, images: selectedImagesBase64,
-                spotify: parseSpotify(spotLink), isFlash, readTime,
-                likes: [], createdAt: serverTimestamp(), expireAt: isFlash ? Date.now() + 3600000 : null
+                uid: me.uid, name: me.displayName, username: myData.username,
+                text: text, image: imgB64, embed: extractEmbedLink(musicLink),
+                createdAt: serverTimestamp()
             });
-            
+
             document.getElementById('post-modal').classList.add('hidden');
-            document.getElementById('post-input').value = "";
-            document.getElementById('spotify-input').value = "";
-            document.getElementById('flash-post').checked = false;
-            document.getElementById('img-preview-container').innerHTML = "";
-            selectedImagesBase64 = [];
+            document.getElementById('post-text').value = "";
+            document.getElementById('post-music').value = "";
+            fileInput.value = "";
+            btn.disabled = false;
+            btn.innerHTML = 'نشر الآن <i class="fa-solid fa-paper-plane"></i>';
         };
 
-        function loadHome() {
-            const q = query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(40));
-            onSnapshot(q, (snap) => {
-                const container = document.getElementById('posts-container');
-                container.innerHTML = "";
-                const now = Date.now();
+        // حذف المنشور
+        window.deletePost = async (id) => {
+            if(confirm("هل أنت متأكد من حذف المنشور؟")) {
+                await deleteDoc(doc(db, "posts", id));
+            }
+        };
 
-                snap.forEach(d => {
-                    const post = d.data();
-                    // التدمير الذاتي (الفلاش)
-                    if(post.isFlash && post.expireAt && now > post.expireAt) return; 
+        // عرض المنشورات
+        function renderPostCards(containerId, snap, isExplore = false) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
+            snap.forEach(d => {
+                const post = d.data();
+                if(isExplore && post.uid === me.uid) return; // إخفاء منشوراتي من الاستكشاف
 
-                    const isLiked = post.likes.includes(me.uid);
-                    const isBookmarked = myData?.bookmarks?.includes(d.id);
-                    const isVerified = true; // محاكاة التوثيق للجميع في النسخة
-
-                    // بناء الصور المتعددة
-                    let imagesHtml = "";
-                    if(post.images && post.images.length > 0) {
-                        imagesHtml = `<div class="post-images-grid">` + 
-                            post.images.map(img => `<img src="${img}">`).join('') + 
-                        `</div>`;
-                    }
-
-                    const card = document.createElement('div');
-                    card.className = 'post-card';
-                    card.innerHTML = `
-                        ${post.isFlash ? '<div class="flash-tag">⚡ فلاش (يختفي قريباً)</div>' : ''}
-                        <div class="post-header" style="${post.isFlash ? 'margin-top:20px;' : ''}">
-                            <img src="https://ui-avatars.com/api/?name=${post.name}" class="avatar">
-                            <div>
-                                <b style="display:flex; align-items:center;">${post.name} <i class="fa-solid fa-circle-check verified-badge" style="margin-right:5px;"></i></b>
-                                <div class="post-meta">${post.readTime ? `<i class="fa-regular fa-clock"></i> ${post.readTime}` : 'الآن'}</div>
+                const html = `
+                    <div class="post-card ${isExplore ? 'explore-item' : ''}">
+                        <div class="post-header">
+                            <div class="post-user-info">
+                                <img src="https://ui-avatars.com/api/?name=${post.name}" class="avatar" style="${isExplore ? 'width:30px;height:30px;' : ''}">
+                                <div>
+                                    <b style="font-size: ${isExplore ? '0.8rem' : '1rem'}">${post.name}</b>
+                                    ${!isExplore ? `<div class="username-tag">${post.username||''}</div>` : ''}
+                                </div>
                             </div>
+                            ${post.uid === me.uid && !isExplore ? `<i class="fa-solid fa-trash delete-btn" onclick="deletePost('${d.id}')"></i>` : ''}
                         </div>
-                        <p style="white-space: pre-wrap; line-height: 1.5; margin-bottom: 10px;">${post.text}</p>
-                        ${imagesHtml}
-                        ${post.spotify ? `<iframe class="spotify-embed" src="${post.spotify}" allow="encrypted-media"></iframe>` : ''}
-                        <div class="post-actions">
-                            <div class="action-item ${isLiked?'active-heart':''}" onclick="likePost('${d.id}', ${isLiked})">
-                                <i class="fa-${isLiked?'solid':'regular'} fa-heart"></i> ${post.likes.length}
-                            </div>
-                            <div class="action-item" onclick="navigator.clipboard.writeText('zagel.app/post/${d.id}'); alert('تم نسخ الرابط!');">
-                                <i class="fa-solid fa-share-nodes"></i> مشاركة
-                            </div>
-                            <div class="action-item ${isBookmarked?'active-bookmark':''}" onclick="bookmarkPost('${d.id}', ${isBookmarked})">
-                                <i class="fa-${isBookmarked?'solid':'regular'} fa-bookmark"></i>
-                            </div>
+                        ${!isExplore ? `<p>${post.text}</p>` : `<p style="font-size:0.8rem; white-space:nowrap; overflow:hidden;">${post.text}</p>`}
+                        ${post.image ? `<img src="${post.image}" class="post-img">` : ''}
+                        ${post.embed && !isExplore ? `<iframe src="${post.embed}" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>` : ''}
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function loadPosts() {
+            onSnapshot(query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(30)), (snap) => {
+                renderPostCards("posts-container", snap, false);
+            });
+        }
+
+        function loadExplore() {
+            // جلب عشوائي/عام لمنشورات للاستكشاف
+            onSnapshot(query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(20)), (snap) => {
+                renderPostCards("explore-container", snap, true);
+            });
+        }
+
+        // --- النوتس (Notes) ---
+        window.addNotePrompt = async () => {
+            const text = prompt("اكتب ملاحظتك (60 حرف كحد أقصى):");
+            if(text && text.length <= 60) {
+                await setDoc(doc(db, "notes", me.uid), {
+                    uid: me.uid, name: me.displayName, text: text, createdAt: Date.now()
+                });
+            }
+        };
+
+        function loadNotes() {
+            onSnapshot(collection(db, "notes"), (snap) => {
+                const container = document.getElementById('notes-container');
+                // الاحتفاظ بزر الإضافة الخاص بي
+                container.innerHTML = `
+                    <div class="note-container" onclick="addNotePrompt()">
+                        <div class="note-bubble">أضف ملاحظة +</div>
+                        <img src="https://ui-avatars.com/api/?name=${me.displayName}&background=00f3ff&color=000" class="note-avatar">
+                    </div>
+                `;
+                const now = Date.now();
+                snap.forEach(d => {
+                    const note = d.data();
+                    if(note.uid === me.uid) return;
+                    if(now - note.createdAt > 86400000) { deleteDoc(doc(db, "notes", d.id)); return; } // حذف بعد 24 ساعة
+
+                    container.innerHTML += `
+                        <div class="note-container">
+                            <div class="note-bubble">${note.text}</div>
+                            <img src="https://ui-avatars.com/api/?name=${note.name}" class="note-avatar">
                         </div>
                     `;
-                    container.appendChild(card);
                 });
             });
         }
 
-        window.likePost = async (id, isLiked) => {
-            const ref = doc(db, "posts", id);
-            await updateDoc(ref, { likes: isLiked ? arrayRemove(me.uid) : arrayUnion(me.uid) });
+        // --- القصص (Stories) ---
+        document.getElementById('btn-upload-story').onclick = async () => {
+            const file = document.getElementById('story-img').files[0];
+            if(!file) return;
+            const b64 = await fileToBase64(file);
+            await addDoc(collection(db, "stories"), { uid: me.uid, name: me.displayName, image: b64, createdAt: Date.now() });
+            document.getElementById('add-story-modal').classList.add('hidden');
         };
 
-        window.bookmarkPost = async (id, isBookmarked) => {
-            const ref = doc(db, "users", me.uid);
-            await updateDoc(ref, { bookmarks: isBookmarked ? arrayRemove(id) : arrayUnion(id) });
-        };
-
-        // --- البحث واكتشاف المستخدمين ---
-        let allUsers = [];
-        function loadUsers() {
-            onSnapshot(collection(db, "users"), (snap) => {
-                allUsers = [];
-                snap.forEach(d => { if(d.id !== me.uid) allUsers.push(d.data()); });
-                renderUsers(allUsers);
-            });
-        }
-
-        function renderUsers(usersList) {
-            const container = document.getElementById('users-container');
-            container.innerHTML = "";
-            usersList.forEach(u => {
-                const isFollowing = u.followers?.includes(me.uid);
-                const row = document.createElement('div');
-                row.className = 'user-row';
-                row.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <img src="https://ui-avatars.com/api/?name=${u.name}" class="avatar" style="width:40px; height:40px; border-color:${u.mood||'#00f3ff'}">
-                        <div>
-                            <b>${u.name}</b>
-                            <div style="font-size:0.7rem; color:var(--text-muted); cursor:pointer; color:var(--accent-pink);" onclick="openZagelModal('${u.uid}')"><i class="fa-solid fa-user-secret"></i> أرسل زاجل سري</div>
-                        </div>
-                    </div>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn" onclick="openChatWith('${u.uid}', '${u.name}')" style="padding:5px 12px; background:var(--surface-light); color:#fff;"><i class="fa-regular fa-comment"></i></button>
-                        <button class="btn ${isFollowing?'':'btn-pink'}" onclick="toggleFollow('${u.uid}', ${isFollowing})" style="padding:5px 12px; font-size:0.8rem;">${isFollowing?'متابع ✅':'متابعة'}</button>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
-        }
-
-        document.getElementById('search-input').addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase();
-            const filtered = allUsers.filter(u => u.nameLower.includes(val));
-            renderUsers(filtered);
-        });
-
-        window.toggleFollow = async (targetUid, isFollowing) => {
-            const myRef = doc(db, "users", me.uid);
-            const targetRef = doc(db, "users", targetUid);
-            if(isFollowing) {
-                await updateDoc(myRef, { following: arrayRemove(targetUid) });
-                await updateDoc(targetRef, { followers: arrayRemove(me.uid) });
-            } else {
-                await updateDoc(myRef, { following: arrayUnion(targetUid) });
-                await updateDoc(targetRef, { followers: arrayUnion(me.uid) });
-            }
-        };
-
-        // --- زاجل السري ---
-        let zagelTargetUid = null;
-        window.openZagelModal = (uid) => {
-            zagelTargetUid = uid;
-            document.getElementById('send-zagel-modal').classList.remove('hidden');
-        };
-
-        document.getElementById('btn-send-zagel').onclick = async () => {
-            const text = document.getElementById('zagel-secret-input').value;
-            if(!text || !zagelTargetUid) return;
-            const targetRef = doc(db, "users", zagelTargetUid);
-            await updateDoc(targetRef, { zagelMessages: arrayUnion(text) });
-            alert("تم إرسال طائر الزاجل السري بنجاح! 🕊️");
-            document.getElementById('send-zagel-modal').classList.add('hidden');
-            document.getElementById('zagel-secret-input').value = "";
-        };
-
-        // --- صندوق الرسائل (Inbox) والدردشة ---
-        function loadInbox() {
-            const inboxRef = ref(rtdb, `user_inbox/${me.uid}`);
-            onValue(inboxRef, (snap) => {
-                const container = document.getElementById('inbox-container');
-                if(!snap.exists()) {
-                    container.innerHTML = "<p style='text-align:center; color:gray; margin-top:30px;'>لا توجد رسائل</p>";
-                    return;
-                }
+        function loadStories() {
+            onSnapshot(collection(db, "stories"), (snap) => {
+                const container = document.getElementById('stories-container');
+                const now = Date.now();
                 
-                container.innerHTML = "";
-                const chats = [];
-                snap.forEach(child => { chats.push({ uid: child.key, ...child.val() }); });
-                
-                // ترتيب حسب الأحدث
-                chats.sort((a,b) => b.timestamp - a.timestamp).forEach(chat => {
+                // تنظيف القديم والاحتفاظ بزر الإضافة
+                Array.from(container.children).forEach(c => {
+                    if(!c.querySelector('.story-add-btn')) c.remove();
+                });
+
+                snap.forEach(d => {
+                    const story = d.data();
+                    if(now - story.createdAt > 86400000) { deleteDoc(doc(db, "stories", d.id)); return; }
+                    
                     const div = document.createElement('div');
-                    div.className = 'inbox-item';
-                    div.onclick = () => openChatWith(chat.uid, chat.name);
-                    div.innerHTML = `
-                        <img src="https://ui-avatars.com/api/?name=${chat.name}" class="avatar" style="width:45px; height:45px;">
-                        <div class="inbox-info">
-                            <div class="inbox-name">${chat.name}</div>
-                            <div class="inbox-msg">${chat.lastMsg}</div>
-                        </div>
-                    `;
+                    div.className = 'story-ring';
+                    div.innerHTML = `<img src="https://ui-avatars.com/api/?name=${story.name}">`;
+                    div.onclick = () => viewStory(story.image);
                     container.appendChild(div);
                 });
             });
         }
 
-        window.openChatWith = (uid, name) => {
-            targetChatUid = uid;
-            targetChatName = name;
-            activeChatId = me.uid < uid ? `${me.uid}_${uid}` : `${uid}_${me.uid}`;
-            
-            document.getElementById('chat-target-name').innerText = name;
-            document.getElementById('chat-target-avatar').src = `https://ui-avatars.com/api/?name=${name}`;
-            document.getElementById('chat-window').classList.remove('hidden');
-            const msgsArea = document.getElementById('chat-msgs');
-            msgsArea.innerHTML = "";
+        let storyTimer;
+        window.viewStory = (imgUrl) => {
+            document.getElementById('story-viewer-img').src = imgUrl;
+            document.getElementById('story-viewer').classList.remove('hidden');
+            const bar = document.getElementById('story-progress-bar');
+            bar.style.transition = 'none'; bar.style.width = '0%';
+            setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
+            storyTimer = setTimeout(closeStory, 5000);
+        };
+        window.closeStory = () => {
+            document.getElementById('story-viewer').classList.add('hidden');
+            clearTimeout(storyTimer);
+        };
 
-            // جلب الرسائل السابقة والمستقبلية
-            const chatRef = ref(rtdb, `chats/${activeChatId}`);
-            onChildAdded(chatRef, (snap) => {
-                const m = snap.val();
-                const div = document.createElement('div');
-                div.className = `msg ${m.sender === me.uid ? 'msg-sent' : 'msg-received'}`;
-                div.innerText = m.text;
-                msgsArea.appendChild(div);
-                msgsArea.scrollTop = msgsArea.scrollHeight;
+        // --- الريلز (Reels with Sound via Firebase Storage) ---
+        document.getElementById('btn-upload-reel').onclick = async () => {
+            const btn = document.getElementById('btn-upload-reel');
+            const vidFile = document.getElementById('reel-video-file').files[0];
+            const audioFile = document.getElementById('reel-audio-file').files[0];
+            const caption = document.getElementById('reel-caption').value;
+            
+            if(!vidFile) return alert("اختر فيديو أولاً");
+
+            btn.disabled = true;
+            btn.innerHTML = 'جاري الرفع لـ Storage...';
+
+            try {
+                // رفع الفيديو لـ Firebase Storage لتخطي حدود Base64
+                const vidRef = sRef(storage, `reels/${Date.now()}_vid.mp4`);
+                await uploadBytes(vidRef, vidFile);
+                const vidUrl = await getDownloadURL(vidRef);
+
+                let audioUrl = null;
+                if(audioFile) {
+                    const audRef = sRef(storage, `reels/${Date.now()}_aud.mp3`);
+                    await uploadBytes(audRef, audioFile);
+                    audioUrl = await getDownloadURL(audRef);
+                }
+
+                await addDoc(collection(db, "reels"), {
+                    uid: me.uid, name: me.displayName, caption: caption,
+                    videoUrl: vidUrl, audioUrl: audioUrl, createdAt: serverTimestamp()
+                });
+
+                document.getElementById('add-reel-modal').classList.add('hidden');
+            } catch(e) {
+                alert("خطأ في الرفع: " + e.message);
+            }
+            btn.disabled = false;
+            btn.innerHTML = 'رفع الريلز';
+        };
+
+        function loadReels() {
+            onSnapshot(query(collection(db, "reels"), orderBy("createdAt", "desc")), (snap) => {
+                const container = document.getElementById('reels-container');
+                container.innerHTML = "";
+                snap.forEach(d => {
+                    const reel = d.data();
+                    const reelId = d.id;
+                    
+                    const div = document.createElement('div');
+                    div.className = 'reel-container';
+                    div.innerHTML = `
+                        <video id="vid-${reelId}" class="reel-video" loop playsinline src="${reel.videoUrl}"></video>
+                        ${reel.audioUrl ? `<audio id="aud-${reelId}" src="${reel.audioUrl}" loop></audio>` : ''}
+                        <div class="reel-ui">
+                            <div>
+                                <h3 style="margin-bottom:5px;">@${reel.name}</h3>
+                                <p style="font-size:0.9rem;">${reel.caption}</p>
+                                ${reel.audioUrl ? `<p style="font-size:0.7rem; color:var(--accent-pink); margin-top:5px;"><i class="fa-solid fa-music"></i> ساوند مخصص</p>` : ''}
+                            </div>
+                            <div class="reel-actions">
+                                <i class="fa-solid fa-heart" style="cursor:pointer;" onclick="this.style.color='#ff007c'"></i>
+                                <i class="fa-solid fa-comment"></i>
+                                <i class="fa-solid fa-share"></i>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // تشغيل الفيديو والصوت عند النقر
+                    div.onclick = () => {
+                        const v = document.getElementById(`vid-${reelId}`);
+                        const a = document.getElementById(`aud-${reelId}`);
+                        if(v.paused) { 
+                            v.play(); 
+                            if(a) a.play(); 
+                        } else { 
+                            v.pause(); 
+                            if(a) a.pause(); 
+                        }
+                    };
+                    container.appendChild(div);
+                });
             });
+        }
 
-            // مستمع حالة "يكتب الآن"
-            const typingRef = ref(rtdb, `typing/${activeChatId}/${uid}`);
-            onValue(typingRef, (snap) => {
-                if(snap.val()) document.getElementById('chat-typing').classList.remove('hidden');
-                else document.getElementById('chat-typing').classList.add('hidden');
-            });
-        };
-
-        window.closeChat = () => {
-            document.getElementById('chat-window').classList.add('hidden');
-            activeChatId = null;
-            if(targetChatUid) set(ref(rtdb, `typing/${activeChatId}/${me.uid}`), false);
-        };
-
-        // مؤشر الكتابة
-        let typingTimeout;
-        document.getElementById('chat-input').addEventListener('input', () => {
-            if(!activeChatId) return;
-            set(ref(rtdb, `typing/${activeChatId}/${me.uid}`), true);
-            clearTimeout(typingTimeout);
-            typingTimeout = setTimeout(() => set(ref(rtdb, `typing/${activeChatId}/${me.uid}`), false), 2000);
-        });
-
-        document.getElementById('btn-send-chat').onclick = async () => {
-            const inp = document.getElementById('chat-input');
-            const msg = inp.value.trim();
-            if(!msg || !activeChatId) return;
-            inp.value = "";
-            set(ref(rtdb, `typing/${activeChatId}/${me.uid}`), false);
-
-            const timestamp = rtdbTimestamp();
-            
-            // إرسال الرسالة
-            await push(ref(rtdb, `chats/${activeChatId}`), { sender: me.uid, text: msg, time: timestamp });
-            
-            // تحديث صندوق الوارد (Inbox) للطرفين
-            const myInboxRef = ref(rtdb, `user_inbox/${me.uid}/${targetChatUid}`);
-            const targetInboxRef = ref(rtdb, `user_inbox/${targetChatUid}/${me.uid}`);
-            
-            await set(myInboxRef, { name: targetChatName, lastMsg: "أنت: " + msg, timestamp: timestamp });
-            await set(targetInboxRef, { name: me.displayName, lastMsg: msg, timestamp: timestamp });
-        };
-
-        // --- تبديل الصفحات ---
+        // Navigation
         window.showTab = (tab) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
