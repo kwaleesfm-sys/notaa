@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مطعم البركة | القائمة الرئيسية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>البركة | Al-Baraka</title>
+    <!-- خط كايرو للعربي وخط بوبينز للإنجليزي -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -22,161 +23,186 @@
         }
 
         /* ================= الإعدادات الأساسية ================= */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; scroll-behavior: smooth; padding-bottom: 50px; }
+        .en-text { font-family: 'Poppins', sans-serif; }
 
         /* ================= شريط التنقل (النافبار) ================= */
         header {
             position: fixed; top: 0; width: 100%; z-index: 1000;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 15px rgba(0,0,0,0.05);
             padding: 15px 5%;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .logo { font-size: 28px; font-weight: 800; color: var(--primary-color); display: flex; align-items: center; gap: 10px; }
+        .logo { 
+            font-size: 26px; font-weight: 800; color: var(--primary-color); 
+            display: flex; align-items: center; gap: 8px; 
+        }
+        .logo .en-name { 
+            font-size: 18px; color: var(--text-light); font-weight: 500; margin-right: 5px; letter-spacing: 1px;
+        }
         .nav-actions { display: flex; gap: 20px; align-items: center; }
         .cart-btn {
             background: var(--primary-color); color: var(--white); border: none;
             padding: 10px 20px; border-radius: 30px; font-weight: bold; cursor: pointer;
             display: flex; align-items: center; gap: 8px; transition: var(--transition);
-            position: relative;
+            position: relative; font-family: 'Cairo', sans-serif;
         }
         .cart-btn:hover { background: var(--secondary-color); transform: translateY(-2px); }
         .cart-count {
             position: absolute; top: -5px; right: -5px; background: var(--accent-color);
             color: white; font-size: 12px; width: 22px; height: 22px;
             border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-family: 'Poppins', sans-serif;
         }
 
-        /* ================= قسم الهيرو (الترحيب) ================= */
+        /* ================= قسم الهيرو ================= */
         .hero {
-            margin-top: 80px; padding: 60px 5%; text-align: center;
-            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(243, 156, 18, 0.1));
-            border-radius: 0 0 50px 50px;
+            margin-top: 70px; padding: 50px 5%; text-align: center;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.08), rgba(243, 156, 18, 0.08));
+            border-radius: 0 0 40px 40px;
         }
-        .hero h1 { font-size: 48px; color: var(--text-dark); margin-bottom: 15px; }
+        .hero h1 { font-size: 42px; color: var(--text-dark); margin-bottom: 10px; }
         .hero h1 span { color: var(--primary-color); }
-        .hero p { font-size: 18px; color: var(--text-light); max-width: 600px; margin: 0 auto 30px; }
+        .hero p { font-size: 16px; color: var(--text-light); max-width: 600px; margin: 0 auto 20px; }
 
-        /* ================= شريط البحث والفلترة ================= */
-        .controls-section { max-width: 1200px; margin: -30px auto 30px; padding: 0 5%; position: relative; z-index: 10; }
+        /* ================= البحث والفلترة ================= */
+        .controls-section { max-width: 1200px; margin: -25px auto 30px; padding: 0 5%; position: relative; z-index: 10; }
         .search-bar {
-            width: 100%; padding: 18px 25px; border-radius: 50px; border: none;
-            box-shadow: var(--shadow); font-size: 16px; outline: none; margin-bottom: 20px;
-            transition: var(--transition);
+            width: 100%; padding: 16px 25px; border-radius: 50px; border: none;
+            box-shadow: var(--shadow); font-size: 15px; outline: none; margin-bottom: 20px;
+            transition: var(--transition); font-family: 'Cairo', sans-serif;
         }
-        .search-bar:focus { box-shadow: 0 15px 40px rgba(231, 76, 60, 0.15); }
+        .search-bar:focus { box-shadow: 0 15px 30px rgba(231, 76, 60, 0.15); }
         
-        .categories { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; }
-        .categories::-webkit-scrollbar { height: 5px; }
-        .categories::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        .categories { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
+        .categories::-webkit-scrollbar { height: 4px; }
+        .categories::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 10px; }
         .cat-btn {
-            padding: 10px 25px; border-radius: 30px; border: 2px solid transparent;
+            padding: 8px 22px; border-radius: 30px; border: 1px solid #eee;
             background: var(--white); color: var(--text-dark); font-weight: bold; cursor: pointer;
-            white-space: nowrap; transition: var(--transition); box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            white-space: nowrap; transition: var(--transition); font-family: 'Cairo', sans-serif;
         }
-        .cat-btn.active { background: var(--primary-color); color: var(--white); box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3); }
+        .cat-btn.active { background: var(--primary-color); color: var(--white); border-color: var(--primary-color); }
 
-        /* ================= شبكة المأكولات (المنيو) ================= */
-        .menu-container { max-width: 1200px; margin: 0 auto 100px; padding: 0 5%; }
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        /* ================= شبكة المأكولات ================= */
+        .menu-container { max-width: 1200px; margin: 0 auto 80px; padding: 0 5%; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
         
         .food-card {
-            background: var(--white); border-radius: 20px; overflow: hidden;
-            box-shadow: var(--shadow); transition: var(--transition); position: relative;
+            background: var(--white); border-radius: 16px; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.04); transition: var(--transition); position: relative;
         }
-        .food-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.12); }
-        .food-image { width: 100%; height: 220px; object-fit: cover; }
+        .food-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .food-image { width: 100%; height: 200px; object-fit: cover; }
         
         /* شارة العرض الخاص */
         .offer-badge {
-            position: absolute; top: 15px; right: 15px; background: #ff4757; color: white;
-            padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold;
-            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4); animation: pulse 2s infinite;
+            position: absolute; top: 12px; right: 12px; background: #ff4757; color: white;
+            padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4); z-index: 2;
         }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        .food-details { padding: 20px; }
-        .food-title { font-size: 22px; margin-bottom: 5px; color: var(--text-dark); }
-        .food-category { font-size: 14px; color: var(--text-light); margin-bottom: 15px; }
         
-        .price-section { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .current-price { font-size: 24px; font-weight: 800; color: var(--primary-color); }
-        .old-price { font-size: 16px; text-decoration: line-through; color: #a4b0be; }
+        .food-details { padding: 18px; }
+        .food-title { font-size: 20px; margin-bottom: 5px; color: var(--text-dark); font-weight: 800; }
+        .food-category { font-size: 13px; color: var(--text-light); margin-bottom: 12px; }
+        
+        .price-section { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .current-price { font-size: 22px; font-weight: 800; color: var(--primary-color); }
+        .old-price { font-size: 15px; text-decoration: line-through; color: #a4b0be; }
 
         .timer-box {
-            background: #fff3e0; color: #e65100; padding: 10px; border-radius: 10px;
-            text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 15px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: rgba(243, 156, 18, 0.1); color: #d35400; padding: 8px; border-radius: 8px;
+            text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 15px;
         }
 
         .add-to-cart-btn {
-            width: 100%; padding: 15px; border: none; border-radius: 12px;
-            background: #2ed573; color: white; font-size: 16px; font-weight: bold;
-            cursor: pointer; transition: var(--transition); display: flex; justify-content: center; gap: 10px;
+            width: 100%; padding: 12px; border: none; border-radius: 10px;
+            background: #27ae60; color: white; font-size: 15px; font-weight: bold;
+            cursor: pointer; transition: var(--transition); display: flex; justify-content: center; gap: 8px;
+            font-family: 'Cairo', sans-serif;
         }
-        .add-to-cart-btn:hover { background: #26de81; transform: scale(1.02); }
+        .add-to-cart-btn:hover { background: #2ecc71; }
 
-        /* ================= السلة الجانبية (Cart Modal) ================= */
+        /* ================= السلة الجانبية ================= */
         .cart-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition);
+            background: rgba(0,0,0,0.6); z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition);
         }
         .cart-overlay.active { opacity: 1; visibility: visible; }
         .cart-sidebar {
-            position: fixed; top: 0; left: -400px; width: 100%; max-width: 400px; height: 100%;
+            position: fixed; top: 0; left: -400px; width: 100%; max-width: 380px; height: 100%;
             background: var(--white); z-index: 2001; transition: var(--transition);
             box-shadow: 5px 0 30px rgba(0,0,0,0.2); display: flex; flex-direction: column;
         }
         .cart-sidebar.active { left: 0; }
         .cart-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .cart-header h2 { color: var(--text-dark); }
-        .close-cart { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-color); }
+        .close-cart { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-light); }
         
         .cart-items-container { flex: 1; overflow-y: auto; padding: 20px; }
-        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .cart-item img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; }
+        .cart-item { display: flex; gap: 12px; margin-bottom: 15px; border-bottom: 1px solid #f5f5f5; padding-bottom: 12px; }
+        .cart-item img { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; }
         .cart-item-details { flex: 1; }
-        .cart-item-title { font-weight: bold; margin-bottom: 5px; }
-        .cart-item-price { color: var(--primary-color); font-weight: bold; }
+        .cart-item-title { font-weight: 800; font-size: 14px; margin-bottom: 4px; }
+        .cart-item-price { color: var(--primary-color); font-weight: bold; font-size: 14px; }
         
         .cart-footer { padding: 20px; border-top: 1px solid #eee; background: var(--bg-light); }
-        .total-price { display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; margin-bottom: 15px; }
-        .checkout-btn { width: 100%; background: var(--primary-color); color: white; border: none; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .total-price { display: flex; justify-content: space-between; font-size: 18px; font-weight: 800; margin-bottom: 15px; }
+        .checkout-btn { width: 100%; background: var(--text-dark); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; font-family: 'Cairo', sans-serif;}
 
-        /* ================= التذييل (حقوق HOMOS) ================= */
-        footer {
-            background: #1e272e; color: #fff; text-align: center; padding: 25px 20px;
-            font-size: 15px; position: fixed; bottom: 0; width: 100%; z-index: 900;
+        /* ================= التذييل (حقوق HOMOS) المحدث ================= */
+        .homos-footer {
+            background: rgba(26, 30, 35, 0.85); /* لون داكن زجاجي أنيق */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #95a5a6;
+            text-align: center;
+            padding: 8px 15px; /* تصغير الحجم */
+            font-size: 11px; /* خط أصغر ومريح للعين */
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            z-index: 900;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            letter-spacing: 0.5px;
         }
-        footer b { color: var(--primary-color); font-size: 18px; letter-spacing: 1px; }
+        .homos-footer b { 
+            color: var(--primary-color); 
+            font-family: 'Poppins', sans-serif; 
+            font-size: 13px; 
+            letter-spacing: 1.5px; 
+            font-weight: 700;
+        }
 
-        /* حالة التحميل الفارغة */
-        .empty-state { text-align: center; padding: 50px; color: var(--text-light); font-size: 20px; width: 100%; grid-column: 1 / -1; }
+        .empty-state { text-align: center; padding: 40px; color: var(--text-light); font-size: 18px; width: 100%; grid-column: 1 / -1; }
     </style>
 </head>
 <body>
 
+    <!-- الهيدر (عربي وإنجليزي) -->
     <header>
         <div class="logo">
             <i class="fa-solid fa-utensils"></i> البركة
+            <span class="en-name en-text">| Al-Baraka</span>
         </div>
         <div class="nav-actions">
             <button class="cart-btn" onclick="toggleCart()">
                 <i class="fa-solid fa-cart-shopping"></i> السلة
-                <span class="cart-count" id="cartCount">0</span>
+                <span class="cart-count en-text" id="cartCount">0</span>
             </button>
         </div>
     </header>
 
+    <!-- الهيرو -->
     <section class="hero">
-        <h1>مرحباً بك في منصة <span>البركة</span></h1>
-        <p>أشهى المأكولات وأقوى العروض الحصرية تصلك ساخنة أينما كنت. تصفح قائمتنا الآن.</p>
+        <h1>مرحباً بك في <span>البركة</span></h1>
+        <p>اكتشف طعم الأصالة بضغطة زر. تصفح قائمتنا واطلب الآن ليصلك طازجاً.</p>
     </section>
 
+    <!-- البحث والفلترة -->
     <section class="controls-section">
-        <input type="text" class="search-bar" id="searchInput" placeholder="🔍 ابحث عن وجبتك المفضلة فوراً... (مثال: شاورما، مشويات)" onkeyup="filterMenu()">
+        <input type="text" class="search-bar" id="searchInput" placeholder="🔍 ابحث عن وجبتك المفضلة... (مثال: كباب، شيش)" onkeyup="filterMenu()">
         
         <div class="categories" id="categoriesContainer">
             <button class="cat-btn active" onclick="setCategory('الكل')">الكل 🍽️</button>
@@ -187,117 +213,121 @@
         </div>
     </section>
 
+    <!-- المنيو -->
     <main class="menu-container">
         <div class="menu-grid" id="menuGrid">
-            <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل أشهى المأكولات...</div>
+            <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل المنيو...</div>
         </div>
     </main>
 
+    <!-- السلة -->
     <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
-            <h2>🛒 سلة طلباتك</h2>
+            <h2>🛒 طلباتي</h2>
             <button class="close-cart" onclick="toggleCart()"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="cart-items-container" id="cartItemsContainer">
-            </div>
+        <div class="cart-items-container" id="cartItemsContainer"></div>
         <div class="cart-footer">
             <div class="total-price">
                 <span>الإجمالي:</span>
-                <span id="cartTotal">0 ج.م</span>
+                <span id="cartTotal" class="en-text">0 EGP</span>
             </div>
-            <button class="checkout-btn" onclick="alert('سيتم توجيهك لصفحة الدفع. جميع الحقوق محفوظة لـ HOMOS!')">إتمام الطلب الآن <i class="fa-solid fa-arrow-left"></i></button>
+            <button class="checkout-btn" onclick="alert('جاري التحويل لصفحة الدفع...')">إتمام الطلب <i class="fa-solid fa-arrow-left" style="margin-right: 5px;"></i></button>
         </div>
     </div>
 
-    <footer>
-        جميع الحقوق محفوظة ومبرمجة بأعلى جودة لـ <b>HOMOS</b> &copy; <span id="currentYear"></span> | منصة مطعم البركة الرسمية
+    <!-- التذييل الاحترافي لـ HOMOS -->
+    <footer class="homos-footer">
+        Powered & Designed with <i class="fa-solid fa-heart" style="color: #e74c3c; font-size: 10px;"></i> by <b>HOMOS</b> &copy; <span id="currentYear" class="en-text"></span>
     </footer>
 
+    <!-- سكريبت الفايربيز والبرمجة -->
     <script type="module">
-        // 1. استدعاء مكتبات Firebase للويب
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // 2. إعدادات قاعدة البيانات الخاصة بك
         const firebaseConfig = {
             apiKey: "AIzaSyDLOsW830rHo7viYDAUehbTkfmBLAiGCg8",
             authDomain: "haaaaa-7e537.firebaseapp.com",
             projectId: "haaaaa-7e537",
             storageBucket: "haaaaa-7e537.firebasestorage.app",
             messagingSenderId: "874151449512",
-            appId: "1:874151449512:web:32867d7d7e33170679839d",
-            measurementId: "G-4C3P542SC5"
+            appId: "1:874151449512:web:32867d7d7e33170679839d"
         };
 
-        // تشغيل الفايربيز
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // متغيرات النظام
         let allMenuItems = [];
         let currentCategory = 'الكل';
         let cart = [];
 
-        // 3. الاتصال الحي (Real-time Listener) بقاعدة البيانات
-        // onSnapshot: أي تعديل من الأدمن هيسمع هنا فوراً بدون ريفريش
-        const menuRef = collection(db, "menu");
-        onSnapshot(menuRef, (snapshot) => {
+        // الاتصال الحي بالداتابيز
+        onSnapshot(collection(db, "menu"), (snapshot) => {
             allMenuItems = [];
             snapshot.forEach((doc) => {
-                const data = doc.data();
-                // نعرض فقط الأكل المتاح (اللي الأدمن معملوش إخفاء)
-                if (data.available !== false) {
-                    allMenuItems.push({ id: doc.id, ...data });
+                if (doc.data().available !== false) {
+                    allMenuItems.push({ id: doc.id, ...doc.data() });
                 }
             });
-            renderMenu(); // إعادة رسم المنيو فوراً بعد أي تحديث
+            renderMenu(); 
         });
 
-        // 4. دالة رسم المأكولات في الشاشة
         window.renderMenu = () => {
             const grid = document.getElementById('menuGrid');
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const now = new Date();
 
-            // الفلترة بالبحث والتصنيف
-            const filteredItems = allMenuItems.filter(item => {
+            // 1. فلترة العناصر بناء على البحث والقسم
+            let filteredItems = allMenuItems.filter(item => {
                 const matchSearch = item.title.toLowerCase().includes(searchTerm);
                 const matchCat = currentCategory === 'الكل' || item.category === currentCategory;
                 return matchSearch && matchCat;
             });
 
+            // 2. فحص العروض الحقيقية وإضافتها كخاصية مؤقتة للترتيب
+            filteredItems = filteredItems.map(item => {
+                const isOfferValid = item.isOffer && item.offerExpiry && (new Date(item.offerExpiry) > now);
+                return { ...item, isOfferValid };
+            });
+
+            // 3. خوارزمية الترتيب: العروض السارية تظهر أولاً دائماً 🚀
+            filteredItems.sort((a, b) => {
+                if (a.isOfferValid && !b.isOfferValid) return -1; // a يصعد للأعلى
+                if (!a.isOfferValid && b.isOfferValid) return 1;  // b يصعد للأعلى
+                return 0; // الباقي يبقى كما هو
+            });
+
             if (filteredItems.length === 0) {
-                grid.innerHTML = '<div class="empty-state"><i class="fa-solid fa-plate-wheat"></i> عذراً، لا توجد وجبات تطابق بحثك حالياً.</div>';
+                grid.innerHTML = '<div class="empty-state"><i class="fa-solid fa-plate-wheat"></i> لا توجد وجبات حالياً.</div>';
                 return;
             }
 
             let html = '';
             filteredItems.forEach(item => {
-                // فحص العرض الترويجي
-                const isOfferValid = item.isOffer && item.offerExpiry && (new Date(item.offerExpiry) > now);
-                const priceToShow = isOfferValid ? item.offerPrice : item.price;
+                const priceToShow = item.isOfferValid ? item.offerPrice : item.price;
                 
                 html += `
-                    <div class="food-card" style="border: ${isOfferValid ? '2px solid #ff4757' : 'none'}">
-                        ${isOfferValid ? `<div class="offer-badge">🔥 عرض حصري</div>` : ''}
-                        <img src="${item.image || 'https://via.placeholder.com/300?text=بدون+صورة'}" alt="${item.title}" class="food-image">
+                    <div class="food-card" style="border: ${item.isOfferValid ? '1px solid #ff4757' : '1px solid transparent'}">
+                        ${item.isOfferValid ? `<div class="offer-badge"><i class="fa-solid fa-fire"></i> عرض خاص</div>` : ''}
+                        <img src="${item.image || 'https://via.placeholder.com/300'}" alt="${item.title}" class="food-image">
                         <div class="food-details">
                             <div class="food-category">${item.category}</div>
                             <h3 class="food-title">${item.title}</h3>
-                            <div class="price-section">
-                                ${isOfferValid ? `
-                                    <span class="current-price">${item.offerPrice} ج.م</span>
-                                    <span class="old-price">${item.price} ج.م</span>
+                            <div class="price-section en-text">
+                                ${item.isOfferValid ? `
+                                    <span class="current-price">${item.offerPrice} EGP</span>
+                                    <span class="old-price">${item.price} EGP</span>
                                 ` : `
-                                    <span class="current-price">${item.price} ج.م</span>
+                                    <span class="current-price">${item.price} EGP</span>
                                 `}
                             </div>
                             
-                            ${isOfferValid ? `<div class="timer-box" data-expiry="${item.offerExpiry}">⏳ جاري حساب الوقت...</div>` : ''}
+                            ${item.isOfferValid ? `<div class="timer-box" data-expiry="${item.offerExpiry}">⏳ جاري الحساب...</div>` : ''}
                             
                             <button class="add-to-cart-btn" onclick="addToCart('${item.id}', '${item.title}', ${priceToShow}, '${item.image}')">
-                                <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                                <i class="fa-solid fa-plus"></i> أضف للسلة
                             </button>
                         </div>
                     </div>
@@ -305,14 +335,13 @@
             });
 
             grid.innerHTML = html;
-            updateTimers(); // تفعيل العدادات فور الرسم
+            updateTimers(); 
         };
 
-        // 5. نظام البحث والفلترة السريع
-        window.filterMenu = () => { renderMenu(); }
+        window.filterMenu = () => renderMenu();
+        
         window.setCategory = (cat) => {
             currentCategory = cat;
-            // تظليل الزر المختار
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if(btn.innerText.includes(cat)) btn.classList.add('active');
@@ -320,7 +349,6 @@
             renderMenu();
         };
 
-        // 6. نظام العداد التنازلي الحي للعروض
         window.updateTimers = () => {
             const timers = document.querySelectorAll('.timer-box');
             timers.forEach(timer => {
@@ -330,21 +358,19 @@
                     const distance = expiryDate - now;
 
                     if (distance < 0) {
-                        timer.innerHTML = "انتهى العرض ❌";
-                        timer.style.background = "#ffeaa7"; timer.style.color = "#d63031";
-                        // التحديث التلقائي للسعر هيتم من خلال الـ onSnapshot لما الأدمن يغيره
+                        timer.innerHTML = "انتهى العرض";
+                        timer.style.color = "#7f8c8d"; timer.style.background = "#f1f2f6";
                     } else {
                         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                        timer.innerHTML = `⏳ متبقي: ${days}يوم و ${hours}:${minutes}:${seconds}`;
+                        timer.innerHTML = `⏳ ينتهي في: ${days}يوم ${hours}س ${minutes}د ${seconds}ث`;
                     }
                 }, 1000);
             });
         };
 
-        // 7. نظام سلة المشتريات (Cart Logic)
         window.toggleCart = () => {
             document.getElementById('cartOverlay').classList.toggle('active');
             document.getElementById('cartSidebar').classList.toggle('active');
@@ -354,12 +380,11 @@
             cart.push({ id, title, price, image });
             updateCartUI();
             
-            // تأثير حركي بسيط لتأكيد الإضافة
             const btn = event.currentTarget;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> تمت الإضافة!';
-            btn.style.background = '#e91e63';
-            setTimeout(() => { btn.innerHTML = originalText; btn.style.background = '#2ed573'; }, 1000);
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> تم!';
+            btn.style.background = '#2c3e50';
+            setTimeout(() => { btn.innerHTML = originalHTML; btn.style.background = '#27ae60'; }, 800);
         };
 
         window.removeFromCart = (index) => {
@@ -373,7 +398,7 @@
             let total = 0;
             
             if (cart.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding: 50px 0; color: #7f8c8d;">سلتك فارغة حالياً.</div>';
+                container.innerHTML = '<div style="text-align:center; padding: 40px 0; color: #aaa;">السلة فارغة</div>';
             } else {
                 let html = '';
                 cart.forEach((item, index) => {
@@ -383,18 +408,17 @@
                             <img src="${item.image}" alt="">
                             <div class="cart-item-details">
                                 <div class="cart-item-title">${item.title}</div>
-                                <div class="cart-item-price">${item.price} ج.م</div>
+                                <div class="cart-item-price en-text">${item.price} EGP</div>
                             </div>
-                            <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#e74c3c; cursor:pointer;"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     `;
                 });
                 container.innerHTML = html;
             }
-            document.getElementById('cartTotal').innerText = `${total} ج.م`;
+            document.getElementById('cartTotal').innerText = `${total} EGP`;
         };
 
-        // تعيين سنة الحقوق الحالية تلقائياً
         document.getElementById('currentYear').innerText = new Date().getFullYear();
     </script>
 </body>
